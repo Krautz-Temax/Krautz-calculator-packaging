@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krautz-Temax | Thermal Packaging & Bin Packing Calculator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        temaxBlue: {
+                            50: '#f0f6ff',
+                            100: '#e0eefd',
+                            500: '#0284c7',
+                            600: '#026aa2',
+                            700: '#035380',
+                            900: '#0c2340',
+                        },
+                        temaxOrange: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-full flex flex-col antialiased">
+
+    <!-- Header Navigation -->
+    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-temaxBlue-600 text-white p-2 rounded-xl shadow-lg flex items-center justify-center font-bold text-lg">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                        KRAUTZ-TEMAX <span class="text-xs px-2 py-0.5 rounded-full bg-temaxBlue-600/30 text-temaxBlue-400 border border-temaxBlue-500/30">Pro Logistics</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Thermal Packaging & 3D Bin Packing Calculator</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="loadPreset('pharma')" class="hidden sm:inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    <i class="fa-solid fa-pills mr-1.5 text-temaxBlue-400"></i> Pharma Box Preset
+                </button>
+                <button onclick="loadPreset('food')" class="hidden sm:inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    <i class="fa-solid fa-utensils mr-1.5 text-temaxOrange-500"></i> Food Box Preset
+                </button>
+                <button onclick="resetCalculator()" class="items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                    <i class="fa-solid fa-rotate-right mr-1.5"></i> Reset
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Panel: Input Controls -->
+        <div class="lg:col-span-5 space-y-6">
+            
+            <!-- Master Container Card -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-700">
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-boxes-stacked text-temaxBlue-500"></i> Master Container (Outer Box)
+                    </h2>
+                    <span class="text-xs text-slate-400 bg-slate-900 px-2.5 py-1 rounded-lg">Inner Dimensions</span>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Length (cm)</label>
+                        <input type="number" id="masterL" value="100" min="1" step="0.1" oninput="calculatePacking()"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:ring-2 focus:ring-temaxBlue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Width (cm)</label>
+                        <input type="number" id="masterW" value="100" min="1" step="0.1" oninput="calculatePacking()"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:ring-2 focus:ring-temaxBlue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Height (cm)</label>
+                        <input type="number" id="masterH" value="100" min="1" step="0.1" oninput="calculatePacking()"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:ring-2 focus:ring-temaxBlue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Insulation Wall Thickness -->
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs font-medium text-slate-300">Thermal Insulation Wall Thickness</label>
+                        <span id="insulationVal" class="text-xs font-bold text-temaxBlue-400">0 cm</span>
+                    </div>
+                    <input type="range" id="insulationThickness" min="0" max="10" step="0.5" value="0" oninput="updateInsulation(this.value)"
+                        class="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-temaxBlue-500">
+                    <p class="text-[11px] text-slate-400 mt-1">Deduct insulation panel thickness from available inner volume.</p>
+                </div>
+            </div>
+
+            <!-- Smaller Inner Packages Card -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-700">
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-cube text-temaxOrange-500"></i> Small Inner Packages / Items
+                    </h2>
+                    <span class="text-xs text-slate-400 bg-slate-900 px-2.5 py-1 rounded-lg">Product Units</span>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Length (cm)</label>
+                        <input type="number" id="itemL" value="20" min="0.1" step="0.1" oninput="calculatePacking()"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:ring-2 focus:ring-temaxOrange-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Width (cm)</label>
+                        <input type="number" id="itemW" value="20" min="0.1" step="0.1" oninput="calculatePacking()"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:ring-2 focus:ring-temaxOrange-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Height (cm)</label>
+                        <input type="number" id="itemH" value="20" min="0.1" step="0.1" oninput="calculatePacking()"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:ring-2 focus:ring-temaxOrange-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between bg-slate-900/60 p-3 rounded-xl border border-slate-700/60">
+                    <span class="text-xs text-slate-300 font-medium">Allow All 6 Rotations / Orientations</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="allowRotation" checked onchange="calculatePacking()" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-temaxBlue-600"></div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="bg-slate-800/40 border border-slate-700/60 rounded-xl p-4">
+                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2.5">Quick Load Presets</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="loadPreset('euro')" class="text-xs text-left bg-slate-800 hover:bg-slate-700 text-slate-200 p-2.5 rounded-lg border border-slate-700 transition flex items-center justify-between">
+                        <span>Euro-Pallet Box (120x80x100)</span>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+                    </button>
+                    <button onclick="loadPreset('thermobox')" class="text-xs text-left bg-slate-800 hover:bg-slate-700 text-slate-200 p-2.5 rounded-lg border border-slate-700 transition flex items-center justify-between">
+                        <span>Insulated Shipper (60x40x40)</span>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Panel: Results & 3D Visualization Grid -->
+        <div class="lg:col-span-7 flex flex-col space-y-6">
+            
+            <!-- Summary Metric Cards -->
+            <div class="grid grid-cols-3 gap-4">
+                <div class="bg-gradient-to-br from-slate-800 to-slate-800/90 border border-slate-700 rounded-2xl p-5 shadow-xl text-center">
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Max Units Fit</p>
+                    <h3 id="resultCount" class="text-3xl font-extrabold text-temaxBlue-400">0</h3>
+                    <p class="text-[11px] text-slate-500 mt-1">Small packages</p>
+                </div>
+                <div class="bg-gradient-to-br from-slate-800 to-slate-800/90 border border-slate-700 rounded-2xl p-5 shadow-xl text-center">
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Volume Utilization</p>
+                    <h3 id="resultUtilization" class="text-3xl font-extrabold text-emerald-400">0%</h3>
+                    <p class="text-[11px] text-slate-500 mt-1">Space efficiency</p>
+                </div>
+                <div class="bg-gradient-to-br from-slate-800 to-slate-800/90 border border-slate-700 rounded-2xl p-5 shadow-xl text-center">
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Packing Layout</p>
+                    <h3 id="resultLayout" class="text-xl font-bold text-white mt-1 truncate">0 × 0 × 0</h3>
+                    <p id="resultOrientation" class="text-[11px] text-slate-400 mt-1">Cols × Rows × Layers</p>
+                </div>
+            </div>
+
+            <!-- Visual Breakdown / Layer Preview -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl flex-1 flex flex-col">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-700">
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-temaxBlue-500"></i> Container Layer Breakdown & Grid Map
+                    </h2>
+                    <div id="layerSelectorContainer" class="hidden items-center space-x-2">
+                        <span class="text-xs text-slate-400">Layer:</span>
+                        <select id="layerSelect" onchange="renderVisualGrid()" class="bg-slate-900 border border-slate-700 rounded-lg text-xs text-white px-2.5 py-1 focus:outline-none">
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Canvas / Visual Area -->
+                <div id="visualContainer" class="bg-slate-900/90 border border-slate-700/80 rounded-xl flex-1 min-h-[300px] flex items-center justify-center p-6 relative overflow-hidden">
+                    <div id="emptyState" class="text-center text-slate-500">
+                        <i class="fa-solid fa-box-archive text-4xl mb-2 text-slate-600"></i>
+                        <p class="text-sm font-medium">Enter valid dimensions to compute packing matrix.</p>
+                    </div>
+                    <div id="gridPreview" class="w-full h-full flex flex-wrap items-center justify-center gap-2 overflow-auto"></div>
+                </div>
+
+                <!-- Detailed Specs Footer -->
+                <div class="mt-4 pt-3 border-t border-slate-700/60 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
+                    <div id="specMasterVol">Effective Master Volume: 0 L</div>
+                    <div id="specItemVol">Unit Volume: 0 L</div>
+                    <div class="text-temaxBlue-400 font-medium">Krautz-Temax Cold-Chain Engine v2.4</div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+        Krautz-Temax Thermal Packaging & Insulated Logistics Solutions &copy; 2026. All rights reserved.
+    </footer>
+
+    <!-- JavaScript Calculation Logic -->
+    <script>
+        function updateInsulation(val) {
+            document.getElementById('insulationVal').innerText = val + ' cm';
+            calculatePacking();
+        }
+
+        function loadPreset(type) {
+            if (type === 'pharma') {
+                document.getElementById('masterL').value = 80;
+                document.getElementById('masterW').value = 60;
+                document.getElementById('masterH').value = 60;
+                document.getElementById('itemL').value = 15;
+                document.getElementById('itemW').value = 10;
+                document.getElementById('itemH').value = 10;
+                document.getElementById('insulationThickness').value = 2;
+                document.getElementById('insulationVal').innerText = '2 cm';
+            } else if (type === 'food') {
+                document.getElementById('masterL').value = 50;
+                document.getElementById('masterW').value = 50;
+                document.getElementById('masterH').value = 50;
+                document.getElementById('itemL').value = 25;
+                document.getElementById('itemW').value = 25;
+                document.getElementById('itemH').value = 10;
+                document.getElementById('insulationThickness').value = 1;
+                document.getElementById('insulationVal').innerText = '1 cm';
+            } else if (type === 'euro') {
+                document.getElementById('masterL').value = 120;
+                document.getElementById('masterW').value = 80;
+                document.getElementById('masterH').value = 100;
+                document.getElementById('itemL').value = 30;
+                document.getElementById('itemW').value = 20;
+                document.getElementById('itemH').value = 20;
+                document.getElementById('insulationThickness').value = 0;
+                document.getElementById('insulationVal').innerText = '0 cm';
+            } else if (type === 'thermobox') {
+                document.getElementById('masterL').value = 60;
+                document.getElementById('masterW').value = 40;
+                document.getElementById('masterH').value = 40;
+                document.getElementById('itemL').value = 20;
+                document.getElementById('itemW').value = 10;
+                document.getElementById('itemH').value = 10;
+                document.getElementById('insulationThickness').value = 1.5;
+                document.getElementById('insulationVal').innerText = '1.5 cm';
+            }
+            calculatePacking();
+        }
+
+        function resetCalculator() {
+            document.getElementById('masterL').value = 100;
+            document.getElementById('masterW').value = 100;
+            document.getElementById('masterH').value = 100;
+            document.getElementById('itemL').value = 20;
+            document.getElementById('itemW').value = 20;
+            document.getElementById('itemH').value = 20;
+            document.getElementById('insulationThickness').value = 0;
+            document.getElementById('insulationVal').innerText = '0 cm';
+            document.getElementById('allowRotation').checked = true;
+            calculatePacking();
+        }
+
+        let currentResult = null;
+
+        function calculatePacking() {
+            const rawML = parseFloat(document.getElementById('masterL').value) || 0;
+            const rawMW = parseFloat(document.getElementById('masterW').value) || 0;
+            const rawMH = parseFloat(document.getElementById('masterH').value) || 0;
+            const insulation = parseFloat(document.getElementById('insulationThickness').value) || 0;
+
+            const itemL = parseFloat(document.getElementById('itemL').value) || 0;
+            const itemW = parseFloat(document.getElementById('itemW').value) || 0;
+            const itemH = parseFloat(document.getElementById('itemH').value) || 0;
+            const allowRotation = document.getElementById('allowRotation').checked;
+
+            // Effective inner dimensions after deducting insulation walls (left+right, front+back, top+bottom)
+            const mL = Math.max(0, rawML - (insulation * 2));
+            const mW = Math.max(0, rawMW - (insulation * 2));
+            const mH = Math.max(0, rawMH - (insulation * 2));
+
+            const emptyState = document.getElementById('emptyState');
+            const gridPreview = document.getElementById('gridPreview');
+            const layerSelectorContainer = document.getElementById('layerSelectorContainer');
+
+            if (mL <= 0 || mW <= 0 || mH <= 0 || itemL <= 0 || itemW <= 0 || itemH <= 0 || itemL > mL || itemW > mW || itemH > mH) {
+                document.getElementById('resultCount').innerText = '0';
+                document.getElementById('resultUtilization').innerText = '0%';
+                document.getElementById('resultLayout').innerText = '0 × 0 × 0';
+                document.getElementById('specMasterVol').innerText = `Effective Master Volume: ${(mL * mW * mH / 1000).toFixed(1)} L`;
+                document.getElementById('specItemVol').innerText = `Unit Volume: ${(itemL * itemW * itemH / 1000).toFixed(2)} L`;
+                emptyState.style.display = 'block';
+                gridPreview.innerHTML = '';
+                layerSelectorContainer.style.display = 'none';
+                currentResult = null;
+                return;
+            }
+
+            // Determine possible orientations
+            let orientations = [];
+            if (allowRotation) {
+                orientations = [
+                    { l: itemL, w: itemW, h: itemH },
+                    { l: itemL, w: itemH, h: itemW },
+                    { l: itemW, w: itemL, h: itemH },
+                    { l: itemW, w: itemH, h: itemL },
+                    { l: itemH, w: itemL, h: itemW },
+                    { l: itemH, w: itemW, h: itemL }
+                ];
+            } else {
+                orientations = [{ l: itemL, w: itemW, h: itemH }];
+            }
+
+            let bestFit = { count: 0, cols: 0, rows: 0, layers: 0, orient: null };
+
+            orientations.forEach(ori => {
+                if (ori.l <= mL && ori.w <= mW && ori.h <= mH) {
+                    const cols = Math.floor(mL / ori.l);
+                    const rows = Math.floor(mW / ori.w);
+                    const layers = Math.floor(mH / ori.h);
+                    const count = cols * rows * layers;
+
+                    if (count > bestFit.count) {
+                        bestFit = { count, cols, rows, layers, orient: ori };
+                    }
+                }
+            });
+
+            // Update UI Metrics
+            document.getElementById('resultCount').innerText = bestFit.count.toLocaleString();
+            
+            const masterVol = mL * mW * mH;
+            const itemVol = itemL * itemW * itemH;
+            const totalItemVol = bestFit.count * itemVol;
+            const utilization = masterVol > 0 ? ((totalItemVol / masterVol) * 100).toFixed(1) : 0;
+            
+            document.getElementById('resultUtilization').innerText = utilization + '%';
+            document.getElementById('resultLayout').innerText = `${bestFit.cols} × ${bestFit.rows} × ${bestFit.layers}`;
+            document.getElementById('specMasterVol').innerText = `Effective Master Volume: ${(masterVol / 1000).toFixed(1)} L`;
+            document.getElementById('specItemVol').innerText = `Unit Volume: ${(itemVol / 1000).toFixed(2)} L`;
+
+            currentResult = bestFit;
+
+            if (bestFit.count > 0) {
+                emptyState.style.display = 'none';
+                layerSelectorContainer.style.display = 'flex';
+                
+                // Populate layer dropdown
+                const layerSelect = document.getElementById('layerSelect');
+                const prevSelected = layerSelect.value;
+                layerSelect.innerHTML = '';
+                for (let i = 1; i <= bestFit.layers; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.text = `Layer ${i} of ${bestFit.layers}`;
+                    layerSelect.appendChild(opt);
+                }
+                if (prevSelected && prevSelected <= bestFit.layers) {
+                    layerSelect.value = prevSelected;
+                }
+
+                renderVisualGrid();
+            } else {
+                emptyState.style.display = 'block';
+                gridPreview.innerHTML = '';
+                layerSelectorContainer.style.display = 'none';
+            }
+        }
+
+        function renderVisualGrid() {
+            if (!currentResult || currentResult.count === 0) return;
+
+            const gridPreview = document.getElementById('gridPreview');
+            gridPreview.innerHTML = '';
+
+            const cols = currentResult.cols;
+            const rows = currentResult.rows;
+            const totalUnitsInLayer = cols * rows;
+
+            // Grid container styling
+            gridPreview.style.display = 'grid';
+            gridPreview.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+            gridPreview.style.gap = '6px';
+            gridPreview.style.maxWidth = '100%';
+            gridPreview.style.maxHeight = '100%';
+
+            for (let i = 0; i < totalUnitsInLayer; i++) {
+                const boxDiv = document.createElement('div');
+                boxDiv.className = 'bg-temaxBlue-600/30 border border-temaxBlue-500/60 rounded-xl p-3 flex flex-col items-center justify-center text-center transition hover:bg-temaxBlue-600/50 shadow-md aspect-square';
+                boxDiv.innerHTML = `
+                    <i class="fa-solid fa-box text-temaxBlue-400 text-base mb-1"></i>
+                    <span class="text-[10px] font-semibold text-white">Unit #${i + 1}</span>
+                    <span class="text-[9px] text-slate-400">${currentResult.orient.l}×${currentResult.orient.w}cm</span>
+                `;
+                gridPreview.appendChild(boxDiv);
+            }
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            calculatePacking();
+        };
+    </script>
+</body>
+</html>
