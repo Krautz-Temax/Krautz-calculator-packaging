@@ -37,7 +37,6 @@
         .glow-blue {
             box-shadow: 0 0 25px -5px rgba(0, 102, 204, 0.4);
         }
-        /* Fluid mobile-responsive grid card sizing */
         .grid-card-item {
             width: calc(33.333% - 8px);
             min-width: 85px;
@@ -198,7 +197,7 @@
                             </div>
                         </div>
 
-                        <!-- Visual Grid Box Map Container (Centered & Mobile Symmetrical) -->
+                        <!-- Visual Grid Box Map Container -->
                         <div id="layerGridDisplay" class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 min-h-[280px] max-h-[360px] overflow-y-auto flex flex-wrap content-start gap-2 justify-center items-center">
                             <!-- Dynamically generated unit blocks -->
                         </div>
@@ -267,48 +266,4 @@
                         <div class="grid grid-cols-3 gap-3">
                             <div>
                                 <label class="text-[11px] text-slate-400">Length (cm)</label>
-                                <input type="number" id="pz-b2-l" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Width (cm)</label>
-                                <input type="number" id="pz-b2-w" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Height (cm)</label>
-                                <input type="number" id="pz-b2-h" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
-                            </div>
-                        </div>
-
-                        <button onclick="calculatePuzzle()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Solve Volume Puzzle</button>
-                    </div>
-
-                    <div class="lg:col-span-2 space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
-                        <div>
-                            <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400 mb-4">Volume Puzzle Solution & Residual Breakdown</h3>
-                            <div id="puzzle-results" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 2: SPHERICAL DENSITY PACKING -->
-        <section id="tab-pack-sphere" class="tab-content space-y-6 hidden">
-            <div class="glass-panel p-6 rounded-2xl glow-blue">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
-                        <i data-lucide="circle-dot" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-white">Spherical Packing Density Estimator</h2>
-                        <p class="text-xs text-slate-400">Calculate ball or round thermal element capacity inside a master container using Grid vs. Hexagonal Close-Packing (FCC).</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800">
-                        <div>
-                            <label class="text-[11px] text-slate-400">Container Size (cm)</label>
-                            <input type="number" id="sphere-container" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px
+                                <input type="number" id="pz-b2-l" value="30" class="
