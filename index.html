@@ -37,15 +37,6 @@
         .glow-blue {
             box-shadow: 0 0 25px -5px rgba(0, 102, 204, 0.4);
         }
-        .grid-card-item {
-            width: calc(33.333% - 8px);
-            min-width: 85px;
-        }
-        @media (min-width: 640px) {
-            .grid-card-item {
-                width: 110px;
-            }
-        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-krautz-500 selection:text-white">
@@ -197,8 +188,8 @@
                             </div>
                         </div>
 
-                        <!-- Visual Grid Box Map Container -->
-                        <div id="layerGridDisplay" class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 min-h-[280px] max-h-[360px] overflow-y-auto flex flex-wrap content-start gap-2 justify-center items-center">
+                        <!-- Symmetrical CSS Grid Container for Mobile & Desktop -->
+                        <div id="layerGridDisplay" class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 min-h-[280px] max-h-[380px] overflow-y-auto grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 justify-items-center">
                             <!-- Dynamically generated unit blocks -->
                         </div>
 
@@ -480,13 +471,13 @@
             const unitsPerLayer = cols * rows;
 
             if (unitsPerLayer === 0 || unitsPerLayer > 250) {
-                display.innerHTML = `<div class="text-slate-500 text-xs py-10 text-center">Items are too large for this container or quantity exceeds display limit.</div>`;
+                display.innerHTML = `<div class="text-slate-500 text-xs py-10 text-center col-span-full">Items are too large for this container or quantity exceeds display limit.</div>`;
                 return;
             }
 
             for (let i = 1; i <= unitsPerLayer; i++) {
                 const card = document.createElement('div');
-                card.className = "grid-card-item bg-krautz-500/25 hover:bg-krautz-500/40 border border-krautz-500/40 hover:border-krautz-400 rounded-xl p-2.5 h-20 flex flex-col items-center justify-center transition shadow-sm cursor-pointer";
+                card.className = "bg-krautz-500/25 hover:bg-krautz-500/40 border border-krautz-500/40 hover:border-krautz-400 rounded-xl p-2.5 w-full h-20 flex flex-col items-center justify-center transition shadow-sm cursor-pointer";
                 card.innerHTML = `
                     <span class="text-krautz-400 text-xs mb-0.5">📦</span>
                     <span class="text-[11px] font-bold text-white leading-tight">Unit #${i}</span>
