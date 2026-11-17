@@ -364,8 +364,9 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-800 bg-slate-900/40 text-center py-4 text-xs text-slate-500">
-        © 2026 Krautz-Temax NV. All rights reserved. Thermal Packaging & Spatial Calculation Technology.
+    <footer class="border-t border-slate-800 bg-slate-900/40 text-center py-4 text-xs text-slate-500 space-y-1">
+        <div>© 2026 Krautz-Temax NV. All rights reserved. Thermal Packaging & Spatial Calculation Technology.</div>
+        <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-krautz-400 hover:underline font-medium">krautz.org</a>[cite: 3].</div>
     </footer>
 
     <!-- JavaScript Application Logic -->
@@ -584,7 +585,7 @@
 
             const masterVol = ml * mw * mh;
             const adjustedObjVol = irrVol * 1.15; // 15% contour void allowance
-            const maxFit = Math.floor(masterVol / adjustedObjVol);
+            const maxFit = Math.floor(masterVol / adjustedObjVal);
 
             const resultsContainer = document.getElementById('irr-results');
             if (!resultsContainer) return;
