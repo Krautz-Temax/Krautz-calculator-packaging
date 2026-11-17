@@ -266,4 +266,347 @@
                         <div class="grid grid-cols-3 gap-3">
                             <div>
                                 <label class="text-[11px] text-slate-400">Length (cm)</label>
-                                <input type="number" id="pz-b2-l" value="30" class="
+                                <input type="number" id="pz-b2-l" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Width (cm)</label>
+                                <input type="number" id="pz-b2-w" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Height (cm)</label>
+                                <input type="number" id="pz-b2-h" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            </div>
+                        </div>
+
+                        <button onclick="calculatePuzzle()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Solve Volume Puzzle</button>
+                    </div>
+
+                    <div class="lg:col-span-2 space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400 mb-4">Volume Puzzle Solution & Residual Breakdown</h3>
+                            <div id="puzzle-results" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: SPHERICAL DENSITY PACKING -->
+        <section id="tab-pack-sphere" class="tab-content space-y-6 hidden">
+            <div class="glass-panel p-6 rounded-2xl glow-blue">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
+                        <i data-lucide="circle-dot" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-white">Spherical Packing Density Estimator</h2>
+                        <p class="text-xs text-slate-400">Calculate ball or round thermal element capacity inside a master container using Grid vs. Hexagonal Close-Packing (FCC).</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800">
+                        <div>
+                            <label class="text-[11px] text-slate-400">Container Size (cm)</label>
+                            <input type="number" id="sphere-container" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                        </div>
+                        <div>
+                            <label class="text-[11px] text-slate-400">Sphere Diameter (cm)</label>
+                            <input type="number" id="sphere-diam" value="20" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                        </div>
+                        <button onclick="calculateSpheres()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Calculate Spherical Pack</button>
+                    </div>
+
+                    <div class="lg:col-span-2 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                        <div id="sphere-results" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: IRREGULAR OBJECT SCAN -->
+        <section id="tab-pack-irregular" class="tab-content space-y-6 hidden">
+            <div class="glass-panel p-6 rounded-2xl glow-blue">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
+                        <i data-lucide="scan" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-white">Irregular Object Scan & Packaging Calculator</h2>
+                        <p class="text-xs text-slate-400">Input scan volume of non-uniform cargo to calculate required master container sizing and packing breakdown ratios.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800">
+                        <div>
+                            <label class="text-[11px] text-slate-400">Irregular Object Volume (cm³)</label>
+                            <input type="number" id="irr-vol" value="12500" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                        </div>
+                        <div>
+                            <label class="text-[11px] text-slate-400">Target Master Box Size (cm)</label>
+                            <div class="grid grid-cols-3 gap-2 mt-1">
+                                <input type="number" id="irr-master-l" value="100" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
+                                <input type="number" id="irr-master-w" value="100" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
+                                <input type="number" id="irr-master-h" value="100" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
+                            </div>
+                        </div>
+                        <button onclick="calculateIrregular()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Compute Irregular Fit</button>
+                    </div>
+
+                    <div class="lg:col-span-2 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                        <div id="irr-results" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-900/40 text-center py-4 text-xs text-slate-500">
+        © 2026 Krautz-Temax NV. All rights reserved. Thermal Packaging & Spatial Calculation Technology.
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        lucide.createIcons();
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-krautz-500', 'text-white', 'shadow');
+                el.classList.add('text-slate-400');
+            });
+
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('bg-krautz-500', 'text-white', 'shadow');
+            activeBtn.classList.remove('text-slate-400');
+            lucide.createIcons();
+        }
+
+        function calculateAll() {
+            calculateDualBoxAndVisualizer();
+            calculatePuzzle();
+            calculateSpheres();
+            calculateIrregular();
+        }
+
+        // 1. Dual Box & Visualizer Logic
+        function calculateDualBoxAndVisualizer() {
+            const CL = parseFloat(document.getElementById('containerL').value) || 1;
+            const CW = parseFloat(document.getElementById('containerW').value) || 1;
+            const CH = parseFloat(document.getElementById('containerH').value) || 1;
+
+            let IL = parseFloat(document.getElementById('itemL').value) || 1;
+            let IW = parseFloat(document.getElementById('itemW').value) || 1;
+            const IH = parseFloat(document.getElementById('itemH').value) || 1;
+
+            const squeezeCheckbox = document.getElementById('squeezeMode');
+            const isSqueezeActive = squeezeCheckbox ? squeezeCheckbox.checked : false;
+
+            let effectiveIL = IL;
+            let effectiveIW = IW;
+            if (isSqueezeActive) {
+                effectiveIL = IL * 0.90;
+                effectiveIW = IW * 0.90;
+            }
+
+            const cols = Math.floor(CL / effectiveIL);
+            const rows = Math.floor(CW / effectiveIW);
+            const layers = Math.floor(CH / IH);
+
+            const totalUnits = cols * rows * layers;
+            const unitVol = (IL * IW * IH) / 1000;
+            const masterVol = (CL * CW * CH) / 1000;
+            const utilizedVol = totalUnits * (IL * IW * IH);
+            const efficiency = Math.min(100, ((utilizedVol / (CL * CW * CH)) * 100)).toFixed(1);
+
+            document.getElementById('maxUnits').innerText = totalUnits;
+            document.getElementById('volumeUtil').innerText = efficiency + '%';
+            document.getElementById('packingLayout').innerText = `${cols} × ${rows} × ${layers}`;
+            document.getElementById('effectiveVolume').innerText = `Effective Master Volume: ${masterVol.toFixed(1)} L`;
+            document.getElementById('unitVolume').innerText = `Unit Volume: ${unitVol.toFixed(2)} L`;
+
+            const layerSelect = document.getElementById('layerSelect');
+            const currentSelected = layerSelect.value;
+            layerSelect.innerHTML = '';
+            
+            const maxLayers = Math.max(1, layers);
+            for (let i = 0; i < maxLayers; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.innerText = `Layer ${i + 1} of ${maxLayers}`;
+                layerSelect.appendChild(opt);
+            }
+            if (currentSelected < maxLayers) {
+                layerSelect.value = currentSelected;
+            } else {
+                layerSelect.value = 0;
+            }
+
+            renderLayerGrid();
+        }
+
+        function renderLayerGrid() {
+            const display = document.getElementById('layerGridDisplay');
+            if (!display) return;
+            display.innerHTML = '';
+
+            const CL = parseFloat(document.getElementById('containerL').value) || 1;
+            const CW = parseFloat(document.getElementById('containerW').value) || 1;
+            let IL = parseFloat(document.getElementById('itemL').value) || 1;
+            let IW = parseFloat(document.getElementById('itemW').value) || 1;
+
+            const squeezeCheckbox = document.getElementById('squeezeMode');
+            const isSqueezeActive = squeezeCheckbox ? squeezeCheckbox.checked : false;
+
+            let effectiveIL = IL;
+            let effectiveIW = IW;
+            if (isSqueezeActive) {
+                effectiveIL = IL * 0.90;
+                effectiveIW = IW * 0.90;
+            }
+
+            const cols = Math.max(1, Math.floor(CL / effectiveIL));
+            const rows = Math.max(1, Math.floor(CW / effectiveIW));
+            const unitsPerLayer = cols * rows;
+
+            if (unitsPerLayer === 0 || unitsPerLayer > 250) {
+                display.innerHTML = `<div class="text-slate-500 text-xs py-10 text-center">Items are too large for this container or quantity exceeds display limit.</div>`;
+                return;
+            }
+
+            for (let i = 1; i <= unitsPerLayer; i++) {
+                const card = document.createElement('div');
+                card.className = "grid-card-item bg-krautz-500/25 hover:bg-krautz-500/40 border border-krautz-500/40 hover:border-krautz-400 rounded-xl p-2.5 h-20 flex flex-col items-center justify-center transition shadow-sm cursor-pointer";
+                card.innerHTML = `
+                    <span class="text-krautz-400 text-xs mb-0.5">📦</span>
+                    <span class="text-[11px] font-bold text-white leading-tight">Unit #${i}</span>
+                    <span class="text-[9px] text-slate-400">${IL}×${IW}cm</span>
+                `;
+                display.appendChild(card);
+            }
+        }
+
+        function setPresetValues(cl, cw, ch, il, iw, ih) {
+            document.getElementById('containerL').value = cl;
+            document.getElementById('containerW').value = cw;
+            document.getElementById('containerH').value = ch;
+            document.getElementById('itemL').value = il;
+            document.getElementById('itemW').value = iw;
+            document.getElementById('itemH').value = ih;
+            calculateAll();
+        }
+
+        // 1.5 Multi-Box Volume Puzzle Solver
+        function calculatePuzzle() {
+            const outL = parseFloat(document.getElementById('pz-out-l').value) || 100;
+            const outW = parseFloat(document.getElementById('pz-out-w').value) || 100;
+            const outH = parseFloat(document.getElementById('pz-out-h').value) || 100;
+
+            const b1Qty = parseFloat(document.getElementById('pz-b1-qty').value) || 100;
+            const b1Dim = parseFloat(document.getElementById('pz-b1-dim').value) || 20;
+
+            const b2l = parseFloat(document.getElementById('pz-b2-l').value) || 30;
+            const b2w = parseFloat(document.getElementById('pz-b2-w').value) || 30;
+            const b2h = parseFloat(document.getElementById('pz-b2-h').value) || 30;
+
+            const outerVol = outL * outW * outH;
+            const box1Vol = Math.pow(b1Dim, 3);
+            const totalBox1Vol = b1Qty * box1Vol;
+
+            const remainingVol = Math.max(0, outerVol - totalBox1Vol);
+            const box2Vol = b2l * b2w * b2h;
+            const box2Fit = box2Vol > 0 ? Math.floor(remainingVol / box2Vol) : 0;
+
+            const resultsContainer = document.getElementById('puzzle-results');
+            if (!resultsContainer) return;
+            resultsContainer.innerHTML = `
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Outer Container Volume</span>
+                    <span class="text-xl font-bold text-white">${(outerVol/1000000).toFixed(3)} m³</span>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">First Box Batch Volume</span>
+                    <span class="text-xl font-bold text-krautz-400">${(totalBox1Vol/1000000).toFixed(3)} m³</span>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Remaining Empty Volume</span>
+                    <span class="text-xl font-bold text-amber-400">${(remainingVol/1000000).toFixed(3)} m³</span>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Secondary Box Capacity Fit</span>
+                    <span class="text-xl font-bold text-emerald-400">~${box2Fit} boxes</span>
+                </div>
+            `;
+        }
+
+        // 2. Spherical Packing Calculation
+        function calculateSpheres() {
+            const containerSize = parseFloat(document.getElementById('sphere-container').value) || 100;
+            const diam = parseFloat(document.getElementById('sphere-diam').value) || 20;
+
+            const gridFitX = Math.floor(containerSize / diam);
+            const gridFitY = Math.floor(containerSize / diam);
+            const gridFitZ = Math.floor(containerSize / diam);
+            const gridTotal = gridFitX * gridFitY * gridFitZ;
+
+            const containerVol = Math.pow(containerSize, 3);
+            const sphereVol = (4/3) * Math.PI * Math.pow(diam/2, 3);
+            const fccTotal = Math.floor((containerVol * 0.7405) / sphereVol);
+
+            const resultsContainer = document.getElementById('sphere-results');
+            if (!resultsContainer) return;
+            resultsContainer.innerHTML = `
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Standard Grid Fit</span>
+                    <span class="text-xl font-bold text-white">${gridTotal} spheres</span>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Hexagonal Close-Packing (FCC)</span>
+                    <span class="text-xl font-bold text-krautz-400">${fccTotal} spheres</span>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Volumetric Efficiency</span>
+                    <span class="text-xl font-bold text-emerald-400">${((fccTotal * sphereVol / containerVol) * 100).toFixed(1)}%</span>
+                </div>
+            `;
+        }
+
+        // 3. Irregular Object Scan
+        function calculateIrregular() {
+            const irrVol = parseFloat(document.getElementById('irr-vol').value) || 12500;
+            const ml = parseFloat(document.getElementById('irr-master-l').value) || 100;
+            const mw = parseFloat(document.getElementById('irr-master-w').value) || 100;
+            const mh = parseFloat(document.getElementById('irr-master-h').value) || 100;
+
+            const masterVol = ml * mw * mh;
+            const adjustedObjVol = irrVol * 1.15; // 15% contour void allowance
+            const maxFit = Math.floor(masterVol / adjustedObjVol);
+
+            const resultsContainer = document.getElementById('irr-results');
+            if (!resultsContainer) return;
+            resultsContainer.innerHTML = `
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Adjusted Object Volume (+15%)</span>
+                    <span class="text-xl font-bold text-white">${adjustedObjVol.toLocaleString()} cm³</span>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Max Master Container Capacity</span>
+                    <span class="text-xl font-bold text-krautz-400">${maxFit} units</span>
+                </div>
+            `;
+        }
+
+        window.onload = calculateAll;
+    </script>
+</body>
+</html>
