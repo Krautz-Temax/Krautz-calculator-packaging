@@ -1,445 +1,569 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en" class="dark">
 <link rel="icon" type="image/png" href="Logo.png">
-    <meta charset="UTF-8">
+   <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Krautz-Temax | Thermal Packaging & Bin Packing Calculator</title>
-    <!-- Tailwind CSS -->
+    <title>Krautz-Temax Pro Logistics - Thermal Packaging & 3D Bin Packing Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
                     colors: {
-                        temaxBlue: {
-                            50: '#f0f6ff',
-                            100: '#e0eefd',
-                            500: '#0284c7',
-                            600: '#026aa2',
-                            700: '#035380',
-                            900: '#0c2340',
-                        },
-                        temaxOrange: {
-                            500: '#f97316',
-                            600: '#ea580c',
+                        krautz: {
+                            50: '#e6f2ff',
+                            100: '#b3d9ff',
+                            500: '#0066cc',
+                            600: '#004c99',
+                            750: '#002244',
+                            900: '#001122',
                         }
                     }
                 }
             }
         }
     </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
+        body { font-family: 'Inter', sans-serif; background-color: #0b1120; color: #f8fafc; }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.15);
         }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .glow-blue {
+            box-shadow: 0 0 25px -5px rgba(0, 102, 204, 0.4);
+        }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-full flex flex-col antialiased">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-krautz-500 selection:text-white">
 
-    <!-- Header Navigation -->
-    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center space-x-3">
-                <div class="bg-temaxBlue-600 text-white p-2 rounded-xl shadow-lg flex items-center justify-center font-bold text-lg">
-                    <i class="fa-solid fa-box-open"></i>
+                <div class="bg-krautz-500 p-2.5 rounded-xl glow-blue flex items-center justify-center">
+                    <i data-lucide="box" class="w-6 h-6 text-white"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-                        KRAUTZ-TEMAX <span class="text-xs px-2 py-0.5 rounded-full bg-temaxBlue-600/30 text-temaxBlue-400 border border-temaxBlue-500/30">Pro Logistics</span>
+                    <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                        KRAUTZ-TEMAX <span class="text-xs px-2 py-0.5 rounded bg-krautz-500/20 text-krautz-400 border border-krautz-500/30">Pro Logistics</span>
                     </h1>
-                    <p class="text-xs text-slate-400">Thermal Packaging & 3D Bin Packing Calculator</p>
+                    <p class="text-xs text-slate-400">Advanced Thermal Packaging & Multi-Dimensional Packing Calculator</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
-                <button onclick="loadPreset('pharma')" class="hidden sm:inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
-                    <i class="fa-solid fa-pills mr-1.5 text-temaxBlue-400"></i> Pharma Box Preset
-                </button>
-                <button onclick="loadPreset('food')" class="hidden sm:inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
-                    <i class="fa-solid fa-utensils mr-1.5 text-temaxOrange-500"></i> Food Box Preset
-                </button>
-                <button onclick="resetCalculator()" class="items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
-                    <i class="fa-solid fa-rotate-right mr-1.5"></i> Reset
-                </button>
-            </div>
+            <!-- Tab Navigation -->
+            <nav class="flex flex-wrap gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
+                <button onclick="switchTab('pack-dual')" id="btn-pack-dual" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all bg-krautz-500 text-white shadow">Dual Box & Visualizer</button>
+                <button onclick="switchTab('pack-puzzle')" id="btn-pack-puzzle" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5"><i data-lucide="boxes" class="w-3.5 h-3.5"></i> Volume Puzzle</button>
+                <button onclick="switchTab('pack-sphere')" id="btn-pack-sphere" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white">Spherical Density</button>
+                <button onclick="switchTab('pack-irregular')" id="btn-pack-irregular" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white">Irregular Scan</button>
+            </nav>
         </div>
     </header>
 
-    <!-- Main Content Layout -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Left Panel: Input Controls -->
-        <div class="lg:col-span-5 space-y-6">
-            
-            <!-- Master Container Card -->
-            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-700">
-                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-boxes-stacked text-temaxBlue-500"></i> Master Container (Outer Box)
-                    </h2>
-                    <span class="text-xs text-slate-400 bg-slate-900 px-2.5 py-1 rounded-lg">Inner Dimensions</span>
-                </div>
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full space-y-8">
+
+        <!-- TAB 1: DUAL BOX FILL CALCULATOR & LAYER VISUALIZER -->
+        <section id="tab-pack-dual" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <div class="grid grid-cols-3 gap-3 mb-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Length (cm)</label>
-                        <input type="number" id="masterL" value="100" min="1" step="0.1" oninput="calculatePacking()"
-                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:ring-2 focus:ring-temaxBlue-500 focus:outline-none">
+                <!-- Left Panel: Inputs -->
+                <div class="lg:col-span-5 space-y-6">
+                    
+                    <!-- Master Container Box -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-krautz-400 text-lg">🟦</span>
+                                <h2 class="text-sm font-semibold text-white tracking-wide">Master Container (Outer Box)</h2>
+                            </div>
+                            <span class="text-xs text-slate-400 bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700">Inner Dimensions</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Length (cm)</label>
+                                <input type="number" id="containerL" value="100" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Width (cm)</label>
+                                <input type="number" id="containerW" value="100" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Height (cm)</label>
+                                <input type="number" id="containerH" value="100" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Small Inner Packages / Items -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-krautz-400 text-lg">📦</span>
+                                <h2 class="text-sm font-semibold text-white tracking-wide">Small Inner Packages / Items</h2>
+                            </div>
+                            <span class="text-xs text-slate-400 bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700">Product Units</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Length (cm)</label>
+                                <input type="number" id="itemL" value="20" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Width (cm)</label>
+                                <input type="number" id="itemW" value="20" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Height (cm)</label>
+                                <input type="number" id="itemH" value="20" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Load Presets -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Quick Load Presets</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setPresetValues(120, 80, 100, 20, 20, 20)" class="p-2.5 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-xs font-medium text-slate-300 transition text-left">
+                                Euro-Pallet Box (120×80×100)
+                            </button>
+                            <button onclick="setPresetValues(60, 40, 40, 15, 10, 10)" class="p-2.5 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-xs font-medium text-slate-300 transition text-left">
+                                Insulated Shipper (60×40×40)
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Panel: Outputs & Visualizer -->
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <!-- KPI Summary Cards -->
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
+                            <span class="text-xs font-medium text-slate-400 mb-1">MAX UNITS FIT</span>
+                            <div id="maxUnits" class="text-3xl font-extrabold text-white">125</div>
+                            <span class="text-[10px] text-slate-500 mt-1">Small packages</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
+                            <span class="text-xs font-medium text-slate-400 mb-1">VOLUME UTILIZATION</span>
+                            <div id="volumeUtil" class="text-2xl font-extrabold text-emerald-400">100.0%</div>
+                            <span class="text-[10px] text-slate-500 mt-1">Space efficiency</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
+                            <span class="text-xs font-medium text-slate-400 mb-1">PACKING LAYOUT</span>
+                            <div id="packingLayout" class="text-lg font-bold text-white tracking-tight">5 × 5 × 5</div>
+                            <span class="text-[10px] text-slate-500 mt-1">Cols × Rows × Layers</span>
+                        </div>
+                    </div>
+
+                    <!-- Container Layer Breakdown & Grid Map -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-krautz-400 text-lg">📦</span>
+                                <h2 class="text-sm font-semibold text-white tracking-wide">Container Layer Breakdown & Grid Map</h2>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <label class="text-xs text-slate-400">Layer:</label>
+                                <select id="layerSelect" onchange="renderLayerGrid()" class="bg-slate-950 border border-slate-800 text-white text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-krautz-500 font-medium">
+                                    <option value="0">Layer 1 of 5</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Visual Grid Box Map Container -->
+                        <div id="layerGridDisplay" class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 min-h-[280px] max-h-[360px] overflow-y-auto flex flex-wrap content-start gap-2 justify-center items-center">
+                            <!-- Dynamically generated unit blocks -->
+                        </div>
+
+                        <!-- Footer Volume Specs -->
+                        <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
+                            <span id="effectiveVolume">Effective Master Volume: 1000.0 L</span>
+                            <span id="unitVolume">Unit Volume: 8.00 L</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax Cold-Chain Engine v2.4</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 1.5: VOLUME PUZZLE CALCULATOR -->
+        <section id="tab-pack-puzzle" class="tab-content space-y-6 hidden">
+            <div class="glass-panel p-6 rounded-2xl glow-blue">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
+                        <i data-lucide="boxes" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Width (cm)</label>
-                        <input type="number" id="masterW" value="100" min="1" step="0.1" oninput="calculatePacking()"
-                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:ring-2 focus:ring-temaxBlue-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Height (cm)</label>
-                        <input type="number" id="masterH" value="100" min="1" step="0.1" oninput="calculatePacking()"
-                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:ring-2 focus:ring-temaxBlue-500 focus:outline-none">
+                        <h2 class="text-lg font-bold text-white">Multi-Box Volume Puzzle Solver</h2>
+                        <p class="text-xs text-slate-400">Solve exact volume residual capacity: packs primary batch in outer packaging, computes exact remaining cubic space, and fits secondary box sizes.</p>
                     </div>
                 </div>
 
-                <!-- Insulation Wall Thickness -->
-                <div>
-                    <div class="flex justify-between items-center mb-1">
-                        <label class="text-xs font-medium text-slate-300">Thermal Insulation Wall Thickness</label>
-                        <span id="insulationVal" class="text-xs font-bold text-temaxBlue-400">0 cm</span>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">1. Outer Packaging</h3>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="text-[11px] text-slate-400">Length (cm)</label>
+                                <input type="number" id="pz-out-l" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Width (cm)</label>
+                                <input type="number" id="pz-out-w" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Height (cm)</label>
+                                <input type="number" id="pz-out-h" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            </div>
+                        </div>
+
+                        <hr class="border-slate-800 my-2">
+
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">2. First Box Batch</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[11px] text-slate-400">Quantity</label>
+                                <input type="number" id="pz-b1-qty" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Cube Size (cm)</label>
+                                <input type="number" id="pz-b1-dim" value="20" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            </div>
+                        </div>
+
+                        <hr class="border-slate-800 my-2">
+
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">3. Secondary Box Type</h3>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="text-[11px] text-slate-400">Length (cm)</label>
+                                <input type="number" id="pz-b2-l" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Width (cm)</label>
+                                <input type="number" id="pz-b2-w" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Height (cm)</label>
+                                <input type="number" id="pz-b2-h" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            </div>
+                        </div>
+
+                        <button onclick="calculatePuzzle()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Solve Volume Puzzle</button>
                     </div>
-                    <input type="range" id="insulationThickness" min="0" max="10" step="0.5" value="0" oninput="updateInsulation(this.value)"
-                        class="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-temaxBlue-500">
-                    <p class="text-[11px] text-slate-400 mt-1">Deduct insulation panel thickness from available inner volume.</p>
+
+                    <div class="lg:col-span-2 space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400 mb-4">Volume Puzzle Solution & Residual Breakdown</h3>
+                            <div id="puzzle-results" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Smaller Inner Packages Card -->
-            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-700">
-                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-cube text-temaxOrange-500"></i> Small Inner Packages / Items
-                    </h2>
-                    <span class="text-xs text-slate-400 bg-slate-900 px-2.5 py-1 rounded-lg">Product Units</span>
-                </div>
-                
-                <div class="grid grid-cols-3 gap-3 mb-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Length (cm)</label>
-                        <input type="number" id="itemL" value="20" min="0.1" step="0.1" oninput="calculatePacking()"
-                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:ring-2 focus:ring-temaxOrange-500 focus:outline-none">
+        <!-- TAB 2: SPHERICAL DENSITY PACKING -->
+        <section id="tab-pack-sphere" class="tab-content space-y-6 hidden">
+            <div class="glass-panel p-6 rounded-2xl glow-blue">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
+                        <i data-lucide="circle-dot" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Width (cm)</label>
-                        <input type="number" id="itemW" value="20" min="0.1" step="0.1" oninput="calculatePacking()"
-                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:ring-2 focus:ring-temaxOrange-500 focus:outline-none">
+                        <h2 class="text-lg font-bold text-white">Spherical Packing Density Estimator</h2>
+                        <p class="text-xs text-slate-400">Calculate ball or round thermal element capacity inside a master container using Grid vs. Hexagonal Close-Packing (FCC).</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800">
+                        <div>
+                            <label class="text-[11px] text-slate-400">Container Size (cm)</label>
+                            <input type="number" id="sphere-container" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                        </div>
+                        <div>
+                            <label class="text-[11px] text-slate-400">Sphere Diameter (cm)</label>
+                            <input type="number" id="sphere-diam" value="20" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                        </div>
+                        <button onclick="calculateSpheres()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Calculate Spherical Pack</button>
+                    </div>
+
+                    <div class="lg:col-span-2 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                        <div id="sphere-results" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: IRREGULAR OBJECT SCAN -->
+        <section id="tab-pack-irregular" class="tab-content space-y-6 hidden">
+            <div class="glass-panel p-6 rounded-2xl glow-blue">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
+                        <i data-lucide="scan" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Height (cm)</label>
-                        <input type="number" id="itemH" value="20" min="0.1" step="0.1" oninput="calculatePacking()"
-                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:ring-2 focus:ring-temaxOrange-500 focus:outline-none">
+                        <h2 class="text-lg font-bold text-white">Irregular Object Scan & Packaging Calculator</h2>
+                        <p class="text-xs text-slate-400">Input scan volume of non-uniform cargo to calculate required master container sizing and packing breakdown ratios.</p>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between bg-slate-900/60 p-3 rounded-xl border border-slate-700/60">
-                    <span class="text-xs text-slate-300 font-medium">Allow All 6 Rotations / Orientations</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="allowRotation" checked onchange="calculatePacking()" class="sr-only peer">
-                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-temaxBlue-600"></div>
-                    </label>
-                </div>
-            </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800">
+                        <div>
+                            <label class="text-[11px] text-slate-400">Irregular Object Volume (cm³)</label>
+                            <input type="number" id="irr-vol" value="12500" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                        </div>
+                        <div>
+                            <label class="text-[11px] text-slate-400">Target Master Box Size (cm)</label>
+                            <div class="grid grid-cols-3 gap-2 mt-1">
+                                <input type="number" id="irr-master-l" value="100" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
+                                <input type="number" id="irr-master-w" value="100" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
+                                <input type="number" id="irr-master-h" value="100" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
+                            </div>
+                        </div>
+                        <button onclick="calculateIrregular()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Compute Irregular Fit</button>
+                    </div>
 
-            <!-- Quick Presets -->
-            <div class="bg-slate-800/40 border border-slate-700/60 rounded-xl p-4">
-                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2.5">Quick Load Presets</h3>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="loadPreset('euro')" class="text-xs text-left bg-slate-800 hover:bg-slate-700 text-slate-200 p-2.5 rounded-lg border border-slate-700 transition flex items-center justify-between">
-                        <span>Euro-Pallet Box (120x80x100)</span>
-                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
-                    </button>
-                    <button onclick="loadPreset('thermobox')" class="text-xs text-left bg-slate-800 hover:bg-slate-700 text-slate-200 p-2.5 rounded-lg border border-slate-700 transition flex items-center justify-between">
-                        <span>Insulated Shipper (60x40x40)</span>
-                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
-                    </button>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Right Panel: Results & 3D Visualization Grid -->
-        <div class="lg:col-span-7 flex flex-col space-y-6">
-            
-            <!-- Summary Metric Cards -->
-            <div class="grid grid-cols-3 gap-4">
-                <div class="bg-gradient-to-br from-slate-800 to-slate-800/90 border border-slate-700 rounded-2xl p-5 shadow-xl text-center">
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Max Units Fit</p>
-                    <h3 id="resultCount" class="text-3xl font-extrabold text-temaxBlue-400">0</h3>
-                    <p class="text-[11px] text-slate-500 mt-1">Small packages</p>
-                </div>
-                <div class="bg-gradient-to-br from-slate-800 to-slate-800/90 border border-slate-700 rounded-2xl p-5 shadow-xl text-center">
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Volume Utilization</p>
-                    <h3 id="resultUtilization" class="text-3xl font-extrabold text-emerald-400">0%</h3>
-                    <p class="text-[11px] text-slate-500 mt-1">Space efficiency</p>
-                </div>
-                <div class="bg-gradient-to-br from-slate-800 to-slate-800/90 border border-slate-700 rounded-2xl p-5 shadow-xl text-center">
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Packing Layout</p>
-                    <h3 id="resultLayout" class="text-xl font-bold text-white mt-1 truncate">0 × 0 × 0</h3>
-                    <p id="resultOrientation" class="text-[11px] text-slate-400 mt-1">Cols × Rows × Layers</p>
-                </div>
-            </div>
-
-            <!-- Visual Breakdown / Layer Preview -->
-            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl flex-1 flex flex-col">
-                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-700">
-                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-layer-group text-temaxBlue-500"></i> Container Layer Breakdown & Grid Map
-                    </h2>
-                    <div id="layerSelectorContainer" class="hidden items-center space-x-2">
-                        <span class="text-xs text-slate-400">Layer:</span>
-                        <select id="layerSelect" onchange="renderVisualGrid()" class="bg-slate-900 border border-slate-700 rounded-lg text-xs text-white px-2.5 py-1 focus:outline-none">
-                        </select>
+                    <div class="lg:col-span-2 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                        <div id="irr-results" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Populated dynamically -->
+                        </div>
                     </div>
                 </div>
-
-                <!-- Canvas / Visual Area -->
-                <div id="visualContainer" class="bg-slate-900/90 border border-slate-700/80 rounded-xl flex-1 min-h-[300px] flex items-center justify-center p-6 relative overflow-hidden">
-                    <div id="emptyState" class="text-center text-slate-500">
-                        <i class="fa-solid fa-box-archive text-4xl mb-2 text-slate-600"></i>
-                        <p class="text-sm font-medium">Enter valid dimensions to compute packing matrix.</p>
-                    </div>
-                    <div id="gridPreview" class="w-full h-full flex flex-wrap items-center justify-center gap-2 overflow-auto"></div>
-                </div>
-
-                <!-- Detailed Specs Footer -->
-                <div class="mt-4 pt-3 border-t border-slate-700/60 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
-                    <div id="specMasterVol">Effective Master Volume: 0 L</div>
-                    <div id="specItemVol">Unit Volume: 0 L</div>
-                    <div class="text-temaxBlue-400 font-medium">Krautz-Temax Cold-Chain Engine v2.4</div>
-                </div>
             </div>
-
-        </div>
+        </section>
 
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
-        Krautz-Temax Thermal Packaging & Insulated Logistics Solutions &copy; 2026. All rights reserved.
+    <footer class="border-t border-slate-800 bg-slate-900/40 text-center py-4 text-xs text-slate-500">
+        © 2026 Krautz-Temax NV. All rights reserved. Thermal Packaging & Spatial Calculation Technology.
     </footer>
 
-    <!-- JavaScript Calculation Logic -->
+    <!-- JavaScript Application Logic -->
     <script>
-        function updateInsulation(val) {
-            document.getElementById('insulationVal').innerText = val + ' cm';
-            calculatePacking();
+        lucide.createIcons();
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-krautz-500', 'text-white', 'shadow');
+                el.classList.add('text-slate-400');
+            });
+
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('bg-krautz-500', 'text-white', 'shadow');
+            activeBtn.classList.remove('text-slate-400');
+            lucide.createIcons();
         }
 
-        function loadPreset(type) {
-            if (type === 'pharma') {
-                document.getElementById('masterL').value = 80;
-                document.getElementById('masterW').value = 60;
-                document.getElementById('masterH').value = 60;
-                document.getElementById('itemL').value = 15;
-                document.getElementById('itemW').value = 10;
-                document.getElementById('itemH').value = 10;
-                document.getElementById('insulationThickness').value = 2;
-                document.getElementById('insulationVal').innerText = '2 cm';
-            } else if (type === 'food') {
-                document.getElementById('masterL').value = 50;
-                document.getElementById('masterW').value = 50;
-                document.getElementById('masterH').value = 50;
-                document.getElementById('itemL').value = 25;
-                document.getElementById('itemW').value = 25;
-                document.getElementById('itemH').value = 10;
-                document.getElementById('insulationThickness').value = 1;
-                document.getElementById('insulationVal').innerText = '1 cm';
-            } else if (type === 'euro') {
-                document.getElementById('masterL').value = 120;
-                document.getElementById('masterW').value = 80;
-                document.getElementById('masterH').value = 100;
-                document.getElementById('itemL').value = 30;
-                document.getElementById('itemW').value = 20;
-                document.getElementById('itemH').value = 20;
-                document.getElementById('insulationThickness').value = 0;
-                document.getElementById('insulationVal').innerText = '0 cm';
-            } else if (type === 'thermobox') {
-                document.getElementById('masterL').value = 60;
-                document.getElementById('masterW').value = 40;
-                document.getElementById('masterH').value = 40;
-                document.getElementById('itemL').value = 20;
-                document.getElementById('itemW').value = 10;
-                document.getElementById('itemH').value = 10;
-                document.getElementById('insulationThickness').value = 1.5;
-                document.getElementById('insulationVal').innerText = '1.5 cm';
+        function calculateAll() {
+            calculateDualBoxAndVisualizer();
+            calculatePuzzle();
+            calculateSpheres();
+            calculateIrregular();
+        }
+
+        // 1. Dual Box & Visualizer Logic
+        function calculateDualBoxAndVisualizer() {
+            const CL = parseFloat(document.getElementById('containerL').value) || 1;
+            const CW = parseFloat(document.getElementById('containerW').value) || 1;
+            const CH = parseFloat(document.getElementById('containerH').value) || 1;
+
+            const IL = parseFloat(document.getElementById('itemL').value) || 1;
+            const IW = parseFloat(document.getElementById('itemW').value) || 1;
+            const IH = parseFloat(document.getElementById('itemH').value) || 1;
+
+            const cols = Math.floor(CL / IL);
+            const rows = Math.floor(CW / IW);
+            const layers = Math.floor(CH / IH);
+
+            const totalUnits = cols * rows * layers;
+            const unitVol = (IL * IW * IH) / 1000;
+            const masterVol = (CL * CW * CH) / 1000;
+            const utilizedVol = totalUnits * (IL * IW * IH);
+            const efficiency = Math.min(100, ((utilizedVol / (CL * CW * CH)) * 100)).toFixed(1);
+
+            document.getElementById('maxUnits').innerText = totalUnits;
+            document.getElementById('volumeUtil').innerText = efficiency + '%';
+            document.getElementById('packingLayout').innerText = `${cols} × ${rows} × ${layers}`;
+            document.getElementById('effectiveVolume').innerText = `Effective Master Volume: ${masterVol.toFixed(1)} L`;
+            document.getElementById('unitVolume').innerText = `Unit Volume: ${unitVol.toFixed(2)} L`;
+
+            const layerSelect = document.getElementById('layerSelect');
+            const currentSelected = layerSelect.value;
+            layerSelect.innerHTML = '';
+            
+            const maxLayers = Math.max(1, layers);
+            for (let i = 0; i < maxLayers; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.innerText = `Layer ${i + 1} of ${maxLayers}`;
+                layerSelect.appendChild(opt);
             }
-            calculatePacking();
+            if (currentSelected < maxLayers) {
+                layerSelect.value = currentSelected;
+            } else {
+                layerSelect.value = 0;
+            }
+
+            renderLayerGrid();
         }
 
-        function resetCalculator() {
-            document.getElementById('masterL').value = 100;
-            document.getElementById('masterW').value = 100;
-            document.getElementById('masterH').value = 100;
-            document.getElementById('itemL').value = 20;
-            document.getElementById('itemW').value = 20;
-            document.getElementById('itemH').value = 20;
-            document.getElementById('insulationThickness').value = 0;
-            document.getElementById('insulationVal').innerText = '0 cm';
-            document.getElementById('allowRotation').checked = true;
-            calculatePacking();
-        }
+        function renderLayerGrid() {
+            const display = document.getElementById('layerGridDisplay');
+            display.innerHTML = '';
 
-        let currentResult = null;
+            const CL = parseFloat(document.getElementById('containerL').value) || 1;
+            const CW = parseFloat(document.getElementById('containerW').value) || 1;
+            const IL = parseFloat(document.getElementById('itemL').value) || 1;
+            const IW = parseFloat(document.getElementById('itemW').value) || 1;
 
-        function calculatePacking() {
-            const rawML = parseFloat(document.getElementById('masterL').value) || 0;
-            const rawMW = parseFloat(document.getElementById('masterW').value) || 0;
-            const rawMH = parseFloat(document.getElementById('masterH').value) || 0;
-            const insulation = parseFloat(document.getElementById('insulationThickness').value) || 0;
+            const cols = Math.max(1, Math.floor(CL / IL));
+            const rows = Math.max(1, Math.floor(CW / IW));
+            const unitsPerLayer = cols * rows;
 
-            const itemL = parseFloat(document.getElementById('itemL').value) || 0;
-            const itemW = parseFloat(document.getElementById('itemW').value) || 0;
-            const itemH = parseFloat(document.getElementById('itemH').value) || 0;
-            const allowRotation = document.getElementById('allowRotation').checked;
-
-            // Effective inner dimensions after deducting insulation walls (left+right, front+back, top+bottom)
-            const mL = Math.max(0, rawML - (insulation * 2));
-            const mW = Math.max(0, rawMW - (insulation * 2));
-            const mH = Math.max(0, rawMH - (insulation * 2));
-
-            const emptyState = document.getElementById('emptyState');
-            const gridPreview = document.getElementById('gridPreview');
-            const layerSelectorContainer = document.getElementById('layerSelectorContainer');
-
-            if (mL <= 0 || mW <= 0 || mH <= 0 || itemL <= 0 || itemW <= 0 || itemH <= 0 || itemL > mL || itemW > mW || itemH > mH) {
-                document.getElementById('resultCount').innerText = '0';
-                document.getElementById('resultUtilization').innerText = '0%';
-                document.getElementById('resultLayout').innerText = '0 × 0 × 0';
-                document.getElementById('specMasterVol').innerText = `Effective Master Volume: ${(mL * mW * mH / 1000).toFixed(1)} L`;
-                document.getElementById('specItemVol').innerText = `Unit Volume: ${(itemL * itemW * itemH / 1000).toFixed(2)} L`;
-                emptyState.style.display = 'block';
-                gridPreview.innerHTML = '';
-                layerSelectorContainer.style.display = 'none';
-                currentResult = null;
+            if (unitsPerLayer === 0 || unitsPerLayer > 250) {
+                display.innerHTML = `<div class="text-slate-500 text-xs py-10">Items are too large for this container or quantity exceeds display limit.</div>`;
                 return;
             }
 
-            // Determine possible orientations
-            let orientations = [];
-            if (allowRotation) {
-                orientations = [
-                    { l: itemL, w: itemW, h: itemH },
-                    { l: itemL, w: itemH, h: itemW },
-                    { l: itemW, w: itemL, h: itemH },
-                    { l: itemW, w: itemH, h: itemL },
-                    { l: itemH, w: itemL, h: itemW },
-                    { l: itemH, w: itemW, h: itemL }
-                ];
-            } else {
-                orientations = [{ l: itemL, w: itemW, h: itemH }];
-            }
-
-            let bestFit = { count: 0, cols: 0, rows: 0, layers: 0, orient: null };
-
-            orientations.forEach(ori => {
-                if (ori.l <= mL && ori.w <= mW && ori.h <= mH) {
-                    const cols = Math.floor(mL / ori.l);
-                    const rows = Math.floor(mW / ori.w);
-                    const layers = Math.floor(mH / ori.h);
-                    const count = cols * rows * layers;
-
-                    if (count > bestFit.count) {
-                        bestFit = { count, cols, rows, layers, orient: ori };
-                    }
-                }
-            });
-
-            // Update UI Metrics
-            document.getElementById('resultCount').innerText = bestFit.count.toLocaleString();
-            
-            const masterVol = mL * mW * mH;
-            const itemVol = itemL * itemW * itemH;
-            const totalItemVol = bestFit.count * itemVol;
-            const utilization = masterVol > 0 ? ((totalItemVol / masterVol) * 100).toFixed(1) : 0;
-            
-            document.getElementById('resultUtilization').innerText = utilization + '%';
-            document.getElementById('resultLayout').innerText = `${bestFit.cols} × ${bestFit.rows} × ${bestFit.layers}`;
-            document.getElementById('specMasterVol').innerText = `Effective Master Volume: ${(masterVol / 1000).toFixed(1)} L`;
-            document.getElementById('specItemVol').innerText = `Unit Volume: ${(itemVol / 1000).toFixed(2)} L`;
-
-            currentResult = bestFit;
-
-            if (bestFit.count > 0) {
-                emptyState.style.display = 'none';
-                layerSelectorContainer.style.display = 'flex';
-                
-                // Populate layer dropdown
-                const layerSelect = document.getElementById('layerSelect');
-                const prevSelected = layerSelect.value;
-                layerSelect.innerHTML = '';
-                for (let i = 1; i <= bestFit.layers; i++) {
-                    const opt = document.createElement('option');
-                    opt.value = i;
-                    opt.text = `Layer ${i} of ${bestFit.layers}`;
-                    layerSelect.appendChild(opt);
-                }
-                if (prevSelected && prevSelected <= bestFit.layers) {
-                    layerSelect.value = prevSelected;
-                }
-
-                renderVisualGrid();
-            } else {
-                emptyState.style.display = 'block';
-                gridPreview.innerHTML = '';
-                layerSelectorContainer.style.display = 'none';
-            }
-        }
-
-        function renderVisualGrid() {
-            if (!currentResult || currentResult.count === 0) return;
-
-            const gridPreview = document.getElementById('gridPreview');
-            gridPreview.innerHTML = '';
-
-            const cols = currentResult.cols;
-            const rows = currentResult.rows;
-            const totalUnitsInLayer = cols * rows;
-
-            // Grid container styling
-            gridPreview.style.display = 'grid';
-            gridPreview.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
-            gridPreview.style.gap = '6px';
-            gridPreview.style.maxWidth = '100%';
-            gridPreview.style.maxHeight = '100%';
-
-            for (let i = 0; i < totalUnitsInLayer; i++) {
-                const boxDiv = document.createElement('div');
-                boxDiv.className = 'bg-temaxBlue-600/30 border border-temaxBlue-500/60 rounded-xl p-3 flex flex-col items-center justify-center text-center transition hover:bg-temaxBlue-600/50 shadow-md aspect-square';
-                boxDiv.innerHTML = `
-                    <i class="fa-solid fa-box text-temaxBlue-400 text-base mb-1"></i>
-                    <span class="text-[10px] font-semibold text-white">Unit #${i + 1}</span>
-                    <span class="text-[9px] text-slate-400">${currentResult.orient.l}×${currentResult.orient.w}cm</span>
+            for (let i = 1; i <= unitsPerLayer; i++) {
+                const card = document.createElement('div');
+                card.className = "bg-krautz-500/20 hover:bg-krautz-500/30 border border-krautz-500/30 hover:border-krautz-400 rounded-xl p-3 w-28 h-24 flex flex-col items-center justify-center transition shadow-sm cursor-pointer";
+                card.innerHTML = `
+                    <span class="text-krautz-400 text-sm mb-1">📦</span>
+                    <span class="text-xs font-bold text-white">Unit #${i}</span>
+                    <span class="text-[10px] text-slate-400">${IL}×${IW}cm</span>
                 `;
-                gridPreview.appendChild(boxDiv);
+                display.appendChild(card);
             }
         }
 
-        // Initialize on load
-        window.onload = function() {
-            calculatePacking();
-        };
+        function setPresetValues(cl, cw, ch, il, iw, ih) {
+            document.getElementById('containerL').value = cl;
+            document.getElementById('containerW').value = cw;
+            document.getElementById('containerH').value = ch;
+            document.getElementById('itemL').value = il;
+            document.getElementById('itemW').value = iw;
+            document.getElementById('itemH').value = ih;
+            calculateAll();
+        }
+
+        // 1.5 Multi-Box Volume Puzzle Solver
+        function calculatePuzzle() {
+            const outL = parseFloat(document.getElementById('pz-out-l').value) || 100;
+            const outW = parseFloat(document.getElementById('pz-out-w').value) || 100;
+            const outH = parseFloat(document.getElementById('pz-out-h').value) || 100;
+
+            const b1Qty = parseFloat(document.getElementById('pz-b1-qty').value) || 100;
+            const b1Dim = parseFloat(document.getElementById('pz-b1-dim').value) || 20;
+
+            const b2l = parseFloat(document.getElementById('pz-b2-l').value) || 30;
+            const b2w = parseFloat(document.getElementById('pz-b2-w').value) || 30;
+            const b2h = parseFloat(document.getElementById('pz-b2-h').value) || 30;
+
+            const outerVol = outL * outW * outH;
+            const box1Vol = Math.pow(b1Dim, 3);
+            const totalBox1Vol = b1Qty * box1Vol;
+
+            const remainingVol = Math.max(0, outerVol - totalBox1Vol);
+            const box2Vol = b2l * b2w * b2h;
+            const box2Fit = box2Vol > 0 ? Math.floor(remainingVol / box2Vol) : 0;
+
+            const resultsContainer = document.getElementById('puzzle-results');
+            resultsContainer.innerHTML = `
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Outer Container Volume</span>
+                    <span class="text-xl font-bold text-white">${(outerVol/1000000).toFixed(3)} m³</span>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">First Box Batch Volume</span>
+                    <span class="text-xl font-bold text-krautz-400">${(totalBox1Vol/1000000).toFixed(3)} m³</span>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Remaining Empty Volume</span>
+                    <span class="text-xl font-bold text-amber-400">${(remainingVol/1000000).toFixed(3)} m³</span>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Secondary Box Capacity Fit</span>
+                    <span class="text-xl font-bold text-emerald-400">~${box2Fit} boxes</span>
+                </div>
+            `;
+        }
+
+        // 2. Spherical Packing Calculation
+        function calculateSpheres() {
+            const containerSize = parseFloat(document.getElementById('sphere-container').value) || 100;
+            const diam = parseFloat(document.getElementById('sphere-diam').value) || 20;
+
+            const gridFitX = Math.floor(containerSize / diam);
+            const gridFitY = Math.floor(containerSize / diam);
+            const gridFitZ = Math.floor(containerSize / diam);
+            const gridTotal = gridFitX * gridFitY * gridFitZ;
+
+            const containerVol = Math.pow(containerSize, 3);
+            const sphereVol = (4/3) * Math.PI * Math.pow(diam/2, 3);
+            const fccTotal = Math.floor((containerVol * 0.7405) / sphereVol);
+
+            const resultsContainer = document.getElementById('sphere-results');
+            resultsContainer.innerHTML = `
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Standard Grid Fit</span>
+                    <span class="text-xl font-bold text-white">${gridTotal} spheres</span>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Hexagonal Close-Packing (FCC)</span>
+                    <span class="text-xl font-bold text-krautz-400">${fccTotal} spheres</span>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Volumetric Efficiency</span>
+                    <span class="text-xl font-bold text-emerald-400">${((fccTotal * sphereVol / containerVol) * 100).toFixed(1)}%</span>
+                </div>
+            `;
+        }
+
+        // 3. Irregular Object Scan
+        function calculateIrregular() {
+            const irrVol = parseFloat(document.getElementById('irr-vol').value) || 12500;
+            const ml = parseFloat(document.getElementById('irr-master-l').value) || 100;
+            const mw = parseFloat(document.getElementById('irr-master-w').value) || 100;
+            const mh = parseFloat(document.getElementById('irr-master-h').value) || 100;
+
+            const masterVol = ml * mw * mh;
+            const adjustedObjVol = irrVol * 1.15; // 15% contour void allowance
+            const maxFit = Math.floor(masterVol / adjustedObjVol);
+
+            const resultsContainer = document.getElementById('irr-results');
+            resultsContainer.innerHTML = `
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Adjusted Object Volume (+15%)</span>
+                    <span class="text-xl font-bold text-white">${adjustedObjVol.toLocaleString()} cm³</span>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 block">Max Master Container Capacity</span>
+                    <span class="text-xl font-bold text-krautz-400">${maxFit} units</span>
+                </div>
+            `;
+        }
+
+        window.onload = calculateAll;
     </script>
 </body>
 </html>
