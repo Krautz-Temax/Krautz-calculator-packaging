@@ -4,7 +4,7 @@
     <link rel="icon" type="image/png" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Krautz-Temax Pro Logistics - 3D Palletized & Concrete Floor Engine</title>
+    <title>Krautz-Temax Pro Logistics - 3D Palletized, Dunnage & Scan Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -28,9 +28,11 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Three.js & OrbitControls -->
+    <!-- Three.js, OrbitControls, STLLoader & OBJLoader -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #0b1120; color: #f8fafc; }
         .glass-panel {
@@ -71,7 +73,9 @@
                 <button onclick="switchTab('pack-sphere')" id="btn-pack-sphere" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
                     <i data-lucide="circle-dot" class="w-3.5 h-3.5"></i> Spherical Density 3D
                 </button>
-                <button onclick="switchTab('pack-irregular')" id="btn-pack-irregular" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white">Irregular Scan</button>
+                <button onclick="switchTab('pack-irregular')" id="btn-pack-irregular" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+                    <i data-lucide="scan" class="w-3.5 h-3.5"></i> Irregular Scan 3D
+                </button>
             </nav>
         </div>
     </header>
@@ -125,6 +129,25 @@
                                 </button>
                             </div>
                             <input type="hidden" id="dualPlacementMode" value="pallet">
+                        </div>
+
+                        <!-- Carton Protection & Stabilization (Sheet Carton & Hoeklatten) -->
+                        <div class="pt-3 border-t border-slate-800 space-y-2.5">
+                            <label class="block text-xs font-semibold text-amber-300">Carton Stabilization & Protection:</label>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800">
+                                <div>
+                                    <label for="dualSheetCarton" class="text-xs font-medium text-slate-200 block cursor-pointer">Sheet Carton (Tussenlegvellen)</label>
+                                    <span class="text-[10px] text-slate-400">0.4 cm kraft sheet between every layer</span>
+                                </div>
+                                <input type="checkbox" id="dualSheetCarton" onchange="calculateDualBoxAndVisualizer()" class="w-4 h-4 accent-amber-500 rounded bg-slate-950 border-slate-700 cursor-pointer">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800">
+                                <div>
+                                    <label for="dualCornerGuards" class="text-xs font-medium text-slate-200 block cursor-pointer">Carton Hoeklatten (Corner Guards)</label>
+                                    <span class="text-[10px] text-slate-400">4× L-profile edge protectors (0.4 cm wall)</span>
+                                </div>
+                                <input type="checkbox" id="dualCornerGuards" onchange="calculateDualBoxAndVisualizer()" class="w-4 h-4 accent-amber-500 rounded bg-slate-950 border-slate-700 cursor-pointer">
+                            </div>
                         </div>
                     </div>
 
@@ -204,7 +227,7 @@
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
                             <span class="text-xs font-medium text-slate-400 mb-1">3D GRID MATRIX</span>
                             <div id="packingLayout" class="text-lg font-bold text-white tracking-tight">4 × 4 × 4</div>
-                            <span class="text-[10px] text-slate-500 mt-1">Cols × Rows × Layers</span>
+                            <span id="dunnageSummary" class="text-[10px] text-slate-400 mt-1">Cols × Rows × Layers</span>
                         </div>
                     </div>
 
@@ -248,8 +271,9 @@
                         <!-- Three.js WebGL Canvas Container -->
                         <div id="canvas-dual" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Primary Unit</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet (15cm)</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Unit</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Sheet Carton / Hoeklatten</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#64748b] inline-block"></span> Concrete Floor</span>
                             </div>
                         </div>
@@ -258,7 +282,7 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Pallet & Floor Engine v3.3</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Pallet & Dunnage Engine v3.4</span>
                         </div>
                     </div>
 
@@ -311,6 +335,18 @@
                                 </button>
                             </div>
                             <input type="hidden" id="puzzlePlacementMode" value="pallet">
+                        </div>
+
+                        <!-- Carton Protection Options for Puzzle Tab -->
+                        <div class="pt-2 space-y-1.5">
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
+                                <label for="puzzleSheetCarton" class="text-xs text-slate-200 cursor-pointer">Sheet Carton Between Layers</label>
+                                <input type="checkbox" id="puzzleSheetCarton" onchange="calculatePuzzle()" class="w-4 h-4 accent-amber-500 cursor-pointer">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
+                                <label for="puzzleCornerGuards" class="text-xs text-slate-200 cursor-pointer">Carton Hoeklatten (4 Corners)</label>
+                                <input type="checkbox" id="puzzleCornerGuards" onchange="calculatePuzzle()" class="w-4 h-4 accent-amber-500 cursor-pointer">
+                            </div>
                         </div>
                     </div>
 
@@ -374,7 +410,7 @@
                                 <span class="text-emerald-400 text-lg">📐</span>
                                 <div>
                                     <h2 class="text-sm font-semibold text-white tracking-wide">3D Multi-SKU Placement & Cross-Section</h2>
-                                    <p class="text-[11px] text-slate-400">Shows Batch 1 + Secondary Batch 2 on Pallet or Concrete Floor</p>
+                                    <p class="text-[11px] text-slate-400">Shows Batch 1 + Secondary Batch 2 with Dunnage on Pallet or Floor</p>
                                 </div>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
@@ -407,10 +443,10 @@
                         <!-- Three.js Canvas -->
                         <div id="canvas-puzzle" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Batch 1 (Primary)</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#10b981] inline-block"></span> Batch 2 (Secondary)</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet (15cm)</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#64748b] inline-block"></span> Concrete Floor</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Batch 1</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#10b981] inline-block"></span> Batch 2</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
                             </div>
                         </div>
                     </div>
@@ -466,6 +502,18 @@
                                 </button>
                             </div>
                             <input type="hidden" id="spherePlacementMode" value="pallet">
+                        </div>
+
+                        <!-- Carton Protection Options for Spherical Tab -->
+                        <div class="pt-2 space-y-1.5">
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
+                                <label for="sphereSheetCarton" class="text-xs text-slate-200 cursor-pointer">Sheet Carton Between Layers</label>
+                                <input type="checkbox" id="sphereSheetCarton" onchange="calculateSpheres()" class="w-4 h-4 accent-amber-500 cursor-pointer">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
+                                <label for="sphereCornerGuards" class="text-xs text-slate-200 cursor-pointer">Carton Hoeklatten (4 Corners)</label>
+                                <input type="checkbox" id="sphereCornerGuards" onchange="calculateSpheres()" class="w-4 h-4 accent-amber-500 cursor-pointer">
+                            </div>
                         </div>
                     </div>
 
@@ -545,8 +593,8 @@
                         <div id="canvas-sphere" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#38bdf8] inline-block"></span> Packed Sphere</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet (15cm)</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#64748b] inline-block"></span> Concrete Floor</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
                             </div>
                         </div>
                     </div>
@@ -555,39 +603,152 @@
             </div>
         </section>
 
-        <!-- TAB 4: IRREGULAR OBJECT SCAN -->
+        <!-- TAB 4: IRREGULAR OBJECT SCAN WITH 3D VISUALIZATION & STL/OBJ UPLOAD -->
         <section id="tab-pack-irregular" class="tab-content space-y-6 hidden">
-            <div class="glass-panel p-6 rounded-2xl glow-blue">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
-                        <i data-lucide="scan" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-white">Irregular Object Scan & Packaging Calculator</h2>
-                        <p class="text-xs text-slate-400">Input scan volume of non-uniform cargo to calculate required master container sizing and packing breakdown ratios.</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800">
-                        <div>
-                            <label class="text-[11px] text-slate-400">Irregular Object Volume (cm³)</label>
-                            <input type="number" id="irr-vol" value="12500" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Inputs -->
+                <div class="lg:col-span-4 space-y-4 bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl">
+                    <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
+                        <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
+                            <i data-lucide="scan" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <label class="text-[11px] text-slate-400">Target Master Box Size (cm)</label>
-                            <div class="grid grid-cols-3 gap-2 mt-1">
-                                <input type="number" id="irr-master-l" value="100" oninput="calculateIrregular()" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
-                                <input type="number" id="irr-master-w" value="100" oninput="calculateIrregular()" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
-                                <input type="number" id="irr-master-h" value="100" oninput="calculateIrregular()" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
+                            <h2 class="text-sm font-bold text-white">Irregular Object Scan 3D</h2>
+                            <p class="text-[11px] text-slate-400">Upload .STL / .OBJ 3D scan or input displacement volume.</p>
+                        </div>
+                    </div>
+
+                    <!-- Optional 3D Scan File Upload -->
+                    <div class="space-y-2 bg-slate-950/80 p-3 rounded-xl border border-dashed border-krautz-500/40">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-semibold text-krautz-400 flex items-center gap-1.5">
+                                <i data-lucide="upload-cloud" class="w-4 h-4"></i> Upload 3D Scan (.STL / .OBJ)
+                            </label>
+                            <button type="button" id="clearScanFileBtn" onclick="clearUploadedScan()" class="hidden text-[10px] text-rose-400 hover:underline">Clear File</button>
+                        </div>
+                        <input type="file" id="irr-scan-file" accept=".stl,.obj" onchange="handleScanFileUpload(event)" class="block w-full text-[11px] text-slate-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-krautz-500/20 file:text-krautz-300 hover:file:bg-krautz-500/30 cursor-pointer">
+                        <p id="irr-scan-status" class="text-[10px] text-slate-400">Using parametric irregular scan mesh (or upload your own 3D scan).</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-sky-400">1. Scanned Object Parameters</h3>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="text-[11px] text-slate-400">Scan Volume (cm³)</label>
+                                <input type="number" id="irr-vol" value="12500" min="1" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Contour Void (%)</label>
+                                <input type="number" id="irr-void-pct" value="15" min="0" max="80" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
                             </div>
                         </div>
-                        <button onclick="calculateIrregular()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Compute Irregular Fit</button>
                     </div>
 
-                    <div class="lg:col-span-2 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
-                        <div id="irr-results" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                    <hr class="border-slate-800">
+
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">2. Target Master Box Size (cm)</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-[11px] text-slate-400">Length (X)</label>
+                                <input type="number" id="irr-master-l" value="120" min="1" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Width (Z)</label>
+                                <input type="number" id="irr-master-w" value="80" min="1" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Height (Y)</label>
+                                <input type="number" id="irr-master-h" value="100" min="1" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                        </div>
+
+                        <!-- Placement Mode Prompt for Irregular Tab -->
+                        <div class="pt-2 space-y-1.5">
+                            <label class="block text-xs font-semibold text-slate-200">Base Placement Mode:</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" id="irrModePalletBtn" onclick="setPlacementMode('irr', 'pallet')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-amber-600/20 border-amber-500 text-amber-300">
+                                    <span>🪵 Palletized</span>
+                                    <span class="text-[10px] opacity-80">+15 cm Brown Pallet</span>
+                                </button>
+                                <button type="button" id="irrModeFloorBtn" onclick="setPlacementMode('irr', 'floor')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
+                                    <span>🏭 Direct on Floor</span>
+                                    <span class="text-[10px] opacity-80">On Grey Concrete</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="irrPlacementMode" value="pallet">
+                        </div>
+
+                        <!-- Carton Protection Options for Irregular Tab -->
+                        <div class="pt-2 space-y-1.5">
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
+                                <label for="irrSheetCarton" class="text-xs text-slate-200 cursor-pointer">Sheet Carton Between Layers</label>
+                                <input type="checkbox" id="irrSheetCarton" onchange="calculateIrregular()" class="w-4 h-4 accent-amber-500 cursor-pointer">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
+                                <label for="irrCornerGuards" class="text-xs text-slate-200 cursor-pointer">Carton Hoeklatten (4 Corners)</label>
+                                <input type="checkbox" id="irrCornerGuards" onchange="calculateIrregular()" class="w-4 h-4 accent-amber-500 cursor-pointer">
+                            </div>
+                        </div>
                     </div>
+
+                    <button onclick="calculateIrregular()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Compute Irregular 3D Fit</button>
+                </div>
+
+                <!-- Right 3D Irregular Viewport & Stats -->
+                <div class="lg:col-span-8 space-y-5">
+                    
+                    <!-- Irregular KPI Cards -->
+                    <div id="irr-results" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+
+                    <!-- 3D Viewport for Irregular Object Scan -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-purple-400 text-lg">🧬</span>
+                                <div>
+                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Irregular Scan Packing & Cross-Section</h2>
+                                    <p class="text-[11px] text-slate-400">Visualizes non-uniform cargo units inside master envelope</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="resetCamera('irr')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
+                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
+                                    <input type="checkbox" id="irrExplode" onchange="update3DScene('irr')" class="accent-krautz-500">
+                                    <span>Explode</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Cross-Section Slicers -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span>
+                                    <span id="irrSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span>
+                                </div>
+                                <input type="range" id="irrSliceY" min="1" max="100" value="100" oninput="update3DScene('irr')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span>
+                                    <span id="irrSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span>
+                                </div>
+                                <input type="range" id="irrSliceX" min="1" max="100" value="100" oninput="update3DScene('irr')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+                            </div>
+                        </div>
+
+                        <!-- Three.js Canvas -->
+                        <div id="canvas-irr" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                            <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8b5cf6] inline-block"></span> Scanned Unit</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -600,17 +761,26 @@
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
 
-    <!-- JavaScript Application & 3D Engine -->
+    <!-- JavaScript Application & 3D Pallet / Dunnage / Scan Engine -->
     <script>
         lucide.createIcons();
 
-        const PALLET_HEIGHT = 15.0; // Standard 15 cm brown pallet height
+        const PALLET_HEIGHT = 15.0;      // 15 cm standard brown pallet
+        const SHEET_THICKNESS = 0.4;     // 0.4 cm corrugated sheet carton (tussenlegvel)
+        const CORNER_THICKNESS = 0.4;    // 0.4 cm carton hoeklat wall thickness
+        const CORNER_WING = 5.5;         // 5.5 cm L-profile wing width
+
         const viewers = {};
         const packedState = {
-            dual: { container: { l: 120, w: 80, h: 100 }, items: [] },
-            puzzle: { container: { l: 120, w: 80, h: 100 }, items: [] },
-            sphere: { container: { l: 100, w: 100, h: 100 }, items: [] }
+            dual:   { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
+            puzzle: { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
+            sphere: { container: { l: 100, w: 100, h: 100 }, items: [], sheetYs: [] },
+            irr:    { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] }
         };
+
+        // Custom uploaded 3D scan geometry state
+        let customScanGeometry = null;
+        let customScanBounds = null;
 
         // Switch between Palletized (+15cm Brown Pallet) and Direct on Concrete Floor
         function setPlacementMode(key, mode) {
@@ -630,9 +800,9 @@
             if (key === 'dual') calculateDualBoxAndVisualizer();
             if (key === 'puzzle') calculatePuzzle();
             if (key === 'sphere') calculateSpheres();
+            if (key === 'irr') calculateIrregular();
         }
 
-        // Switch between FCC Hexagonal Close-Packing and Cubic Grid for Spheres
         function setSpherePattern(pattern) {
             document.getElementById('spherePattern').value = pattern;
             const fccBtn = document.getElementById('spherePatternFccBtn');
@@ -648,7 +818,7 @@
             calculateSpheres();
         }
 
-        // Initialize a Three.js Scene
+        // Initialize Three.js Scene
         function init3DViewer(key, containerElId) {
             const container = document.getElementById(containerElId);
             if (!container) return;
@@ -671,7 +841,7 @@
             controls.enableDamping = true;
             controls.dampingFactor = 0.06;
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.70);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.72);
             scene.add(ambientLight);
 
             const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.82);
@@ -722,7 +892,7 @@
             v.controls.update();
         }
 
-        // Procedural Grey Concrete Warehouse Floor
+        // Grey Concrete Warehouse Floor
         function buildConcreteFloorMesh(L, W) {
             const floorGroup = new THREE.Group();
             const slabSize = Math.max(L, W) * 2.6;
@@ -738,15 +908,14 @@
             slabMesh.add(slabLine);
             floorGroup.add(slabMesh);
 
-            const divisions = 12;
-            const grid = new THREE.GridHelper(slabSize, divisions, 0x3f4752, 0x47505c);
+            const grid = new THREE.GridHelper(slabSize, 12, 0x3f4752, 0x47505c);
             grid.position.set(0, 0.05, 0);
             floorGroup.add(grid);
 
             return floorGroup;
         }
 
-        // Procedural 3D Brown Wooden Pallet Builder (Exact 15.0 cm height, L x W footprint)
+        // 15.0 cm Brown Wooden Pallet
         function buildBrownPalletMesh(L, W, maxXCut) {
             const palletGroup = new THREE.Group();
             const brownWoodTopMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
@@ -776,23 +945,17 @@
 
             const skidWidth = Math.min(10, W * 0.14);
             const zSkids = [-W / 2 + skidWidth / 2, 0, W / 2 - skidWidth / 2];
-            zSkids.forEach(zPos => {
-                addPart(0, boardThickness / 2, zPos, L, boardThickness, skidWidth, brownWoodTopMat);
-            });
+            zSkids.forEach(zPos => addPart(0, boardThickness / 2, zPos, L, boardThickness, skidWidth, brownWoodTopMat));
 
             const blockL = Math.min(14.5, L * 0.14);
             const xBlocks = [-L / 2 + blockL / 2, 0, L / 2 - blockL / 2];
             const blockCenterY = boardThickness + blockHeight / 2;
             xBlocks.forEach(xPos => {
-                zSkids.forEach(zPos => {
-                    addPart(xPos, blockCenterY, zPos, blockL, blockHeight, skidWidth, brownWoodBlockMat);
-                });
+                zSkids.forEach(zPos => addPart(xPos, blockCenterY, zPos, blockL, blockHeight, skidWidth, brownWoodBlockMat));
             });
 
             const stringerCenterY = boardThickness + blockHeight + stringerThickness / 2;
-            xBlocks.forEach(xPos => {
-                addPart(xPos, stringerCenterY, 0, blockL, stringerThickness, W, brownWoodTopMat);
-            });
+            xBlocks.forEach(xPos => addPart(xPos, stringerCenterY, 0, blockL, stringerThickness, W, brownWoodTopMat));
 
             const topCenterY = PALLET_HEIGHT - boardThickness / 2;
             const deckCount = 5;
@@ -806,7 +969,97 @@
             return palletGroup;
         }
 
-        // Unified 3D Scene Renderer (Boxes & Spheres + Pallet + Concrete Floor + Cross-Section Slicing)
+        // Build 4 Vertical Carton Hoeklatten (L-Profile Corner Guards)
+        function buildCornerGuardsMesh(L, W, H, baseOffsetY, maxYCut, maxXCut, explodeFactor) {
+            const group = new THREE.Group();
+            const kraftMat = new THREE.MeshLambertMaterial({ color: 0xd4a373 });
+            const edgeMat = new THREE.LineBasicMaterial({ color: 0x7f5539, transparent: true, opacity: 0.85 });
+
+            const visibleH = Math.min(H, maxYCut);
+            if (visibleH <= 0.5) return group;
+
+            const wingX = Math.min(CORNER_WING, L * 0.22);
+            const wingZ = Math.min(CORNER_WING, W * 0.22);
+            const t = CORNER_THICKNESS;
+
+            const corners = [
+                { sx: -1, sz: -1 },
+                { sx:  1, sz: -1 },
+                { sx: -1, sz:  1 },
+                { sx:  1, sz:  1 }
+            ];
+
+            corners.forEach(c => {
+                // X-wing flange
+                const xCenter = c.sx * (L / 2 - wingX / 2) * explodeFactor;
+                const zFlange1 = c.sz * (W / 2 - t / 2) * explodeFactor;
+                const xPosInContainer = xCenter + L / 2;
+
+                if (xPosInContainer - wingX / 2 <= maxXCut) {
+                    const geo1 = new THREE.BoxGeometry(wingX, visibleH, t);
+                    const m1 = new THREE.Mesh(geo1, kraftMat);
+                    m1.position.set(xCenter, baseOffsetY + (visibleH / 2) * explodeFactor, zFlange1);
+                    m1.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo1), edgeMat));
+                    group.add(m1);
+                }
+
+                // Z-wing flange
+                const xFlange2 = c.sx * (L / 2 - t / 2) * explodeFactor;
+                const zCenter = c.sz * (W / 2 - wingZ / 2) * explodeFactor;
+                if (xFlange2 + L / 2 <= maxXCut) {
+                    const geo2 = new THREE.BoxGeometry(t, visibleH, wingZ);
+                    const m2 = new THREE.Mesh(geo2, kraftMat);
+                    m2.position.set(xFlange2, baseOffsetY + (visibleH / 2) * explodeFactor, zCenter);
+                    m2.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo2), edgeMat));
+                    group.add(m2);
+                }
+            });
+
+            return group;
+        }
+
+        // Build Horizontal Sheet Carton Interlayers (Tussenlegvellen)
+        function buildSheetCartonsMesh(L, W, sheetYs, baseOffsetY, maxYCut, maxXCut, explodeFactor) {
+            const group = new THREE.Group();
+            const sheetMat = new THREE.MeshLambertMaterial({ color: 0xd4a373 });
+            const edgeMat = new THREE.LineBasicMaterial({ color: 0x7f5539, transparent: true, opacity: 0.85 });
+
+            const visibleL = Math.min(L, maxXCut);
+            if (visibleL <= 0.5) return group;
+
+            const centerX = (visibleL / 2 - L / 2) * explodeFactor;
+
+            sheetYs.forEach(yPos => {
+                if (yPos > maxYCut) return;
+                const geo = new THREE.BoxGeometry(visibleL, SHEET_THICKNESS, W);
+                const mesh = new THREE.Mesh(geo, sheetMat);
+                mesh.position.set(centerX, baseOffsetY + (yPos + SHEET_THICKNESS / 2) * explodeFactor, 0);
+                mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeMat));
+                group.add(mesh);
+            });
+
+            return group;
+        }
+
+        // Procedural Organic Irregular Scan Mesh (smooth bumpy potato/cut-of-meat/device geometry)
+        function buildProceduralIrregularGeo(rx, ry, rz) {
+            const geo = new THREE.IcosahedronGeometry(1, 3);
+            const pos = geo.attributes.position;
+            for (let i = 0; i < pos.count; i++) {
+                let vx = pos.getX(i);
+                let vy = pos.getY(i);
+                let vz = pos.getZ(i);
+                const wave = 1
+                    + 0.16 * Math.sin(vx * 3.4 + vy * 2.1)
+                    + 0.12 * Math.cos(vy * 4.2 - vz * 2.8)
+                    + 0.08 * Math.sin(vz * 5.0 + vx * 1.9);
+                pos.setXYZ(i, vx * rx * wave, vy * ry * wave, vz * rz * wave);
+            }
+            geo.computeVertexNormals();
+            return geo;
+        }
+
+        // Unified 3D Scene Renderer across all 4 Tabs
         function update3DScene(key) {
             const v = viewers[key];
             const data = packedState[key];
@@ -821,6 +1074,8 @@
             const sliceXPercent = parseFloat(document.getElementById(`${key}SliceX`).value) || 100;
             const explode = document.getElementById(`${key}Explode`).checked;
             const placementMode = document.getElementById(`${key}PlacementMode`).value;
+            const useCorners = document.getElementById(`${key}CornerGuards`)?.checked || false;
+            const useSheets = document.getElementById(`${key}SheetCarton`)?.checked || false;
             const isPalletized = placementMode === 'pallet';
 
             document.getElementById(`${key}SliceYLabel`).innerText = sliceYPercent === 100 ? '100% (Full)' : `${sliceYPercent}% Cut`;
@@ -831,10 +1086,10 @@
             const maxXCut = (sliceXPercent / 100) * CL;
             const explodeFactor = explode ? 1.18 : 1.0;
 
-            // 1. Grey Concrete Floor
+            // 1. Concrete Floor
             v.rootGroup.add(buildConcreteFloorMesh(CL, CW));
 
-            // 2. Optional 15.0 cm Brown Wooden Pallet
+            // 2. Brown 15 cm Pallet
             if (isPalletized) {
                 v.rootGroup.add(buildBrownPalletMesh(CL, CW, maxXCut));
             }
@@ -844,7 +1099,7 @@
             const outerMat = new THREE.MeshPhongMaterial({
                 color: 0x38bdf8,
                 transparent: true,
-                opacity: 0.06,
+                opacity: 0.05,
                 depthWrite: false,
                 side: THREE.DoubleSide
             });
@@ -858,7 +1113,17 @@
             wireframe.position.set(0, baseOffsetY + CH / 2, 0);
             v.rootGroup.add(wireframe);
 
-            // 4. Render Packed Items (Boxes OR Spheres)
+            // 4. Carton Hoeklatten (4 Corner Guards)
+            if (useCorners) {
+                v.rootGroup.add(buildCornerGuardsMesh(CL, CW, CH, baseOffsetY, maxYCut, maxXCut, explodeFactor));
+            }
+
+            // 5. Sheet Carton Interlayers (Tussenlegvellen)
+            if (useSheets && data.sheetYs && data.sheetYs.length > 0) {
+                v.rootGroup.add(buildSheetCartonsMesh(CL, CW, data.sheetYs, baseOffsetY, maxYCut, maxXCut, explodeFactor));
+            }
+
+            // 6. Packed Items (Boxes, Spheres, or Irregular Scanned Meshes)
             const itemsToRender = data.items.slice(0, 1500);
             const matBatch1 = new THREE.MeshLambertMaterial({ color: 0x0077ee });
             const matBatch2 = new THREE.MeshLambertMaterial({ color: 0x10b981 });
@@ -868,29 +1133,60 @@
                 emissiveIntensity: 0.25,
                 shininess: 75
             });
+            const matIrregular = new THREE.MeshPhongMaterial({
+                color: 0x8b5cf6,
+                emissive: 0x4c1d95,
+                emissiveIntensity: 0.22,
+                shininess: 55
+            });
             const edgeMat1 = new THREE.LineBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.65 });
             const edgeMat2 = new THREE.LineBasicMaterial({ color: 0xa7f3d0, transparent: true, opacity: 0.75 });
 
-            // Shared sphere geometry if rendering spheres
             let sharedSphereGeo = null;
+            let sharedIrregularGeo = null;
+
             if (itemsToRender.length > 0 && itemsToRender[0].shape === 'sphere') {
                 sharedSphereGeo = new THREE.SphereGeometry(itemsToRender[0].r * 0.985, 22, 16);
+            }
+            if (itemsToRender.length > 0 && itemsToRender[0].shape === 'irregular') {
+                const first = itemsToRender[0];
+                if (customScanGeometry && customScanBounds) {
+                    sharedIrregularGeo = customScanGeometry.clone();
+                    sharedIrregularGeo.scale(
+                        (first.l * 0.88) / customScanBounds.x,
+                        (first.h * 0.88) / customScanBounds.y,
+                        (first.w * 0.88) / customScanBounds.z
+                    );
+                } else {
+                    sharedIrregularGeo = buildProceduralIrregularGeo(first.l * 0.42, first.h * 0.42, first.w * 0.42);
+                }
             }
 
             itemsToRender.forEach(item => {
                 if (item.shape === 'sphere') {
-                    // Sphere item: (x, y, z) is center in container space [0..CL, 0..CH, 0..CW]
                     if (item.y - item.r * 0.6 > maxYCut) return;
                     if (item.x - item.r * 0.6 > maxXCut) return;
 
                     const mesh = new THREE.Mesh(sharedSphereGeo, matSphere);
-                    const cx = (item.x - CL / 2) * explodeFactor;
-                    const cy = baseOffsetY + item.y * explodeFactor;
-                    const cz = (item.z - CW / 2) * explodeFactor;
-                    mesh.position.set(cx, cy, cz);
+                    mesh.position.set(
+                        (item.x - CL / 2) * explodeFactor,
+                        baseOffsetY + item.y * explodeFactor,
+                        (item.z - CW / 2) * explodeFactor
+                    );
+                    v.rootGroup.add(mesh);
+                } else if (item.shape === 'irregular') {
+                    if (item.y + item.h * 0.25 > maxYCut) return;
+                    if (item.x + item.l * 0.25 > maxXCut) return;
+
+                    const mesh = new THREE.Mesh(sharedIrregularGeo, matIrregular);
+                    mesh.position.set(
+                        (item.x + item.l / 2 - CL / 2) * explodeFactor,
+                        baseOffsetY + (item.y + item.h / 2) * explodeFactor,
+                        (item.z + item.w / 2 - CW / 2) * explodeFactor
+                    );
+                    if (item.rotY) mesh.rotation.y = item.rotY;
                     v.rootGroup.add(mesh);
                 } else {
-                    // Box item: (x, y, z) is bottom-left-back corner
                     if (item.y + item.h * 0.15 > maxYCut) return;
                     if (item.x + item.l * 0.15 > maxXCut) return;
 
@@ -902,19 +1198,19 @@
                     );
 
                     const mesh = new THREE.Mesh(geo, item.type === 2 ? matBatch2 : matBatch1);
-                    const cx = (item.x + item.l / 2 - CL / 2) * explodeFactor;
-                    const cy = baseOffsetY + (item.y + item.h / 2) * explodeFactor;
-                    const cz = (item.z + item.w / 2 - CW / 2) * explodeFactor;
-                    mesh.position.set(cx, cy, cz);
+                    mesh.position.set(
+                        (item.x + item.l / 2 - CL / 2) * explodeFactor,
+                        baseOffsetY + (item.y + item.h / 2) * explodeFactor,
+                        (item.z + item.w / 2 - CW / 2) * explodeFactor
+                    );
 
                     const bEdges = new THREE.EdgesGeometry(geo);
-                    const bLine = new THREE.LineSegments(bEdges, item.type === 2 ? edgeMat2 : edgeMat1);
-                    mesh.add(bLine);
+                    mesh.add(new THREE.LineSegments(bEdges, item.type === 2 ? edgeMat2 : edgeMat1));
                     v.rootGroup.add(mesh);
                 }
             });
 
-            // 5. Visual Cutaway Plane indicator when slicing < 100%
+            // 7. Visual Cutaway Plane when slicing < 100%
             if (sliceXPercent < 100) {
                 const totalHeight = CH + baseOffsetY + 6;
                 const planeGeo = new THREE.PlaneGeometry(CW + 8, totalHeight);
@@ -949,6 +1245,7 @@
                 if (tabId === 'pack-dual') resetCamera('dual');
                 if (tabId === 'pack-puzzle') resetCamera('puzzle');
                 if (tabId === 'pack-sphere') resetCamera('sphere');
+                if (tabId === 'pack-irregular') resetCamera('irr');
             }, 30);
         }
 
@@ -970,7 +1267,7 @@
             return unique;
         }
 
-        // 1. Dual Box & 3D Visualizer Logic
+        // 1. Dual Box & 3D Visualizer Logic (with Sheet Carton & Corner Guards)
         function calculateDualBoxAndVisualizer() {
             const CL = parseFloat(document.getElementById('containerL').value) || 1;
             const CW = parseFloat(document.getElementById('containerW').value) || 1;
@@ -983,6 +1280,13 @@
             const isSqueezeActive = document.getElementById('squeezeMode').checked;
             const autoRotate = document.getElementById('autoRotateDual').checked;
             const isPalletized = document.getElementById('dualPlacementMode').value === 'pallet';
+            const useSheets = document.getElementById('dualSheetCarton').checked;
+            const useCorners = document.getElementById('dualCornerGuards').checked;
+
+            // Corner guards occupy 0.4cm thickness on each side (0.8cm total per axis)
+            const cornerInset = useCorners ? CORNER_THICKNESS : 0;
+            const usableL = Math.max(1, CL - cornerInset * 2);
+            const usableW = Math.max(1, CW - cornerInset * 2);
 
             const factor = isSqueezeActive ? 0.90 : 1.0;
             const orientations = autoRotate
@@ -992,9 +1296,12 @@
             let best = { total: -1, cols: 0, rows: 0, layers: 0, dim: orientations[0] };
 
             orientations.forEach(o => {
-                const cols = Math.floor(CL / o.l);
-                const rows = Math.floor(CW / o.w);
-                const layers = Math.floor(CH / o.h);
+                const cols = Math.floor(usableL / o.l);
+                const rows = Math.floor(usableW / o.w);
+                // If sheet carton is placed between layers, N layers require (N - 1) sheets
+                const layers = useSheets
+                    ? Math.max(0, Math.floor((CH + SHEET_THICKNESS) / (o.h + SHEET_THICKNESS)))
+                    : Math.floor(CH / o.h);
                 const total = cols * rows * layers;
                 if (total > best.total) {
                     best = { total, cols, rows, layers, dim: o };
@@ -1014,18 +1321,32 @@
                 ? `Total Palletized Height: ${totalHeight.toFixed(1)} cm`
                 : `Floor Stack Height: ${totalHeight.toFixed(1)} cm`;
             document.getElementById('packingLayout').innerText = `${best.cols} × ${best.rows} × ${best.layers}`;
+
+            const sheetCount = (useSheets && best.layers > 1) ? (best.layers - 1) : 0;
+            const dunnageNotes = [];
+            if (sheetCount > 0) dunnageNotes.push(`${sheetCount} sheets`);
+            if (useCorners) dunnageNotes.push(`4 hoeklatten`);
+            document.getElementById('dunnageSummary').innerText = dunnageNotes.length > 0
+                ? `+ ${dunnageNotes.join(' & ')}`
+                : 'Cols × Rows × Layers';
+
             document.getElementById('effectiveVolume').innerText = `Effective Cargo Volume: ${masterVol.toFixed(1)} L`;
             document.getElementById('unitVolume').innerText = `Unit Volume: ${unitVol.toFixed(2)} L`;
 
             const items = [];
+            const sheetYs = [];
             for (let y = 0; y < best.layers; y++) {
+                const layerY = y * (best.dim.h + (useSheets ? SHEET_THICKNESS : 0));
+                if (useSheets && y > 0) {
+                    sheetYs.push(layerY - SHEET_THICKNESS);
+                }
                 for (let z = 0; z < best.rows; z++) {
                     for (let x = 0; x < best.cols; x++) {
                         items.push({
                             shape: 'box',
-                            x: x * best.dim.l,
-                            y: y * best.dim.h,
-                            z: z * best.dim.w,
+                            x: cornerInset + x * best.dim.l,
+                            y: layerY,
+                            z: cornerInset + z * best.dim.w,
                             l: best.dim.l,
                             w: best.dim.w,
                             h: best.dim.h,
@@ -1035,7 +1356,7 @@
                 }
             }
 
-            packedState.dual = { container: { l: CL, w: CW, h: CH }, items };
+            packedState.dual = { container: { l: CL, w: CW, h: CH }, items, sheetYs };
             update3DScene('dual');
         }
 
@@ -1057,6 +1378,17 @@
             const CH = parseFloat(document.getElementById('pz-out-h').value) || 100;
 
             const isPalletized = document.getElementById('puzzlePlacementMode').value === 'pallet';
+            const useSheets = document.getElementById('puzzleSheetCarton').checked;
+            const useCorners = document.getElementById('puzzleCornerGuards').checked;
+
+            const cornerInset = useCorners ? CORNER_THICKNESS : 0;
+            const minX = cornerInset;
+            const maxX = Math.max(minX + 1, CL - cornerInset);
+            const minZ = cornerInset;
+            const maxZ = Math.max(minZ + 1, CW - cornerInset);
+            const usableL = maxX - minX;
+            const usableW = maxZ - minZ;
+
             const b1TargetQty = Math.max(0, parseInt(document.getElementById('pz-b1-qty').value) || 0);
             const b1L = parseFloat(document.getElementById('pz-b1-l').value) || 30;
             const b1W = parseFloat(document.getElementById('pz-b1-w').value) || 20;
@@ -1067,22 +1399,28 @@
             const b2H = parseFloat(document.getElementById('pz-b2-h').value) || 25;
 
             const items = [];
+            const sheetYs = [];
 
-            const cols1 = Math.floor(CL / b1L);
-            const rows1 = Math.floor(CW / b1W);
-            const layers1 = Math.floor(CH / b1H);
+            const cols1 = Math.floor(usableL / b1L);
+            const rows1 = Math.floor(usableW / b1W);
+            const layerStep1 = b1H + (useSheets ? SHEET_THICKNESS : 0);
+            const layers1 = useSheets
+                ? Math.max(0, Math.floor((CH + SHEET_THICKNESS) / layerStep1))
+                : Math.floor(CH / b1H);
             const maxB1Possible = cols1 * rows1 * layers1;
             const b1Placed = Math.min(b1TargetQty, maxB1Possible);
 
             let count1 = 0;
             for (let y = 0; y < layers1 && count1 < b1Placed; y++) {
+                const layerY = y * layerStep1;
+                if (useSheets && y > 0) sheetYs.push(layerY - SHEET_THICKNESS);
                 for (let z = 0; z < rows1 && count1 < b1Placed; z++) {
                     for (let x = 0; x < cols1 && count1 < b1Placed; x++) {
                         items.push({
                             shape: 'box',
-                            x: x * b1L,
-                            y: y * b1H,
-                            z: z * b1W,
+                            x: minX + x * b1L,
+                            y: layerY,
+                            z: minZ + z * b1W,
                             l: b1L,
                             w: b1W,
                             h: b1H,
@@ -1096,9 +1434,11 @@
             function collides(candidate) {
                 const eps = 0.01;
                 if (
-                    candidate.x + candidate.l > CL + eps ||
+                    candidate.x < minX - eps ||
+                    candidate.z < minZ - eps ||
+                    candidate.x + candidate.l > maxX + eps ||
                     candidate.y + candidate.h > CH + eps ||
-                    candidate.z + candidate.w > CW + eps
+                    candidate.z + candidate.w > maxZ + eps
                 ) return true;
 
                 for (let i = 0; i < items.length; i++) {
@@ -1114,15 +1454,16 @@
             const b2Orientations = getOrientations(b2L, b2W, b2H);
             let b2Placed = 0;
             let placedNew = true;
+            const sheetGap = useSheets ? SHEET_THICKNESS : 0;
 
             while (placedNew && items.length < 1500) {
                 placedNew = false;
 
-                const anchors = [{ x: 0, y: 0, z: 0 }];
+                const anchors = [{ x: minX, y: 0, z: minZ }];
                 items.forEach(b => {
                     anchors.push({ x: b.x + b.l, y: b.y, z: b.z });
                     anchors.push({ x: b.x, y: b.y, z: b.z + b.w });
-                    anchors.push({ x: b.x, y: b.y + b.h, z: b.z });
+                    anchors.push({ x: b.x, y: b.y + b.h + sheetGap, z: b.z });
                 });
 
                 anchors.sort((a, b) => (a.y - b.y) || (a.z - b.z) || (a.x - b.x));
@@ -1132,6 +1473,9 @@
                         const cand = { shape: 'box', x: a.x, y: a.y, z: a.z, l: o.l, w: o.w, h: o.h, type: 2 };
                         if (!collides(cand)) {
                             items.push(cand);
+                            if (useSheets && a.y > 0 && !sheetYs.some(sy => Math.abs(sy - (a.y - SHEET_THICKNESS)) < 0.05)) {
+                                sheetYs.push(a.y - SHEET_THICKNESS);
+                            }
                             b2Placed++;
                             placedNew = true;
                             break;
@@ -1168,7 +1512,7 @@
                 `;
             }
 
-            packedState.puzzle = { container: { l: CL, w: CW, h: CH }, items };
+            packedState.puzzle = { container: { l: CL, w: CW, h: CH }, items, sheetYs };
             update3DScene('puzzle');
         }
 
@@ -1182,49 +1526,63 @@
 
             const pattern = document.getElementById('spherePattern').value;
             const isPalletized = document.getElementById('spherePlacementMode').value === 'pallet';
+            const useSheets = document.getElementById('sphereSheetCarton').checked;
+            const useCorners = document.getElementById('sphereCornerGuards').checked;
 
-            // Compute exact 3D coordinates for Cubic Grid
+            const cornerInset = useCorners ? CORNER_THICKNESS : 0;
+            const usableL = Math.max(1, CL - cornerInset * 2);
+            const usableW = Math.max(1, CW - cornerInset * 2);
+
             const gridSpheres = [];
-            const gx = Math.floor(CL / diam);
-            const gy = Math.floor(CH / diam);
-            const gz = Math.floor(CW / diam);
+            const gridSheetYs = [];
+            const gx = Math.floor(usableL / diam);
+            const gz = Math.floor(usableW / diam);
+            const gridStepY = diam + (useSheets ? SHEET_THICKNESS : 0);
+            const gy = useSheets
+                ? Math.max(0, Math.floor((CH + SHEET_THICKNESS) / gridStepY))
+                : Math.floor(CH / diam);
+
             for (let iy = 0; iy < gy; iy++) {
+                const baseY = iy * gridStepY;
+                if (useSheets && iy > 0) gridSheetYs.push(baseY - SHEET_THICKNESS);
                 for (let iz = 0; iz < gz; iz++) {
                     for (let ix = 0; ix < gx; ix++) {
                         gridSpheres.push({
                             shape: 'sphere',
-                            x: r + ix * diam,
-                            y: r + iy * diam,
-                            z: r + iz * diam,
+                            x: cornerInset + r + ix * diam,
+                            y: baseY + r,
+                            z: cornerInset + r + iz * diam,
                             r: r
                         });
                     }
                 }
             }
 
-            // Compute exact 3D coordinates for Hexagonal Close-Packing (FCC)
+            // FCC Hexagonal Close-Packing (if sheet carton is enabled, layers rest flat on each sheet)
             const fccSpheres = [];
-            const dz = diam * (Math.sqrt(3) / 2);      // Row spacing in Z
-            const dy = diam * Math.sqrt(2 / 3);        // Layer spacing in Y
-            const layerOffsetZ = diam / (2 * Math.sqrt(3)); // Nested pocket offset in Z
+            const fccSheetYs = [];
+            const dz = diam * (Math.sqrt(3) / 2);
+            const dy = useSheets ? (diam + SHEET_THICKNESS) : (diam * Math.sqrt(2 / 3));
+            const layerOffsetZ = useSheets ? 0 : (diam / (2 * Math.sqrt(3)));
 
             for (let iy = 0; ; iy++) {
                 const y = r + iy * dy;
                 if (y + r > CH + 0.001) break;
+                if (useSheets && iy > 0) fccSheetYs.push(y - r - SHEET_THICKNESS);
 
-                const isOddLayer = (iy % 2 === 1);
-                const zBase = r + (isOddLayer ? layerOffsetZ : 0);
+                const isOddLayer = (!useSheets && iy % 2 === 1);
+                const zBase = cornerInset + r + (isOddLayer ? layerOffsetZ : 0);
 
                 for (let iz = 0; ; iz++) {
                     const z = zBase + iz * dz;
-                    if (z + r > CW + 0.001) break;
+                    if (z + r > CW - cornerInset + 0.001) break;
 
                     const isOddRow = ((iz + (isOddLayer ? 1 : 0)) % 2 === 1);
-                    const xBase = r + (isOddRow ? r : 0);
+                    const xBase = cornerInset + r + (isOddRow ? r : 0);
 
                     for (let ix = 0; ; ix++) {
                         const x = xBase + ix * diam;
-                        if (x + r > CL + 0.001) break;
+                        if (x + r > CL - cornerInset + 0.001) break;
 
                         fccSpheres.push({
                             shape: 'sphere',
@@ -1238,6 +1596,7 @@
             }
 
             const activeSpheres = pattern === 'fcc' ? fccSpheres : gridSpheres;
+            const activeSheetYs = pattern === 'fcc' ? fccSheetYs : gridSheetYs;
             const containerVol = CL * CW * CH;
             const sphereVol = (4 / 3) * Math.PI * Math.pow(r, 3);
             const efficiency = Math.min(100, ((activeSpheres.length * sphereVol) / containerVol) * 100).toFixed(1);
@@ -1265,33 +1624,197 @@
                 `;
             }
 
-            packedState.sphere = { container: { l: CL, w: CW, h: CH }, items: activeSpheres };
+            packedState.sphere = { container: { l: CL, w: CW, h: CH }, items: activeSpheres, sheetYs: activeSheetYs };
             update3DScene('sphere');
         }
 
-        // 4. Irregular Object Scan
+        // 4. Irregular Object Scan 3D Calculator + STL/OBJ File Parsing
+        function handleScanFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const statusEl = document.getElementById('irr-scan-status');
+            const clearBtn = document.getElementById('clearScanFileBtn');
+            const ext = file.name.split('.').pop().toLowerCase();
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    let geometry = null;
+                    if (ext === 'stl') {
+                        const loader = new THREE.STLLoader();
+                        geometry = loader.parse(e.target.result);
+                    } else if (ext === 'obj') {
+                        const loader = new THREE.OBJLoader();
+                        const group = loader.parse(e.target.result);
+                        group.traverse(child => {
+                            if (child.isMesh && !geometry) {
+                                geometry = child.geometry.clone();
+                            }
+                        });
+                    }
+
+                    if (!geometry) throw new Error('Could not extract mesh geometry.');
+
+                    geometry.computeBoundingBox();
+                    const box = geometry.boundingBox;
+                    const size = new THREE.Vector3();
+                    box.getSize(size);
+                    const center = new THREE.Vector3();
+                    box.getCenter(center);
+
+                    // Center geometry at (0,0,0)
+                    geometry.translate(-center.x, -center.y, -center.z);
+                    geometry.computeVertexNormals();
+
+                    // Compute signed mesh volume (if units look like mm, convert to cm)
+                    let rawVol = computeMeshVolume(geometry);
+                    let scaleHint = 'cm';
+                    if (size.x > 150 || size.y > 150 || size.z > 150) {
+                        // Likely exported in millimeters -> convert mm³ to cm³
+                        rawVol = rawVol / 1000;
+                        scaleHint = 'mm → cm';
+                    }
+
+                    customScanGeometry = geometry;
+                    customScanBounds = {
+                        x: Math.max(0.001, size.x),
+                        y: Math.max(0.001, size.y),
+                        z: Math.max(0.001, size.z)
+                    };
+
+                    if (rawVol > 1) {
+                        document.getElementById('irr-vol').value = Math.round(rawVol);
+                    }
+
+                    statusEl.innerText = `Loaded "${file.name}" (${scaleHint}) • Auto-updated scan volume`;
+                    statusEl.className = "text-[10px] text-emerald-400 font-medium";
+                    clearBtn.classList.remove('hidden');
+                    calculateIrregular();
+                } catch (err) {
+                    statusEl.innerText = `Error reading 3D scan: ${err.message}`;
+                    statusEl.className = "text-[10px] text-rose-400";
+                }
+            };
+
+            if (ext === 'stl') reader.readAsArrayBuffer(file);
+            else reader.readAsText(file);
+        }
+
+        function clearUploadedScan() {
+            customScanGeometry = null;
+            customScanBounds = null;
+            document.getElementById('irr-scan-file').value = '';
+            const statusEl = document.getElementById('irr-scan-status');
+            statusEl.innerText = 'Using parametric irregular scan mesh (or upload your own 3D scan).';
+            statusEl.className = 'text-[10px] text-slate-400';
+            document.getElementById('clearScanFileBtn').classList.add('hidden');
+            calculateIrregular();
+        }
+
+        function computeMeshVolume(geometry) {
+            const pos = geometry.attributes.position;
+            let vol = 0;
+            const p1 = new THREE.Vector3(), p2 = new THREE.Vector3(), p3 = new THREE.Vector3();
+            for (let i = 0; i < pos.count; i += 3) {
+                p1.fromBufferAttribute(pos, i);
+                p2.fromBufferAttribute(pos, i + 1);
+                p3.fromBufferAttribute(pos, i + 2);
+                vol += p1.dot(p2.cross(p3)) / 6.0;
+            }
+            return Math.abs(vol);
+        }
+
         function calculateIrregular() {
-            const irrVol = parseFloat(document.getElementById('irr-vol').value) || 12500;
-            const ml = parseFloat(document.getElementById('irr-master-l').value) || 100;
-            const mw = parseFloat(document.getElementById('irr-master-w').value) || 100;
+            const irrVol = Math.max(1, parseFloat(document.getElementById('irr-vol').value) || 12500);
+            const voidPct = Math.max(0, parseFloat(document.getElementById('irr-void-pct').value) || 15);
+            const ml = parseFloat(document.getElementById('irr-master-l').value) || 120;
+            const mw = parseFloat(document.getElementById('irr-master-w').value) || 80;
             const mh = parseFloat(document.getElementById('irr-master-h').value) || 100;
 
-            const masterVol = ml * mw * mh;
-            const adjustedObjVol = irrVol * 1.15;
-            const maxFit = Math.floor(masterVol / adjustedObjVol);
+            const isPalletized = document.getElementById('irrPlacementMode').value === 'pallet';
+            const useSheets = document.getElementById('irrSheetCarton').checked;
+            const useCorners = document.getElementById('irrCornerGuards').checked;
 
+            const cornerInset = useCorners ? CORNER_THICKNESS : 0;
+            const usableL = Math.max(1, ml - cornerInset * 2);
+            const usableW = Math.max(1, mw - cornerInset * 2);
+
+            const adjustedObjVol = irrVol * (1 + voidPct / 100);
+
+            // Compute proportional bounding cell for each irregular unit so 3D spatial grid matches physical capacity
+            let aspectX = 1.15, aspectY = 0.85, aspectZ = 1.0;
+            if (customScanBounds) {
+                const maxB = Math.max(customScanBounds.x, customScanBounds.y, customScanBounds.z);
+                aspectX = customScanBounds.x / maxB;
+                aspectY = customScanBounds.y / maxB;
+                aspectZ = customScanBounds.z / maxB;
+            }
+            const scaleCube = Math.cbrt(adjustedObjVol / (aspectX * aspectY * aspectZ));
+            const cellL = scaleCube * aspectX;
+            const cellH = scaleCube * aspectY;
+            const cellW = scaleCube * aspectZ;
+
+            const cols = Math.max(1, Math.floor(usableL / cellL));
+            const rows = Math.max(1, Math.floor(usableW / cellW));
+            const layerStep = cellH + (useSheets ? SHEET_THICKNESS : 0);
+            const layers = useSheets
+                ? Math.max(0, Math.floor((mh + SHEET_THICKNESS) / layerStep))
+                : Math.floor(mh / cellH);
+
+            const spatialCapacity = cols * rows * layers;
+            const pureVolCapacity = Math.floor((usableL * usableW * mh) / adjustedObjVol);
+            const maxFit = Math.max(spatialCapacity, Math.min(pureVolCapacity, Math.ceil(usableL / cellL) * Math.ceil(usableW / cellW) * layers));
+
+            const items = [];
+            const sheetYs = [];
+            let placed = 0;
+
+            for (let y = 0; y < layers && placed < maxFit; y++) {
+                const layerY = y * layerStep;
+                if (useSheets && y > 0) sheetYs.push(layerY - SHEET_THICKNESS);
+                for (let z = 0; z < rows && placed < maxFit; z++) {
+                    for (let x = 0; x < cols && placed < maxFit; x++) {
+                        items.push({
+                            shape: 'irregular',
+                            x: cornerInset + x * cellL,
+                            y: layerY,
+                            z: cornerInset + z * cellW,
+                            l: cellL,
+                            w: cellW,
+                            h: cellH,
+                            rotY: ((x + z + y) % 4) * (Math.PI / 2)
+                        });
+                        placed++;
+                    }
+                }
+            }
+
+            const totalHeight = isPalletized ? (mh + PALLET_HEIGHT) : mh;
             const resultsContainer = document.getElementById('irr-results');
-            if (!resultsContainer) return;
-            resultsContainer.innerHTML = `
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-slate-400 block">Adjusted Object Volume (+15%)</span>
-                    <span class="text-xl font-bold text-white">${adjustedObjVol.toLocaleString()} cm³</span>
-                </div>
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-slate-400 block">Max Master Container Capacity</span>
-                    <span class="text-xl font-bold text-krautz-400">${maxFit} units</span>
-                </div>
-            `;
+            if (resultsContainer) {
+                resultsContainer.innerHTML = `
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Adjusted Vol (+${voidPct}% Void)</span>
+                        <span class="text-xl font-bold text-white">${Math.round(adjustedObjVol).toLocaleString()} cm³</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Max Container Capacity</span>
+                        <span class="text-xl font-bold text-purple-400">${placed} units</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">3D Spatial Matrix</span>
+                        <span class="text-xl font-bold text-emerald-400">${cols} × ${rows} × ${layers}</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">${isPalletized ? 'Total Pallet Height' : 'Floor Stack Height'}</span>
+                        <span class="text-xl font-bold text-amber-400">${totalHeight.toFixed(1)} cm</span>
+                    </div>
+                `;
+            }
+
+            packedState.irr = { container: { l: ml, w: mw, h: mh }, items, sheetYs };
+            update3DScene('irr');
         }
 
         function calculateAll() {
@@ -1305,10 +1828,12 @@
             init3DViewer('dual', 'canvas-dual');
             init3DViewer('puzzle', 'canvas-puzzle');
             init3DViewer('sphere', 'canvas-sphere');
+            init3DViewer('irr', 'canvas-irr');
             calculateAll();
             resetCamera('dual');
             resetCamera('puzzle');
             resetCamera('sphere');
+            resetCamera('irr');
         };
     </script>
 </body>
