@@ -4,7 +4,7 @@
     <link rel="icon" type="image/png" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Krautz-Temax Pro Logistics - 3D Palletized, Dunnage & Scan Engine</title>
+    <title>Krautz-Temax Pro Logistics - 3D Palletized, Freight & Spec Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -50,7 +50,7 @@
 
     <!-- Top Navigation Bar -->
     <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-col xl:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
                 <div class="bg-krautz-500 p-2.5 rounded-xl glow-blue flex items-center justify-center">
                     <i data-lucide="box" class="w-6 h-6 text-white"></i>
@@ -59,24 +59,35 @@
                     <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
                         KRAUTZ-TEMAX <span class="text-xs px-2 py-0.5 rounded bg-krautz-500/20 text-krautz-400 border border-krautz-500/30">Pro Logistics 3D</span>
                     </h1>
-                    <p class="text-xs text-slate-400">Thermal Packaging, Palletized Bin-Packing & 3D Cross-Section Engine</p>
+                    <p class="text-xs text-slate-400">Thermal Packaging, Palletized Bin-Packing, Fleet Load & Spec Engine</p>
                 </div>
             </div>
-            <!-- Tab Navigation -->
-            <nav class="flex flex-wrap gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
-                <button onclick="switchTab('pack-dual')" id="btn-pack-dual" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all bg-krautz-500 text-white shadow flex items-center gap-1.5">
-                    <i data-lucide="box" class="w-3.5 h-3.5"></i> Dual Box & 3D View
+
+            <div class="flex flex-wrap items-center justify-center gap-2">
+                <!-- Tab Navigation -->
+                <nav class="flex flex-wrap gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
+                    <button onclick="switchTab('pack-dual')" id="btn-pack-dual" class="tab-btn px-3 py-2 text-xs font-medium rounded-lg transition-all bg-krautz-500 text-white shadow flex items-center gap-1.5">
+                        <i data-lucide="box" class="w-3.5 h-3.5"></i> Dual Box & 3D
+                    </button>
+                    <button onclick="switchTab('pack-puzzle')" id="btn-pack-puzzle" class="tab-btn px-3 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+                        <i data-lucide="boxes" class="w-3.5 h-3.5"></i> Volume Puzzle
+                    </button>
+                    <button onclick="switchTab('pack-sphere')" id="btn-pack-sphere" class="tab-btn px-3 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+                        <i data-lucide="circle-dot" class="w-3.5 h-3.5"></i> Spherical 3D
+                    </button>
+                    <button onclick="switchTab('pack-irregular')" id="btn-pack-irregular" class="tab-btn px-3 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+                        <i data-lucide="scan" class="w-3.5 h-3.5"></i> Irregular Scan
+                    </button>
+                    <button onclick="switchTab('pack-truck')" id="btn-pack-truck" class="tab-btn px-3 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+                        <i data-lucide="truck" class="w-3.5 h-3.5"></i> Truck / Reefer 3D
+                    </button>
+                </nav>
+
+                <!-- Feature #5: Export Spec Sheet / Print Button -->
+                <button onclick="exportSpecSheet()" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow-lg transition flex items-center gap-1.5">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Export Spec Sheet
                 </button>
-                <button onclick="switchTab('pack-puzzle')" id="btn-pack-puzzle" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
-                    <i data-lucide="boxes" class="w-3.5 h-3.5"></i> 3D Volume Puzzle
-                </button>
-                <button onclick="switchTab('pack-sphere')" id="btn-pack-sphere" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
-                    <i data-lucide="circle-dot" class="w-3.5 h-3.5"></i> Spherical Density 3D
-                </button>
-                <button onclick="switchTab('pack-irregular')" id="btn-pack-irregular" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
-                    <i data-lucide="scan" class="w-3.5 h-3.5"></i> Irregular Scan 3D
-                </button>
-            </nav>
+            </div>
         </div>
     </header>
 
@@ -88,7 +99,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
                 <!-- Left Panel: Inputs -->
-                <div class="lg:col-span-4 space-y-5">
+                <div class="lg:col-span-4 space-y-4">
                     
                     <!-- Master Container / Outer Footprint -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
@@ -131,8 +142,24 @@
                             <input type="hidden" id="dualPlacementMode" value="pallet">
                         </div>
 
+                        <!-- Feature #4: Stacking Pattern (Column vs Interlocking Brick) -->
+                        <div class="pt-3 border-t border-slate-800 space-y-2">
+                            <label class="block text-xs font-semibold text-sky-300">Stacking Pattern (Stapelpatroon):</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" id="stackPatternColBtn" onclick="setStackPattern('column')" class="px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-krautz-500/20 border-krautz-500 text-krautz-300">
+                                    <span>🧱 Column Stack</span>
+                                    <span class="text-[10px] opacity-80">Aligned Vertical</span>
+                                </button>
+                                <button type="button" id="stackPatternBrickBtn" onclick="setStackPattern('interlock')" class="px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
+                                    <span>🔀 Interlocking</span>
+                                    <span class="text-[10px] opacity-80">Verband (Alt Layers)</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="dualStackPattern" value="column">
+                        </div>
+
                         <!-- Carton Protection & Stabilization (Sheet Carton & Hoeklatten) -->
-                        <div class="pt-3 border-t border-slate-800 space-y-2.5">
+                        <div class="pt-3 border-t border-slate-800 space-y-2">
                             <label class="block text-xs font-semibold text-amber-300">Carton Stabilization & Protection:</label>
                             <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800">
                                 <div>
@@ -151,32 +178,59 @@
                         </div>
                     </div>
 
-                    <!-- Small Inner Packages / Items -->
+                    <!-- Small Inner Packages / Items + Weight (#1) & Order Qty (#6) -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                             <div class="flex items-center space-x-2">
                                 <span class="text-krautz-400 text-lg">📦</span>
-                                <h2 class="text-sm font-semibold text-white tracking-wide">Inner Packages (Units)</h2>
+                                <h2 class="text-sm font-semibold text-white tracking-wide">Inner Packages, Weight & Order</h2>
                             </div>
-                            <span class="text-xs text-slate-400 bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700">Unit cm</span>
+                            <span class="text-xs text-slate-400 bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700">Unit Specs</span>
                         </div>
                         
                         <div class="grid grid-cols-3 gap-3">
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Length</label>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Length (cm)</label>
                                 <input type="number" id="itemL" value="30" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Width</label>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Width (cm)</label>
                                 <input type="number" id="itemW" value="20" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Height</label>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Height (cm)</label>
                                 <input type="number" id="itemH" value="25" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                         </div>
 
-                        <div class="pt-2 border-t border-slate-800 space-y-2.5">
+                        <!-- Feature #1: Weight & Payload Limits -->
+                        <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Unit Weight (kg)</label>
+                                <input type="number" id="itemWeight" value="12.5" min="0" step="0.1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Max Payload (kg)</label>
+                                <input type="number" id="maxPayload" value="1000" min="1" step="10" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
+                            </div>
+                        </div>
+
+                        <!-- Feature #6: Total Order Quantity & Partial Pallet Preview -->
+                        <div class="pt-2 border-t border-slate-800 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-semibold text-emerald-300">Total Order Quantity (Boxes):</label>
+                                <span id="orderPalletSummary" class="text-[11px] font-bold text-emerald-400">8 Pallets (7 Full + 1 Partial)</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="number" id="orderTotalQty" value="500" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-emerald-500 transition">
+                                <select id="palletViewSelector" onchange="calculateDualBoxAndVisualizer()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-200 focus:outline-none focus:border-krautz-500">
+                                    <option value="full">View: Full Pallet</option>
+                                    <option value="partial">View: Partial Remainder</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-800 space-y-2">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <label class="text-xs font-medium text-slate-300 block">Auto-Optimize 3D Rotation</label>
@@ -195,7 +249,7 @@
                     </div>
 
                     <!-- Quick Load Presets -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2.5">
                         <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Quick Load Presets</h3>
                         <div class="grid grid-cols-2 gap-2">
                             <button onclick="setPresetValues(120, 80, 100, 30, 20, 25)" class="p-2.5 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-xs font-medium text-slate-300 transition text-left">
@@ -212,20 +266,25 @@
                 <!-- Right Panel: Outputs & 3D Interactive Viewport -->
                 <div class="lg:col-span-8 space-y-5">
                     
-                    <!-- KPI Summary Cards -->
-                    <div class="grid grid-cols-3 gap-4">
+                    <!-- KPI Summary Cards (4 Cards including Gross Weight & Limiting Factor) -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
-                            <span class="text-xs font-medium text-slate-400 mb-1">MAX UNITS FIT</span>
-                            <div id="maxUnits" class="text-3xl font-extrabold text-white">64</div>
+                            <span class="text-[11px] font-medium text-slate-400 mb-1">UNITS ON PALLET</span>
+                            <div id="maxUnits" class="text-2xl font-extrabold text-white">64</div>
                             <span id="chosenOrientation" class="text-[10px] text-krautz-400 mt-1">30×20×25 cm</span>
                         </div>
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
-                            <span class="text-xs font-medium text-slate-400 mb-1">VOLUME UTILIZATION</span>
+                            <span class="text-[11px] font-medium text-slate-400 mb-1">VOLUME FILL</span>
                             <div id="volumeUtil" class="text-2xl font-extrabold text-emerald-400">100.0%</div>
                             <span id="totalStackHeight" class="text-[10px] text-amber-300 mt-1">Total Height: 115.0 cm</span>
                         </div>
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
-                            <span class="text-xs font-medium text-slate-400 mb-1">3D GRID MATRIX</span>
+                            <span class="text-[11px] font-medium text-slate-400 mb-1">GROSS WEIGHT</span>
+                            <div id="grossWeightDisplay" class="text-2xl font-extrabold text-sky-400">825 kg</div>
+                            <span id="weightLimitBadge" class="text-[10px] text-emerald-400 mt-1">Volume-Limited</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
+                            <span class="text-[11px] font-medium text-slate-400 mb-1">3D GRID MATRIX</span>
                             <div id="packingLayout" class="text-lg font-bold text-white tracking-tight">4 × 4 × 4</div>
                             <span id="dunnageSummary" class="text-[10px] text-slate-400 mt-1">Cols × Rows × Layers</span>
                         </div>
@@ -242,6 +301,9 @@
                                 </div>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="switchTab('pack-truck')" class="px-2.5 py-1.5 bg-krautz-500/20 hover:bg-krautz-500/30 text-xs text-krautz-300 font-medium rounded-lg border border-krautz-500/40 transition flex items-center gap-1">
+                                    <i data-lucide="truck" class="w-3.5 h-3.5"></i> Load into Truck 3D →
+                                </button>
                                 <button onclick="resetCamera('dual')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
                                 <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
                                     <input type="checkbox" id="dualExplode" onchange="update3DScene('dual')" class="accent-krautz-500">
@@ -278,16 +340,14 @@
                             </div>
                         </div>
 
-                        <!-- Live 3D Dimensions & Volume Status Bar (Inclusive of Pallet vs Goods Only) -->
-                        <div id="dual-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs">
-                            <!-- Dynamically populated by update3DScene('dual') -->
-                        </div>
+                        <!-- Live 3D Dimensions, Weight & Volume Status Bar -->
+                        <div id="dual-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
 
                         <!-- Footer Volume Specs -->
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Pallet & Dunnage Engine v3.6</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Pallet & Fleet Engine v4.0</span>
                         </div>
                     </div>
 
@@ -326,7 +386,7 @@
                             </div>
                         </div>
 
-                        <!-- Placement Mode Prompt for Puzzle Tab -->
+                        <!-- Placement Mode Prompt -->
                         <div class="pt-2 space-y-1.5">
                             <label class="block text-xs font-semibold text-slate-200">Base Placement Mode:</label>
                             <div class="grid grid-cols-2 gap-2">
@@ -342,7 +402,7 @@
                             <input type="hidden" id="puzzlePlacementMode" value="pallet">
                         </div>
 
-                        <!-- Carton Protection Options for Puzzle Tab -->
+                        <!-- Carton Protection Options -->
                         <div class="pt-2 space-y-1.5">
                             <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
                                 <label for="puzzleSheetCarton" class="text-xs text-slate-200 cursor-pointer">Sheet Carton Between Layers</label>
@@ -404,11 +464,8 @@
 
                 <!-- Right 3D Puzzle Viewport & Stats -->
                 <div class="lg:col-span-8 space-y-5">
-                    
-                    <!-- Puzzle KPI Cards -->
                     <div id="puzzle-results" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
 
-                    <!-- 3D Viewport for Multi-Box Puzzle -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
                             <div class="flex items-center space-x-2">
@@ -427,7 +484,6 @@
                             </div>
                         </div>
 
-                        <!-- Cross-Section Slicers -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
                             <div>
                                 <div class="flex justify-between text-[11px] mb-1">
@@ -445,7 +501,6 @@
                             </div>
                         </div>
 
-                        <!-- Three.js Canvas -->
                         <div id="canvas-puzzle" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Batch 1</span>
@@ -455,12 +510,8 @@
                             </div>
                         </div>
 
-                        <!-- Live 3D Dimensions & Volume Status Bar -->
-                        <div id="puzzle-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs">
-                            <!-- Dynamically populated by update3DScene('puzzle') -->
-                        </div>
+                        <div id="puzzle-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
                     </div>
-
                 </div>
             </div>
         </section>
@@ -498,7 +549,6 @@
                             </div>
                         </div>
 
-                        <!-- Placement Mode Prompt for Spherical Tab -->
                         <div class="pt-2 space-y-1.5">
                             <label class="block text-xs font-semibold text-slate-200">Base Placement Mode:</label>
                             <div class="grid grid-cols-2 gap-2">
@@ -514,7 +564,6 @@
                             <input type="hidden" id="spherePlacementMode" value="pallet">
                         </div>
 
-                        <!-- Carton Protection Options for Spherical Tab -->
                         <div class="pt-2 space-y-1.5">
                             <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
                                 <label for="sphereSheetCarton" class="text-xs text-slate-200 cursor-pointer">Sheet Carton Between Layers</label>
@@ -536,7 +585,6 @@
                             <input type="number" id="sphere-diam" value="20" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-semibold focus:outline-none focus:border-krautz-500">
                         </div>
 
-                        <!-- Packing Lattice Pattern Selector -->
                         <div class="pt-1 space-y-1.5">
                             <label class="block text-xs font-semibold text-slate-200">3D Packing Pattern:</label>
                             <div class="grid grid-cols-2 gap-2">
@@ -558,11 +606,8 @@
 
                 <!-- Right 3D Sphere Viewport & Stats -->
                 <div class="lg:col-span-8 space-y-5">
-                    
-                    <!-- Sphere KPI Cards -->
                     <div id="sphere-results" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
 
-                    <!-- 3D Viewport for Spherical Packing -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
                             <div class="flex items-center space-x-2">
@@ -581,7 +626,6 @@
                             </div>
                         </div>
 
-                        <!-- Cross-Section Slicers -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
                             <div>
                                 <div class="flex justify-between text-[11px] mb-1">
@@ -599,7 +643,6 @@
                             </div>
                         </div>
 
-                        <!-- Three.js Canvas -->
                         <div id="canvas-sphere" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#38bdf8] inline-block"></span> Packed Sphere</span>
@@ -608,12 +651,8 @@
                             </div>
                         </div>
 
-                        <!-- Live 3D Dimensions & Volume Status Bar -->
-                        <div id="sphere-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs">
-                            <!-- Dynamically populated by update3DScene('sphere') -->
-                        </div>
+                        <div id="sphere-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
                     </div>
-
                 </div>
             </div>
         </section>
@@ -634,7 +673,6 @@
                         </div>
                     </div>
 
-                    <!-- Optional 3D Scan File Upload -->
                     <div class="space-y-2 bg-slate-950/80 p-3 rounded-xl border border-dashed border-krautz-500/40">
                         <div class="flex items-center justify-between">
                             <label class="text-xs font-semibold text-krautz-400 flex items-center gap-1.5">
@@ -679,7 +717,6 @@
                             </div>
                         </div>
 
-                        <!-- Placement Mode Prompt for Irregular Tab -->
                         <div class="pt-2 space-y-1.5">
                             <label class="block text-xs font-semibold text-slate-200">Base Placement Mode:</label>
                             <div class="grid grid-cols-2 gap-2">
@@ -695,7 +732,6 @@
                             <input type="hidden" id="irrPlacementMode" value="pallet">
                         </div>
 
-                        <!-- Carton Protection Options for Irregular Tab -->
                         <div class="pt-2 space-y-1.5">
                             <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
                                 <label for="irrSheetCarton" class="text-xs text-slate-200 cursor-pointer">Sheet Carton Between Layers</label>
@@ -713,11 +749,8 @@
 
                 <!-- Right 3D Irregular Viewport & Stats -->
                 <div class="lg:col-span-8 space-y-5">
-                    
-                    <!-- Irregular KPI Cards -->
                     <div id="irr-results" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
 
-                    <!-- 3D Viewport for Irregular Object Scan -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
                             <div class="flex items-center space-x-2">
@@ -736,7 +769,6 @@
                             </div>
                         </div>
 
-                        <!-- Cross-Section Slicers -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
                             <div>
                                 <div class="flex justify-between text-[11px] mb-1">
@@ -754,7 +786,6 @@
                             </div>
                         </div>
 
-                        <!-- Three.js Canvas -->
                         <div id="canvas-irr" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8b5cf6] inline-block"></span> Scanned Unit</span>
@@ -763,12 +794,141 @@
                             </div>
                         </div>
 
-                        <!-- Live 3D Dimensions & Volume Status Bar -->
-                        <div id="irr-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs">
-                            <!-- Dynamically populated by update3DScene('irr') -->
+                        <div id="irr-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: TRUCK / REEFER CONTAINER 3D LOAD PLAN (FEATURE #2) -->
+        <section id="tab-pack-truck" class="tab-content space-y-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Panel: Vehicle / Reefer Specs -->
+                <div class="lg:col-span-4 space-y-4 bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl">
+                    <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
+                        <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
+                            <i data-lucide="truck" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-sm font-bold text-white">Truck / Reefer 3D Fleet Load</h2>
+                            <p class="text-[11px] text-slate-400">Loads your Tab 1 palletized unit into trailers & reefers.</p>
                         </div>
                     </div>
 
+                    <!-- Fleet Presets -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold uppercase tracking-wider text-krautz-400">1. Vehicle / Container Presets</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="setTruckPreset(1360, 248, 270, 24000)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
+                                🚛 13.6m Euro-Trailer<br><span class="text-[10px] text-slate-400">1360×248×270 cm</span>
+                            </button>
+                            <button type="button" onclick="setTruckPreset(1203, 235, 269, 26000)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
+                                ❄️ 40' HC Reefer<br><span class="text-[10px] text-slate-400">1203×235×269 cm</span>
+                            </button>
+                            <button type="button" onclick="setTruckPreset(545, 229, 226, 21000)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
+                                🧊 20' Std Reefer<br><span class="text-[10px] text-slate-400">545×229×226 cm</span>
+                            </button>
+                            <button type="button" onclick="setTruckPreset(610, 245, 240, 3500)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
+                                🚚 7.5T Box Truck<br><span class="text-[10px] text-slate-400">610×245×240 cm</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-800">
+
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-sky-400">2. Inner Trailer / Container Dimensions</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-[11px] text-slate-400">Length (X)</label>
+                                <input type="number" id="tr-l" value="1360" min="100" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Width (Z)</label>
+                                <input type="number" id="tr-w" value="248" min="100" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Height (Y)</label>
+                                <input type="number" id="tr-h" value="270" min="100" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[11px] text-slate-400 block mb-1">Max Vehicle Legal Payload (kg)</label>
+                            <input type="number" id="tr-max-kg" value="24000" min="100" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                        </div>
+
+                        <div class="pt-2 space-y-2">
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800">
+                                <div>
+                                    <label for="tr-double-stack" class="text-xs font-medium text-slate-200 block cursor-pointer">Allow Double-Stacking Pallets</label>
+                                    <span class="text-[10px] text-slate-400">Stacks 2 pallets high if height permits</span>
+                                </div>
+                                <input type="checkbox" id="tr-double-stack" checked onchange="calculateTruckLoad()" class="w-4 h-4 accent-krautz-500 cursor-pointer">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800">
+                                <div>
+                                    <label for="tr-rotate-pallets" class="text-xs font-medium text-slate-200 block cursor-pointer">Auto-Rotate Pallets (80×120 vs 120×80)</label>
+                                    <span class="text-[10px] text-slate-400">Maximizes floor pallet count</span>
+                                </div>
+                                <input type="checkbox" id="tr-rotate-pallets" checked onchange="calculateTruckLoad()" class="w-4 h-4 accent-krautz-500 cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="calculateTruckLoad()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Recalculate Fleet Load</button>
+                </div>
+
+                <!-- Right Panel: Truck KPIs & 3D Trailer Viewport -->
+                <div class="lg:col-span-8 space-y-5">
+                    <div id="truck-results" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sky-400 text-lg">🚛</span>
+                                <div>
+                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Trailer / Reefer Pallet Plan & Cross-Section</h2>
+                                    <p class="text-[11px] text-slate-400">Shows exact floor & stacked arrangement of your palletized loads</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="resetCamera('truck')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
+                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
+                                    <input type="checkbox" id="truckExplode" onchange="updateTruck3DScene()" class="accent-krautz-500">
+                                    <span>Explode</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-slate-400 font-medium">Tier Cutaway (Height)</span>
+                                    <span id="truckSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span>
+                                </div>
+                                <input type="range" id="truckSliceY" min="1" max="100" value="100" oninput="updateTruck3DScene()" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-slate-400 font-medium">Trailer Length Cut (X-Plane)</span>
+                                    <span id="truckSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span>
+                                </div>
+                                <input type="range" id="truckSliceX" min="1" max="100" value="100" oninput="updateTruck3DScene()" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+                            </div>
+                        </div>
+
+                        <div id="canvas-truck" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                            <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Palletized Cargo</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet Base</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm border border-sky-400 inline-block"></span> Trailer / Reefer Envelope</span>
+                            </div>
+                        </div>
+
+                        <div id="truck-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -781,23 +941,26 @@
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
 
-    <!-- JavaScript Application & 3D Pallet / Dunnage / Scan Engine -->
+    <!-- JavaScript Application & 3D Pallet / Dunnage / Fleet / Spec Engine -->
     <script>
         lucide.createIcons();
 
         const PALLET_HEIGHT = 15.0;      // 15 cm standard brown pallet
-        const SHEET_THICKNESS = 0.4;     // 0.4 cm corrugated sheet carton (tussenlegvel)
+        const PALLET_TARE_KG = 25.0;     // 25 kg standard EPAL pallet tare weight
+        const SHEET_THICKNESS = 0.4;     // 0.4 cm corrugated sheet carton
         const CORNER_THICKNESS = 0.45;   // 0.45 cm carton hoeklat wall thickness
         const CORNER_WING = 5.5;         // 5.5 cm L-profile wing width
 
         const viewers = {};
         const packedState = {
-            dual:   { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
+            dual:   { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [], summary: {} },
             puzzle: { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
             sphere: { container: { l: 100, w: 100, h: 100 }, items: [], sheetYs: [] },
-            irr:    { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] }
+            irr:    { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
+            truck:  { container: { l: 1360, w: 248, h: 270 }, pallets: [], summary: {} }
         };
 
+        let activeTabKey = 'dual';
         let customScanGeometry = null;
         let customScanBounds = null;
 
@@ -815,10 +978,25 @@
                 palletBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
             }
 
-            if (key === 'dual') calculateDualBoxAndVisualizer();
+            if (key === 'dual') { calculateDualBoxAndVisualizer(); calculateTruckLoad(); }
             if (key === 'puzzle') calculatePuzzle();
             if (key === 'sphere') calculateSpheres();
             if (key === 'irr') calculateIrregular();
+        }
+
+        function setStackPattern(pattern) {
+            document.getElementById('dualStackPattern').value = pattern;
+            const colBtn = document.getElementById('stackPatternColBtn');
+            const brickBtn = document.getElementById('stackPatternBrickBtn');
+
+            if (pattern === 'column') {
+                colBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-krautz-500/20 border-krautz-500 text-krautz-300";
+                brickBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            } else {
+                brickBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-krautz-500/20 border-krautz-500 text-krautz-300";
+                colBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            }
+            calculateDualBoxAndVisualizer();
         }
 
         function setSpherePattern(pattern) {
@@ -836,6 +1014,7 @@
             calculateSpheres();
         }
 
+        // Initialize Three.js Scene (with preserveDrawingBuffer: true for Spec Sheet Snapshot Export)
         function init3DViewer(key, containerElId) {
             const container = document.getElementById(containerElId);
             if (!container) return;
@@ -846,10 +1025,10 @@
             const width = container.clientWidth || 600;
             const height = container.clientHeight || 390;
 
-            const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 5000);
+            const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 10000);
             camera.position.set(170, 150, 190);
 
-            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
             renderer.setSize(width, height);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
@@ -862,11 +1041,11 @@
             scene.add(ambientLight);
 
             const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.82);
-            dirLight1.position.set(220, 320, 160);
+            dirLight1.position.set(320, 420, 260);
             scene.add(dirLight1);
 
             const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.35);
-            dirLight2.position.set(-200, 120, -160);
+            dirLight2.position.set(-250, 180, -200);
             scene.add(dirLight2);
 
             const rootGroup = new THREE.Group();
@@ -900,6 +1079,13 @@
             const v = viewers[key];
             const c = packedState[key].container;
             if (!v || !c) return;
+            if (key === 'truck') {
+                const maxDim = Math.max(c.l, c.w, c.h);
+                v.camera.position.set(maxDim * 0.95, maxDim * 0.65, maxDim * 0.95);
+                v.controls.target.set(0, c.h * 0.35, 0);
+                v.controls.update();
+                return;
+            }
             const mode = document.getElementById(`${key}PlacementMode`)?.value || 'pallet';
             const baseOffset = mode === 'pallet' ? PALLET_HEIGHT : 0;
             const totalH = c.h + baseOffset;
@@ -909,7 +1095,6 @@
             v.controls.update();
         }
 
-        // Compute exact bounding box & net volume of packed goods
         function getPackedStackBounds(items, CL, CW, CH) {
             if (!items || items.length === 0) {
                 return { minX: 0, maxX: 0, minZ: 0, maxZ: 0, maxY: 0, stackL: 0, stackW: 0, netGoodsVolL: 0 };
@@ -938,19 +1123,14 @@
             });
 
             return {
-                minX,
-                maxX,
-                minZ,
-                maxZ,
-                maxY,
+                minX, maxX, minZ, maxZ, maxY,
                 stackL: Math.max(0, maxX - minX),
                 stackW: Math.max(0, maxZ - minZ),
                 netGoodsVolL: netGoodsVolCm3 / 1000
             };
         }
 
-        // Update Live Status Bar underneath the 3D Drawing (Inclusive of Pallet vs Goods Only)
-        function updateDimensionStatusBar(key, CL, CW, CH, isPalletized, stackBounds) {
+        function updateDimensionStatusBar(key, CL, CW, CH, isPalletized, stackBounds, weightInfo = null) {
             const statusEl = document.getElementById(`${key}-dim-status`);
             if (!statusEl) return;
 
@@ -966,6 +1146,9 @@
             const netGoodsVolL = stackBounds.netGoodsVolL;
 
             const baseLabel = isPalletized ? 'Incl. 15cm Euro-Pallet' : 'Direct on Concrete Floor';
+            const weightLine = weightInfo
+                ? ` • Gross: <span class="font-semibold text-amber-300">${weightInfo.grossKg.toFixed(1)} kg</span> (Net: ${weightInfo.netKg.toFixed(1)} kg)`
+                : '';
 
             statusEl.innerHTML = `
                 <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 flex flex-col justify-between space-y-1">
@@ -980,8 +1163,8 @@
                         <span class="text-[11px] font-normal text-slate-400">(L × W × H)</span>
                     </div>
                     <div class="text-[11px] text-slate-300">
-                        Gross Envelope Volume: <span class="font-semibold text-amber-300">${totalEnvelopeVolL.toFixed(1)} L</span>
-                        <span class="text-slate-500">(${totalEnvelopeVolM3.toFixed(3)} m³)</span>
+                        Gross Envelope: <span class="font-semibold text-amber-300">${totalEnvelopeVolL.toFixed(1)} L</span>
+                        <span class="text-slate-500">(${totalEnvelopeVolM3.toFixed(3)} m³)</span>${weightLine}
                     </div>
                 </div>
 
@@ -1005,7 +1188,6 @@
             `;
         }
 
-        // Grey Concrete Warehouse Floor
         function buildConcreteFloorMesh(L, W) {
             const floorGroup = new THREE.Group();
             const slabSize = Math.max(L, W) * 2.6;
@@ -1028,7 +1210,6 @@
             return floorGroup;
         }
 
-        // 15.0 cm Brown Wooden Pallet
         function buildBrownPalletMesh(L, W, maxXCut) {
             const palletGroup = new THREE.Group();
             const brownWoodTopMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
@@ -1082,7 +1263,6 @@
             return palletGroup;
         }
 
-        // Build 4 Vertical Carton Hoeklatten snapped flush onto the 4 outer corners of the packed stack
         function buildCornerGuardsMesh(L, W, bounds, baseOffsetY, maxYCut, maxXCut, explodeFactor) {
             const group = new THREE.Group();
             const kraftMat = new THREE.MeshLambertMaterial({ color: 0xd4a373 });
@@ -1132,7 +1312,6 @@
             return group;
         }
 
-        // Build Horizontal Sheet Carton Interlayers sized cleanly to the packed stack footprint
         function buildSheetCartonsMesh(L, W, bounds, sheetYs, baseOffsetY, maxYCut, maxXCut, explodeFactor) {
             const group = new THREE.Group();
             const sheetMat = new THREE.MeshLambertMaterial({ color: 0xd4a373 });
@@ -1201,15 +1380,12 @@
             const maxXCut = (sliceXPercent / 100) * CL;
             const explodeFactor = explode ? 1.18 : 1.0;
 
-            // 1. Concrete Floor
             v.rootGroup.add(buildConcreteFloorMesh(CL, CW));
 
-            // 2. Brown 15 cm Pallet
             if (isPalletized) {
                 v.rootGroup.add(buildBrownPalletMesh(CL, CW, maxXCut));
             }
 
-            // 3. Outer Load Envelope
             const outerGeo = new THREE.BoxGeometry(CL, CH, CW);
             const outerMat = new THREE.MeshPhongMaterial({
                 color: 0x38bdf8,
@@ -1229,23 +1405,19 @@
             v.rootGroup.add(wireframe);
 
             const stackBounds = getPackedStackBounds(data.items, CL, CW, CH);
+            updateDimensionStatusBar(key, CL, CW, CH, isPalletized, stackBounds, data.weightInfo || null);
 
-            // Update the live dimension & volume bar directly underneath the 3D viewport
-            updateDimensionStatusBar(key, CL, CW, CH, isPalletized, stackBounds);
-
-            // 4. Carton Hoeklatten snapped tightly to the 4 corners of the actual packed stack
             if (useCorners && data.items.length > 0) {
                 v.rootGroup.add(buildCornerGuardsMesh(CL, CW, stackBounds, baseOffsetY, maxYCut, maxXCut, explodeFactor));
             }
 
-            // 5. Sheet Carton Interlayers matched to the packed stack footprint
             if (useSheets && data.sheetYs && data.sheetYs.length > 0 && data.items.length > 0) {
                 v.rootGroup.add(buildSheetCartonsMesh(CL, CW, stackBounds, data.sheetYs, baseOffsetY, maxYCut, maxXCut, explodeFactor));
             }
 
-            // 6. Packed Items (Boxes, Spheres, or Irregular Scanned Meshes)
             const itemsToRender = data.items.slice(0, 1500);
             const matBatch1 = new THREE.MeshLambertMaterial({ color: 0x0077ee });
+            const matBatch1Alt = new THREE.MeshLambertMaterial({ color: 0x0284c7 });
             const matBatch2 = new THREE.MeshLambertMaterial({ color: 0x10b981 });
             const matSphere = new THREE.MeshPhongMaterial({
                 color: 0x0ea5e9,
@@ -1317,7 +1489,8 @@
                         Math.max(0.5, item.w - gap)
                     );
 
-                    const mesh = new THREE.Mesh(geo, item.type === 2 ? matBatch2 : matBatch1);
+                    const mat = item.type === 2 ? matBatch2 : (item.altLayer ? matBatch1Alt : matBatch1);
+                    const mesh = new THREE.Mesh(geo, mat);
                     mesh.position.set(
                         (item.x + item.l / 2 - CL / 2) * explodeFactor,
                         baseOffsetY + (item.y + item.h / 2) * explodeFactor,
@@ -1330,7 +1503,6 @@
                 }
             });
 
-            // 7. Visual Cutaway Plane when slicing < 100%
             if (sliceXPercent < 100) {
                 const totalHeight = CH + baseOffsetY + 6;
                 const planeGeo = new THREE.PlaneGeometry(CW + 8, totalHeight);
@@ -1360,12 +1532,15 @@
             activeBtn.classList.remove('text-slate-400');
             lucide.createIcons();
 
+            activeTabKey = tabId.replace('pack-', '').replace('irregular', 'irr');
+
             setTimeout(() => {
                 handleResize();
                 if (tabId === 'pack-dual') resetCamera('dual');
                 if (tabId === 'pack-puzzle') resetCamera('puzzle');
                 if (tabId === 'pack-sphere') resetCamera('sphere');
                 if (tabId === 'pack-irregular') resetCamera('irr');
+                if (tabId === 'pack-truck') { calculateTruckLoad(); resetCamera('truck'); }
             }, 30);
         }
 
@@ -1387,7 +1562,7 @@
             return unique;
         }
 
-        // 1. Dual Box & 3D Visualizer Logic
+        // 1. Dual Box & 3D Visualizer Logic (with Weight Cap #1, Interlocking #4 & Order Qty #6)
         function calculateDualBoxAndVisualizer() {
             const CL = parseFloat(document.getElementById('containerL').value) || 1;
             const CW = parseFloat(document.getElementById('containerW').value) || 1;
@@ -1397,9 +1572,15 @@
             let IW = parseFloat(document.getElementById('itemW').value) || 1;
             let IH = parseFloat(document.getElementById('itemH').value) || 1;
 
+            const unitWeightKg = Math.max(0, parseFloat(document.getElementById('itemWeight').value) || 0);
+            const maxPayloadKg = Math.max(1, parseFloat(document.getElementById('maxPayload').value) || 1000);
+            const orderTotalQty = Math.max(1, parseInt(document.getElementById('orderTotalQty').value) || 1);
+            const palletViewMode = document.getElementById('palletViewSelector').value;
+
             const isSqueezeActive = document.getElementById('squeezeMode').checked;
             const autoRotate = document.getElementById('autoRotateDual').checked;
             const isPalletized = document.getElementById('dualPlacementMode').value === 'pallet';
+            const stackPattern = document.getElementById('dualStackPattern').value;
             const useSheets = document.getElementById('dualSheetCarton').checked;
             const useCorners = document.getElementById('dualCornerGuards').checked;
 
@@ -1422,56 +1603,152 @@
                 }
             });
 
-            const unitVol = (IL * IW * IH) / 1000;
-            const masterVol = (CL * CW * CH) / 1000;
-            const utilizedVol = best.total * (IL * IW * IH);
-            const efficiency = Math.min(100, ((utilizedVol / (CL * CW * CH)) * 100)).toFixed(1);
-            const totalHeight = isPalletized ? (CH + PALLET_HEIGHT) : CH;
+            // Feature #1: Enforce Max Payload Weight Cap
+            const tareKg = isPalletized ? PALLET_TARE_KG : 0;
+            const maxNetCargoKg = Math.max(0, maxPayloadKg - tareKg);
+            const weightCappedUnits = unitWeightKg > 0 ? Math.floor(maxNetCargoKg / unitWeightKg) : best.total;
+            const isWeightLimited = unitWeightKg > 0 && weightCappedUnits < best.total;
+            const maxUnitsPerPallet = Math.max(0, Math.min(best.total, weightCappedUnits));
 
-            document.getElementById('maxUnits').innerText = best.total;
-            document.getElementById('chosenOrientation').innerText = `Placed as ${best.dim.l.toFixed(1)}×${best.dim.w.toFixed(1)}×${best.dim.h.toFixed(1)} cm`;
-            document.getElementById('volumeUtil').innerText = efficiency + '%';
-            document.getElementById('totalStackHeight').innerText = isPalletized
-                ? `Total Palletized Height: ${totalHeight.toFixed(1)} cm`
-                : `Floor Stack Height: ${totalHeight.toFixed(1)} cm`;
-            document.getElementById('packingLayout').innerText = `${best.cols} × ${best.rows} × ${best.layers}`;
+            // Feature #6: Order Quantity & Partial Pallet Calculation
+            const safeCap = Math.max(1, maxUnitsPerPallet);
+            const fullPallets = Math.floor(orderTotalQty / safeCap);
+            const remainderUnits = orderTotalQty % safeCap;
+            const totalPalletsNeeded = fullPallets + (remainderUnits > 0 ? 1 : 0);
 
-            const sheetCount = (useSheets && best.layers > 1) ? (best.layers - 1) : 0;
-            const dunnageNotes = [];
-            if (sheetCount > 0) dunnageNotes.push(`${sheetCount} sheets`);
-            if (useCorners) dunnageNotes.push(`4 hoeklatten`);
-            document.getElementById('dunnageSummary').innerText = dunnageNotes.length > 0
-                ? `+ ${dunnageNotes.join(' & ')}`
-                : 'Cols × Rows × Layers';
+            const orderSummaryEl = document.getElementById('orderPalletSummary');
+            if (orderSummaryEl) {
+                orderSummaryEl.innerText = remainderUnits > 0
+                    ? `${totalPalletsNeeded} Pallets (${fullPallets} Full + 1 Partial: ${remainderUnits} u)`
+                    : `${totalPalletsNeeded} Full Pallet${totalPalletsNeeded > 1 ? 's' : ''}`;
+            }
 
-            document.getElementById('effectiveVolume').innerText = `Effective Cargo Volume: ${masterVol.toFixed(1)} L`;
-            document.getElementById('unitVolume').innerText = `Unit Volume: ${unitVol.toFixed(2)} L`;
+            // Decide how many units to render on the active 3D pallet (Full vs Partial Remainder)
+            const unitsToPack = (palletViewMode === 'partial' && remainderUnits > 0)
+                ? remainderUnits
+                : maxUnitsPerPallet;
 
+            // Build 3D Coordinates (supporting Column & Interlocking Brick-Stacking)
             const items = [];
             const sheetYs = [];
-            for (let y = 0; y < best.layers; y++) {
+            let packedCount = 0;
+
+            // Check if 90-degree rotated layer fits on odd layers for interlocking
+            const rotCols = Math.floor(CL / best.dim.w);
+            const rotRows = Math.floor(CW / best.dim.l);
+            const canRotateAltLayer = (stackPattern === 'interlock') && (rotCols * rotRows >= best.cols * best.rows * 0.85) && (rotCols > 0 && rotRows > 0);
+
+            for (let y = 0; y < best.layers && packedCount < unitsToPack; y++) {
                 const layerY = y * (best.dim.h + (useSheets ? SHEET_THICKNESS : 0));
                 if (useSheets && y > 0) {
                     sheetYs.push(layerY - SHEET_THICKNESS);
                 }
-                for (let z = 0; z < best.rows; z++) {
-                    for (let x = 0; x < best.cols; x++) {
-                        items.push({
-                            shape: 'box',
-                            x: x * best.dim.l,
-                            y: layerY,
-                            z: z * best.dim.w,
-                            l: best.dim.l,
-                            w: best.dim.w,
-                            h: best.dim.h,
-                            unitVolCm3: IL * IW * IH,
-                            type: 1
-                        });
+
+                const isOddLayer = (y % 2 === 1);
+                if (stackPattern === 'interlock' && isOddLayer && canRotateAltLayer) {
+                    // Rotated 90° interlocking layer
+                    for (let z = 0; z < rotRows && packedCount < unitsToPack; z++) {
+                        for (let x = 0; x < rotCols && packedCount < unitsToPack; x++) {
+                            items.push({
+                                shape: 'box',
+                                x: x * best.dim.w,
+                                y: layerY,
+                                z: z * best.dim.l,
+                                l: best.dim.w,
+                                w: best.dim.l,
+                                h: best.dim.h,
+                                unitVolCm3: IL * IW * IH,
+                                altLayer: true,
+                                type: 1
+                            });
+                            packedCount++;
+                        }
+                    }
+                } else {
+                    // Standard layer (with slight brick shift on odd layers if interlocking)
+                    const slackX = CL - best.cols * best.dim.l;
+                    const shiftX = (stackPattern === 'interlock' && isOddLayer) ? slackX : 0;
+
+                    for (let z = 0; z < best.rows && packedCount < unitsToPack; z++) {
+                        for (let x = 0; x < best.cols && packedCount < unitsToPack; x++) {
+                            items.push({
+                                shape: 'box',
+                                x: shiftX + x * best.dim.l,
+                                y: layerY,
+                                z: z * best.dim.w,
+                                l: best.dim.l,
+                                w: best.dim.w,
+                                h: best.dim.h,
+                                unitVolCm3: IL * IW * IH,
+                                altLayer: isOddLayer && stackPattern === 'interlock',
+                                type: 1
+                            });
+                            packedCount++;
+                        }
                     }
                 }
             }
 
-            packedState.dual = { container: { l: CL, w: CW, h: CH }, items, sheetYs };
+            const dunnageKg = (useSheets ? sheetYs.length * 0.45 : 0) + (useCorners ? 1.2 : 0);
+            const netCargoKg = items.length * unitWeightKg;
+            const grossPalletKg = netCargoKg + tareKg + dunnageKg;
+
+            const unitVol = (IL * IW * IH) / 1000;
+            const masterVol = (CL * CW * CH) / 1000;
+            const utilizedVol = items.length * (IL * IW * IH);
+            const efficiency = Math.min(100, ((utilizedVol / (CL * CW * CH)) * 100)).toFixed(1);
+            const totalHeight = isPalletized ? (CH + PALLET_HEIGHT) : CH;
+
+            document.getElementById('maxUnits').innerText = items.length;
+            document.getElementById('chosenOrientation').innerText = `Placed as ${best.dim.l.toFixed(1)}×${best.dim.w.toFixed(1)}×${best.dim.h.toFixed(1)} cm`;
+            document.getElementById('volumeUtil').innerText = efficiency + '%';
+            document.getElementById('totalStackHeight').innerText = isPalletized
+                ? `Total Height: ${totalHeight.toFixed(1)} cm (Incl. Pallet)`
+                : `Floor Stack Height: ${totalHeight.toFixed(1)} cm`;
+
+            document.getElementById('grossWeightDisplay').innerText = `${grossPalletKg.toFixed(0)} kg`;
+            const badgeEl = document.getElementById('weightLimitBadge');
+            if (isWeightLimited) {
+                badgeEl.innerText = `⚠️ Weight-Limited (Max ${maxPayloadKg}kg)`;
+                badgeEl.className = "text-[10px] text-amber-400 font-semibold mt-1";
+            } else {
+                badgeEl.innerText = `Volume-Limited (${((grossPalletKg / maxPayloadKg) * 100).toFixed(0)}% Cap)`;
+                badgeEl.className = "text-[10px] text-emerald-400 mt-1";
+            }
+
+            document.getElementById('packingLayout').innerText = `${best.cols} × ${best.rows} × ${best.layers}`;
+            const dunnageNotes = [];
+            if (useSheets && sheetYs.length > 0) dunnageNotes.push(`${sheetYs.length} sheets`);
+            if (useCorners) dunnageNotes.push(`4 hoeklatten`);
+            document.getElementById('dunnageSummary').innerText = dunnageNotes.length > 0
+                ? `+ ${dunnageNotes.join(' & ')}`
+                : (stackPattern === 'interlock' ? 'Interlocking Pattern' : 'Cols × Rows × Layers');
+
+            document.getElementById('effectiveVolume').innerText = `Effective Cargo Volume: ${masterVol.toFixed(1)} L`;
+            document.getElementById('unitVolume').innerText = `Unit Volume: ${unitVol.toFixed(2)} L`;
+
+            packedState.dual = {
+                container: { l: CL, w: CW, h: CH },
+                items,
+                sheetYs,
+                weightInfo: { netKg: netCargoKg, grossKg: grossPalletKg },
+                summary: {
+                    CL, CW, CH, totalHeight, isPalletized,
+                    IL, IW, IH, unitWeightKg, maxPayloadKg,
+                    unitsOnPallet: items.length,
+                    efficiency,
+                    grossPalletKg,
+                    netCargoKg,
+                    isWeightLimited,
+                    stackPattern,
+                    sheetCount: sheetYs.length,
+                    useCorners,
+                    orderTotalQty,
+                    totalPalletsNeeded,
+                    fullPallets,
+                    remainderUnits
+                }
+            };
             update3DScene('dual');
         }
 
@@ -1909,11 +2186,278 @@
             update3DScene('irr');
         }
 
+        // 5. Truck / Reefer Container 3D Load Plan (Feature #2)
+        function setTruckPreset(l, w, h, maxKg) {
+            document.getElementById('tr-l').value = l;
+            document.getElementById('tr-w').value = w;
+            document.getElementById('tr-h').value = h;
+            document.getElementById('tr-max-kg').value = maxKg;
+            calculateTruckLoad();
+            resetCamera('truck');
+        }
+
+        function calculateTruckLoad() {
+            const TL = parseFloat(document.getElementById('tr-l').value) || 1360;
+            const TW = parseFloat(document.getElementById('tr-w').value) || 248;
+            const TH = parseFloat(document.getElementById('tr-h').value) || 270;
+            const maxTruckKg = Math.max(100, parseFloat(document.getElementById('tr-max-kg').value) || 24000);
+            const allowDoubleStack = document.getElementById('tr-double-stack').checked;
+            const allowRotate = document.getElementById('tr-rotate-pallets').checked;
+
+            const dualSum = packedState.dual.summary || {};
+            const pL = dualSum.CL || 120;
+            const pW = dualSum.CW || 80;
+            const pH = dualSum.totalHeight || 115;
+            const isPalletized = dualSum.isPalletized !== false;
+            const singlePalletGrossKg = dualSum.grossPalletKg || 825;
+            const unitsPerPallet = dualSum.unitsOnPallet || 64;
+
+            const candidates = [{ l: pL, w: pW }];
+            if (allowRotate && pL !== pW) candidates.push({ l: pW, w: pL });
+
+            let bestLayout = { total: 0, cols: 0, rows: 0, tiers: 0, dim: candidates[0] };
+            candidates.forEach(c => {
+                const cols = Math.floor(TL / c.l);
+                const rows = Math.floor(TW / c.w);
+                const maxTiers = allowDoubleStack ? Math.floor(TH / pH) : Math.min(1, Math.floor(TH / pH));
+                const total = cols * rows * maxTiers;
+                if (total > bestLayout.total) {
+                    bestLayout = { total, cols, rows, tiers: maxTiers, dim: c };
+                }
+            });
+
+            // Cap by legal vehicle payload weight
+            const weightCappedPallets = singlePalletGrossKg > 0 ? Math.floor(maxTruckKg / singlePalletGrossKg) : bestLayout.total;
+            const fittedPallets = Math.max(0, Math.min(bestLayout.total, weightCappedPallets));
+            const totalUnitsInTruck = fittedPallets * unitsPerPallet;
+            const totalFleetKg = fittedPallets * singlePalletGrossKg;
+            const floorFillPct = ((Math.min(fittedPallets, bestLayout.cols * bestLayout.rows) * bestLayout.dim.l * bestLayout.dim.w) / (TL * TW) * 100).toFixed(1);
+
+            const pallets = [];
+            let count = 0;
+            for (let y = 0; y < bestLayout.tiers && count < fittedPallets; y++) {
+                for (let x = 0; x < bestLayout.cols && count < fittedPallets; x++) {
+                    for (let z = 0; z < bestLayout.rows && count < fittedPallets; z++) {
+                        pallets.push({
+                            x: x * bestLayout.dim.l,
+                            y: y * pH,
+                            z: z * bestLayout.dim.w,
+                            l: bestLayout.dim.l,
+                            w: bestLayout.dim.w,
+                            h: pH,
+                            isPalletized
+                        });
+                        count++;
+                    }
+                }
+            }
+
+            const resultsEl = document.getElementById('truck-results');
+            if (resultsEl) {
+                resultsEl.innerHTML = `
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Pallets in Vehicle</span>
+                        <span class="text-xl font-bold text-krautz-400">${fittedPallets} pallets</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Total Boxes Loaded</span>
+                        <span class="text-xl font-bold text-emerald-400">${totalUnitsInTruck.toLocaleString()} units</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Total Fleet Weight</span>
+                        <span class="text-xl font-bold text-amber-400">${totalFleetKg.toLocaleString()} kg</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Floor / Tier Matrix</span>
+                        <span class="text-lg font-bold text-white">${bestLayout.cols}×${bestLayout.rows} (${bestLayout.tiers} tier${bestLayout.tiers > 1 ? 's' : ''})</span>
+                    </div>
+                `;
+            }
+
+            const statusEl = document.getElementById('truck-dim-status');
+            if (statusEl) {
+                statusEl.innerHTML = `
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 space-y-1">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-sky-400 block">🚛 Vehicle Inner Envelope</span>
+                        <div class="text-sm font-bold text-white">${TL} × ${TW} × ${TH} cm <span class="text-[11px] font-normal text-slate-400">(${((TL * TW * TH) / 1000000).toFixed(2)} m³)</span></div>
+                        <div class="text-[11px] text-slate-300">Floor Space Utilization: <span class="text-emerald-400 font-semibold">${floorFillPct}%</span> • Payload Cap: ${maxTruckKg.toLocaleString()} kg</div>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 space-y-1">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-400 block">🪵 Unit Pallet Footprint Used</span>
+                        <div class="text-sm font-bold text-white">${bestLayout.dim.l} × ${bestLayout.dim.w} × ${pH.toFixed(1)} cm <span class="text-[11px] font-normal text-slate-400">(${singlePalletGrossKg.toFixed(1)} kg / pallet)</span></div>
+                        <div class="text-[11px] text-slate-300">Trucks Needed for ${dualSum.orderTotalQty || 500}-Box Order: <span class="text-krautz-400 font-bold">${Math.max(1, Math.ceil((dualSum.totalPalletsNeeded || 1) / Math.max(1, fittedPallets)))} vehicle(s)</span></div>
+                    </div>
+                `;
+            }
+
+            packedState.truck = { container: { l: TL, w: TW, h: TH }, pallets };
+            updateTruck3DScene();
+        }
+
+        function updateTruck3DScene() {
+            const v = viewers['truck'];
+            const data = packedState['truck'];
+            if (!v || !data) return;
+
+            while (v.rootGroup.children.length > 0) {
+                v.rootGroup.remove(v.rootGroup.children[0]);
+            }
+
+            const { l: TL, w: TW, h: TH } = data.container;
+            const sliceYPercent = parseFloat(document.getElementById('truckSliceY').value) || 100;
+            const sliceXPercent = parseFloat(document.getElementById('truckSliceX').value) || 100;
+            const explode = document.getElementById('truckExplode').checked;
+
+            document.getElementById('truckSliceYLabel').innerText = sliceYPercent === 100 ? '100% (Full)' : `${sliceYPercent}% Cut`;
+            document.getElementById('truckSliceXLabel').innerText = sliceXPercent === 100 ? '100% (Full)' : `${sliceXPercent}% Cut`;
+
+            const maxYCut = (sliceYPercent / 100) * TH;
+            const maxXCut = (sliceXPercent / 100) * TL;
+            const explodeFactor = explode ? 1.12 : 1.0;
+
+            // Concrete loading bay floor
+            v.rootGroup.add(buildConcreteFloorMesh(TL, TW));
+
+            // Translucent Trailer / Reefer Container Wireframe
+            const trailerGeo = new THREE.BoxGeometry(TL, TH, TW);
+            const trailerMat = new THREE.MeshPhongMaterial({
+                color: 0x38bdf8,
+                transparent: true,
+                opacity: 0.05,
+                depthWrite: false,
+                side: THREE.DoubleSide
+            });
+            const trailerMesh = new THREE.Mesh(trailerGeo, trailerMat);
+            trailerMesh.position.set(0, TH / 2, 0);
+            v.rootGroup.add(trailerMesh);
+
+            const edgesGeo = new THREE.EdgesGeometry(trailerGeo);
+            const wireframe = new THREE.LineSegments(edgesGeo, new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.75 }));
+            wireframe.position.set(0, TH / 2, 0);
+            v.rootGroup.add(wireframe);
+
+            const palletBaseMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+            const cargoMat = new THREE.MeshLambertMaterial({ color: 0x0077ee });
+            const cargoEdgeMat = new THREE.LineBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.65 });
+
+            data.pallets.forEach(p => {
+                if (p.y + p.h * 0.2 > maxYCut) return;
+                if (p.x + p.l * 0.2 > maxXCut) return;
+
+                const gap = 1.5;
+                const baseH = p.isPalletized ? Math.min(PALLET_HEIGHT, p.h * 0.35) : 0;
+                const cargoH = Math.max(2, p.h - baseH);
+
+                const cx = (p.x + p.l / 2 - TL / 2) * explodeFactor;
+                const cz = (p.z + p.w / 2 - TW / 2) * explodeFactor;
+
+                // Brown wooden pallet base
+                if (baseH > 0) {
+                    const bGeo = new THREE.BoxGeometry(p.l - gap, baseH, p.w - gap);
+                    const bMesh = new THREE.Mesh(bGeo, palletBaseMat);
+                    bMesh.position.set(cx, (p.y + baseH / 2) * explodeFactor, cz);
+                    v.rootGroup.add(bMesh);
+                }
+
+                // Blue cargo load block on top of pallet
+                const cGeo = new THREE.BoxGeometry(p.l - gap, cargoH - 0.5, p.w - gap);
+                const cMesh = new THREE.Mesh(cGeo, cargoMat);
+                cMesh.position.set(cx, (p.y + baseH + cargoH / 2) * explodeFactor, cz);
+                cMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(cGeo), cargoEdgeMat));
+                v.rootGroup.add(cMesh);
+            });
+        }
+
+        // Feature #5: Export Branded Packing Spec Sheet + Live 3D Snapshot
+        function exportSpecSheet() {
+            const viewerKey = viewers[activeTabKey] ? activeTabKey : 'dual';
+            const v = viewers[viewerKey];
+            let snapshotUrl = '';
+            if (v && v.renderer) {
+                v.renderer.render(v.scene, v.camera);
+                snapshotUrl = v.renderer.domElement.toDataURL('image/png');
+            }
+
+            const s = packedState.dual.summary || {};
+            const now = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+            const printWin = window.open('', '_blank', 'width=900,height=780');
+            if (!printWin) {
+                alert('Please allow pop-ups in your browser to open the printable Spec Sheet.');
+                return;
+            }
+
+            printWin.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Krautz-Temax 3D Packing Specification Sheet</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Arial, sans-serif; color: #0f172a; margin: 32px; line-height: 1.45; }
+                        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #0066cc; padding-bottom: 14px; margin-bottom: 22px; }
+                        .brand { font-size: 22px; font-weight: 800; color: #004c99; letter-spacing: -0.5px; }
+                        .sub { font-size: 12px; color: #475569; }
+                        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+                        .card { border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; background: #f8fafc; }
+                        .card h3 { margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; color: #0066cc; letter-spacing: 0.5px; }
+                        .row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px dashed #e2e8f0; }
+                        .row:last-child { border-bottom: none; }
+                        .val { font-weight: 700; }
+                        .preview { text-align: center; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px; background: #060b16; margin-bottom: 20px; }
+                        .preview img { max-width: 100%; max-height: 320px; border-radius: 8px; }
+                        .footer { font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; }
+                        @media print { .no-print { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div>
+                            <div class="brand">KRAUTZ-TEMAX — 3D Pallet & Cold-Chain Spec Sheet</div>
+                            <div class="sub">Thermal Packaging, Spatial Optimization & Fleet Loading Report</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:12px;font-weight:700;">Date: ${now}</div>
+                            <button class="no-print" onclick="window.print()" style="margin-top:6px;padding:6px 14px;background:#0066cc;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Print / Save as PDF</button>
+                        </div>
+                    </div>
+
+                    ${snapshotUrl ? `<div class="preview"><img src="${snapshotUrl}" alt="3D Load Render"></div>` : ''}
+
+                    <div class="grid">
+                        <div class="card">
+                            <h3>1. Total Load & Pallet Dimensions</h3>
+                            <div class="row"><span>Base Mode:</span><span class="val">${s.isPalletized ? 'Palletized (+15 cm Brown Pallet)' : 'Direct on Concrete Floor'}</span></div>
+                            <div class="row"><span>Total Load (L × W × H):</span><span class="val">${s.CL} × ${s.CW} × ${s.totalHeight?.toFixed(1)} cm</span></div>
+                            <div class="row"><span>Goods Only (L × W × H):</span><span class="val">${s.CL} × ${s.CW} × ${s.CH} cm</span></div>
+                            <div class="row"><span>Stacking Pattern:</span><span class="val">${s.stackPattern === 'interlock' ? 'Interlocking (Verband)' : 'Column Stack'}</span></div>
+                            <div class="row"><span>Carton Protection:</span><span class="val">${s.sheetCount || 0} Sheets • ${s.useCorners ? '4 Hoeklatten' : 'No Hoeklatten'}</span></div>
+                        </div>
+
+                        <div class="card">
+                            <h3>2. Unit Capacity, Weight & Order Totals</h3>
+                            <div class="row"><span>Inner Unit Dimensions:</span><span class="val">${s.IL} × ${s.IW} × ${s.IH} cm</span></div>
+                            <div class="row"><span>Units per Pallet:</span><span class="val">${s.unitsOnPallet} units (${s.efficiency}% fill)</span></div>
+                            <div class="row"><span>Net / Gross Pallet Weight:</span><span class="val">${s.netCargoKg?.toFixed(1)} kg / ${s.grossPalletKg?.toFixed(1)} kg</span></div>
+                            <div class="row"><span>Limiting Factor:</span><span class="val">${s.isWeightLimited ? 'Weight-Limited' : 'Volume-Limited'}</span></div>
+                            <div class="row"><span>Order (${s.orderTotalQty} units):</span><span class="val">${s.totalPalletsNeeded} Pallets (${s.fullPallets} Full + ${s.remainderUnits} rem.)</span></div>
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        Generated by Krautz-Temax Pro Logistics 3D Engine • https://krautz.org/
+                    </div>
+                </body>
+                </html>
+            `);
+            printWin.document.close();
+        }
+
         function calculateAll() {
             calculateDualBoxAndVisualizer();
             calculatePuzzle();
             calculateSpheres();
             calculateIrregular();
+            calculateTruckLoad();
         }
 
         window.onload = function () {
@@ -1921,11 +2465,13 @@
             init3DViewer('puzzle', 'canvas-puzzle');
             init3DViewer('sphere', 'canvas-sphere');
             init3DViewer('irr', 'canvas-irr');
+            init3DViewer('truck', 'canvas-truck');
             calculateAll();
             resetCamera('dual');
             resetCamera('puzzle');
             resetCamera('sphere');
             resetCamera('irr');
+            resetCamera('truck');
         };
     </script>
 </body>
