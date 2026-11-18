@@ -4,7 +4,7 @@
     <link rel="icon" type="image/png" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Krautz-Temax Pro Logistics - Thermal Packaging & 3D Bin Packing Calculator</title>
+    <title>Krautz-Temax Pro Logistics - 3D Bin Packing & Cross-Section Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -15,6 +15,7 @@
                         krautz: {
                             50: '#e6f2ff',
                             100: '#b3d9ff',
+                            400: '#38bdf8',
                             500: '#0066cc',
                             600: '#004c99',
                             750: '#002244',
@@ -27,6 +28,9 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Three.js & OrbitControls for 3D Perspective & Cross-Section Rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #0b1120; color: #f8fafc; }
         .glass-panel {
@@ -37,6 +41,7 @@
         .glow-blue {
             box-shadow: 0 0 25px -5px rgba(0, 102, 204, 0.4);
         }
+        canvas { display: block; outline: none; }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-krautz-500 selection:text-white">
@@ -50,15 +55,19 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                        KRAUTZ-TEMAX <span class="text-xs px-2 py-0.5 rounded bg-krautz-500/20 text-krautz-400 border border-krautz-500/30">Pro Logistics</span>
+                        KRAUTZ-TEMAX <span class="text-xs px-2 py-0.5 rounded bg-krautz-500/20 text-krautz-400 border border-krautz-500/30">Pro Logistics 3D</span>
                     </h1>
-                    <p class="text-xs text-slate-400">Advanced Thermal Packaging & Multi-Dimensional Packing Calculator</p>
+                    <p class="text-xs text-slate-400">Thermal Packaging, Spatial Bin-Packing & 3D Cross-Section Visualizer</p>
                 </div>
             </div>
             <!-- Tab Navigation -->
             <nav class="flex flex-wrap gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
-                <button onclick="switchTab('pack-dual')" id="btn-pack-dual" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all bg-krautz-500 text-white shadow">Dual Box & Visualizer</button>
-                <button onclick="switchTab('pack-puzzle')" id="btn-pack-puzzle" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5"><i data-lucide="boxes" class="w-3.5 h-3.5"></i> Volume Puzzle</button>
+                <button onclick="switchTab('pack-dual')" id="btn-pack-dual" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all bg-krautz-500 text-white shadow flex items-center gap-1.5">
+                    <i data-lucide="box" class="w-3.5 h-3.5"></i> Dual Box & 3D View
+                </button>
+                <button onclick="switchTab('pack-puzzle')" id="btn-pack-puzzle" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+                    <i data-lucide="boxes" class="w-3.5 h-3.5"></i> 3D Volume Puzzle
+                </button>
                 <button onclick="switchTab('pack-sphere')" id="btn-pack-sphere" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white">Spherical Density</button>
                 <button onclick="switchTab('pack-irregular')" id="btn-pack-irregular" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white">Irregular Scan</button>
             </nav>
@@ -68,34 +77,34 @@
     <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full space-y-8">
 
-        <!-- TAB 1: DUAL BOX FILL CALCULATOR & LAYER VISUALIZER -->
+        <!-- TAB 1: DUAL BOX FILL CALCULATOR & 3D VISUALIZER -->
         <section id="tab-pack-dual" class="tab-content space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
                 <!-- Left Panel: Inputs -->
-                <div class="lg:col-span-5 space-y-6">
+                <div class="lg:col-span-4 space-y-5">
                     
                     <!-- Master Container Box -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                             <div class="flex items-center space-x-2">
                                 <span class="text-krautz-400 text-lg">🟦</span>
-                                <h2 class="text-sm font-semibold text-white tracking-wide">Master Container (Outer Box)</h2>
+                                <h2 class="text-sm font-semibold text-white tracking-wide">Master Container (Outer)</h2>
                             </div>
-                            <span class="text-xs text-slate-400 bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700">Inner Dimensions</span>
+                            <span class="text-xs text-slate-400 bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700">Inner cm</span>
                         </div>
                         
                         <div class="grid grid-cols-3 gap-3">
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Length (cm)</label>
-                                <input type="number" id="containerL" value="100" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Length (X)</label>
+                                <input type="number" id="containerL" value="120" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Width (cm)</label>
-                                <input type="number" id="containerW" value="100" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Width (Z)</label>
+                                <input type="number" id="containerW" value="80" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Height (cm)</label>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Height (Y)</label>
                                 <input type="number" id="containerH" value="100" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                         </div>
@@ -106,33 +115,41 @@
                         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                             <div class="flex items-center space-x-2">
                                 <span class="text-krautz-400 text-lg">📦</span>
-                                <h2 class="text-sm font-semibold text-white tracking-wide">Small Inner Packages / Items</h2>
+                                <h2 class="text-sm font-semibold text-white tracking-wide">Inner Packages (Units)</h2>
                             </div>
-                            <span class="text-xs text-slate-400 bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700">Product Units</span>
+                            <span class="text-xs text-slate-400 bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700">Unit cm</span>
                         </div>
                         
                         <div class="grid grid-cols-3 gap-3">
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Length (cm)</label>
-                                <input type="number" id="itemL" value="20" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Length</label>
+                                <input type="number" id="itemL" value="30" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Width (cm)</label>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Width</label>
                                 <input type="number" id="itemW" value="20" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Height (cm)</label>
-                                <input type="number" id="itemH" value="20" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Height</label>
+                                <input type="number" id="itemH" value="25" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                         </div>
 
-                        <!-- Roll Squeeze / Compression Tolerance Option -->
-                        <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
-                            <div>
-                                <label class="text-xs font-medium text-slate-300 block">Roll Squeeze / Compression Mode</label>
-                                <span class="text-[10px] text-slate-400">Accounts for tension squeezing (fits up to ~150 rolls)</span>
+                        <div class="pt-2 border-t border-slate-800 space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-xs font-medium text-slate-300 block">Auto-Optimize 3D Rotation</label>
+                                    <span class="text-[10px] text-slate-400">Tests all 6 orientations for max fit</span>
+                                </div>
+                                <input type="checkbox" id="autoRotateDual" checked onchange="calculateAll()" class="w-4 h-4 accent-krautz-500 rounded bg-slate-950 border-slate-700 cursor-pointer">
                             </div>
-                            <input type="checkbox" id="squeezeMode" onchange="calculateAll()" class="w-4 h-4 accent-krautz-500 rounded bg-slate-950 border-slate-700 cursor-pointer">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-xs font-medium text-slate-300 block">Roll Squeeze / Compression</label>
+                                    <span class="text-[10px] text-slate-400">10% tension compression tolerance</span>
+                                </div>
+                                <input type="checkbox" id="squeezeMode" onchange="calculateAll()" class="w-4 h-4 accent-krautz-500 rounded bg-slate-950 border-slate-700 cursor-pointer">
+                            </div>
                         </div>
                     </div>
 
@@ -140,26 +157,26 @@
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Quick Load Presets</h3>
                         <div class="grid grid-cols-2 gap-2">
-                            <button onclick="setPresetValues(120, 80, 100, 20, 20, 20)" class="p-2.5 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-xs font-medium text-slate-300 transition text-left">
-                                Euro-Pallet Box (120×80×100)
+                            <button onclick="setPresetValues(120, 80, 100, 30, 20, 25)" class="p-2.5 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-xs font-medium text-slate-300 transition text-left">
+                                Euro-Pallet (120×80×100)
                             </button>
                             <button onclick="setPresetValues(60, 40, 40, 15, 10, 10)" class="p-2.5 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-xs font-medium text-slate-300 transition text-left">
-                                Insulated Shipper (60×40×40)
+                                Temax Shipper (60×40×40)
                             </button>
                         </div>
                     </div>
 
                 </div>
 
-                <!-- Right Panel: Outputs & Visualizer -->
-                <div class="lg:col-span-7 space-y-6">
+                <!-- Right Panel: Outputs & 3D Interactive Viewport -->
+                <div class="lg:col-span-8 space-y-5">
                     
                     <!-- KPI Summary Cards -->
                     <div class="grid grid-cols-3 gap-4">
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
                             <span class="text-xs font-medium text-slate-400 mb-1">MAX UNITS FIT</span>
-                            <div id="maxUnits" class="text-3xl font-extrabold text-white">125</div>
-                            <span class="text-[10px] text-slate-500 mt-1">Small packages</span>
+                            <div id="maxUnits" class="text-3xl font-extrabold text-white">64</div>
+                            <span id="chosenOrientation" class="text-[10px] text-krautz-400 mt-1">30×20×25 cm</span>
                         </div>
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
                             <span class="text-xs font-medium text-slate-400 mb-1">VOLUME UTILIZATION</span>
@@ -167,127 +184,208 @@
                             <span class="text-[10px] text-slate-500 mt-1">Space efficiency</span>
                         </div>
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
-                            <span class="text-xs font-medium text-slate-400 mb-1">PACKING LAYOUT</span>
-                            <div id="packingLayout" class="text-lg font-bold text-white tracking-tight">5 × 5 × 5</div>
+                            <span class="text-xs font-medium text-slate-400 mb-1">3D GRID MATRIX</span>
+                            <div id="packingLayout" class="text-lg font-bold text-white tracking-tight">4 × 4 × 4</div>
                             <span class="text-[10px] text-slate-500 mt-1">Cols × Rows × Layers</span>
                         </div>
                     </div>
 
-                    <!-- Container Layer Breakdown & Grid Map -->
+                    <!-- Interactive 3D Viewport + Cross-Section Controls -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-800 pb-3 gap-3">
+                        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
                             <div class="flex items-center space-x-2">
-                                <span class="text-krautz-400 text-lg">📦</span>
+                                <span class="text-krautz-400 text-lg">🧊</span>
                                 <div>
-                                    <h2 class="text-sm font-semibold text-white tracking-wide">Container Layer Breakdown & Grid Map</h2>
-                                    <p class="text-[11px] text-amber-400/90 italic mt-0.5">Disclaimer: Box visual layout may look differently on mobile devices due to screen width adaptation.</p>
+                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Perspective & Cross-Section (Doorsnede)</h2>
+                                    <p class="text-[11px] text-slate-400">Drag to rotate • Scroll to zoom • Right-drag to pan</p>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-2 self-end sm:self-auto">
-                                <label class="text-xs text-slate-400">Layer:</label>
-                                <select id="layerSelect" onchange="renderLayerGrid()" class="bg-slate-950 border border-slate-800 text-white text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-krautz-500 font-medium">
-                                    <option value="0">Layer 1 of 5</option>
-                                </select>
+                            <div class="flex items-center gap-2">
+                                <button onclick="resetCamera('dual')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
+                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
+                                    <input type="checkbox" id="dualExplode" onchange="update3DScene('dual')" class="accent-krautz-500">
+                                    <span>Explode</span>
+                                </label>
                             </div>
                         </div>
 
-                        <!-- Symmetrical CSS Grid Container for Mobile & Desktop -->
-                        <div id="layerGridDisplay" class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 min-h-[280px] max-h-[380px] overflow-y-auto grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 justify-items-center">
-                            <!-- Dynamically generated unit blocks -->
+                        <!-- Cross-Section Slicer Controls -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-slate-400 font-medium">Vertical Layer Cutaway (Height)</span>
+                                    <span id="dualSliceYLabel" class="text-krautz-400 font-bold">100% (All Layers)</span>
+                                </div>
+                                <input type="range" id="dualSliceY" min="1" max="100" value="100" oninput="update3DScene('dual')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span>
+                                    <span id="dualSliceXLabel" class="text-amber-400 font-bold">100% (Full Depth)</span>
+                                </div>
+                                <input type="range" id="dualSliceX" min="1" max="100" value="100" oninput="update3DScene('dual')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+                            </div>
+                        </div>
+
+                        <!-- Three.js WebGL Canvas Container -->
+                        <div id="canvas-dual" class="w-full h-[380px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                            <div class="absolute bottom-3 left-3 z-10 flex items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Primary Unit</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm border border-sky-400/60 inline-block"></span> Outer Container</span>
+                            </div>
                         </div>
 
                         <!-- Footer Volume Specs -->
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
-                            <span id="effectiveVolume">Effective Master Volume: 1000.0 L</span>
-                            <span id="unitVolume">Unit Volume: 8.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax Cold-Chain Engine v2.4</span>
+                            <span id="effectiveVolume">Effective Master Volume: 960.0 L</span>
+                            <span id="unitVolume">Unit Volume: 15.00 L</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Spatial Engine v3.0</span>
                         </div>
                     </div>
 
                 </div>
-
             </div>
         </section>
 
-        <!-- TAB 1.5: VOLUME PUZZLE CALCULATOR -->
+        <!-- TAB 2: MULTI-BOX 3D VOLUME PUZZLE -->
         <section id="tab-pack-puzzle" class="tab-content space-y-6 hidden">
-            <div class="glass-panel p-6 rounded-2xl glow-blue">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
-                        <i data-lucide="boxes" class="w-6 h-6"></i>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Inputs -->
+                <div class="lg:col-span-4 space-y-4 bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl">
+                    <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
+                        <i data-lucide="boxes" class="w-5 h-5 text-krautz-400"></i>
+                        <div>
+                            <h2 class="text-sm font-bold text-white">Multi-Box 3D Puzzle Config</h2>
+                            <p class="text-[11px] text-slate-400">Packs Batch 1, then fits Batch 2 into real remaining 3D coordinates.</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-white">Multi-Box Volume Puzzle Solver</h2>
-                        <p class="text-xs text-slate-400">Solve exact volume residual capacity: packs primary batch in outer packaging, computes exact remaining cubic space, and fits secondary box sizes.</p>
+
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">1. Outer Packaging (cm)</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-[11px] text-slate-400">Length</label>
+                                <input type="number" id="pz-out-l" value="100" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Width</label>
+                                <input type="number" id="pz-out-w" value="100" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Height</label>
+                                <input type="number" id="pz-out-h" value="100" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                        </div>
                     </div>
+
+                    <hr class="border-slate-800">
+
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-sky-400">2. First Box Batch (Primary)</h3>
+                        <div class="grid grid-cols-4 gap-2">
+                            <div>
+                                <label class="text-[11px] text-slate-400">Qty</label>
+                                <input type="number" id="pz-b1-qty" value="75" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">L (cm)</label>
+                                <input type="number" id="pz-b1-l" value="20" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">W (cm)</label>
+                                <input type="number" id="pz-b1-w" value="20" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">H (cm)</label>
+                                <input type="number" id="pz-b1-h" value="20" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-800">
+
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-emerald-400">3. Secondary Box Type (Fill Remaining)</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-[11px] text-slate-400">Length</label>
+                                <input type="number" id="pz-b2-l" value="25" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Width</label>
+                                <input type="number" id="pz-b2-w" value="25" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Height</label>
+                                <input type="number" id="pz-b2-h" value="20" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="calculatePuzzle()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Recalculate 3D Placement</button>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800">
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">1. Outer Packaging</h3>
-                        <div class="grid grid-cols-3 gap-3">
-                            <div>
-                                <label class="text-[11px] text-slate-400">Length (cm)</label>
-                                <input type="number" id="pz-out-l" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Width (cm)</label>
-                                <input type="number" id="pz-out-w" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Height (cm)</label>
-                                <input type="number" id="pz-out-h" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
-                            </div>
-                        </div>
-
-                        <hr class="border-slate-800 my-2">
-
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">2. First Box Batch</h3>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-[11px] text-slate-400">Quantity</label>
-                                <input type="number" id="pz-b1-qty" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Cube Size (cm)</label>
-                                <input type="number" id="pz-b1-dim" value="20" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
-                            </div>
-                        </div>
-
-                        <hr class="border-slate-800 my-2">
-
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">3. Secondary Box Type</h3>
-                        <div class="grid grid-cols-3 gap-3">
-                            <div>
-                                <label class="text-[11px] text-slate-400">Length (cm)</label>
-                                <input type="number" id="pz-b2-l" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Width (cm)</label>
-                                <input type="number" id="pz-b2-w" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Height (cm)</label>
-                                <input type="number" id="pz-b2-h" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
-                            </div>
-                        </div>
-
-                        <button onclick="calculatePuzzle()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Solve Volume Puzzle</button>
+                <!-- Right 3D Puzzle Viewport & Stats -->
+                <div class="lg:col-span-8 space-y-5">
+                    
+                    <!-- Puzzle KPI Cards -->
+                    <div id="puzzle-results" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <!-- Populated dynamically -->
                     </div>
 
-                    <div class="lg:col-span-2 space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
-                        <div>
-                            <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400 mb-4">Volume Puzzle Solution & Residual Breakdown</h3>
-                            <div id="puzzle-results" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <!-- Populated dynamically -->
+                    <!-- 3D Viewport for Multi-Box Puzzle -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-emerald-400 text-lg">📐</span>
+                                <div>
+                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Multi-SKU Placement & Cross-Section</h2>
+                                    <p class="text-[11px] text-slate-400">Shows exact physical placement of Batch 1 + Secondary Batch 2</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="resetCamera('puzzle')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
+                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
+                                    <input type="checkbox" id="puzzleExplode" onchange="update3DScene('puzzle')" class="accent-krautz-500">
+                                    <span>Explode</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Cross-Section Slicers -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span>
+                                    <span id="puzzleSliceYLabel" class="text-krautz-400 font-bold">100%</span>
+                                </div>
+                                <input type="range" id="puzzleSliceY" min="1" max="100" value="100" oninput="update3DScene('puzzle')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span>
+                                    <span id="puzzleSliceXLabel" class="text-amber-400 font-bold">100%</span>
+                                </div>
+                                <input type="range" id="puzzleSliceX" min="1" max="100" value="100" oninput="update3DScene('puzzle')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+                            </div>
+                        </div>
+
+                        <!-- Three.js Canvas -->
+                        <div id="canvas-puzzle" class="w-full h-[380px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                            <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Batch 1 (Primary)</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#10b981] inline-block"></span> Batch 2 (Secondary)</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm border border-sky-400/60 inline-block"></span> Outer Container</span>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </section>
 
-        <!-- TAB 2: SPHERICAL DENSITY PACKING -->
+        <!-- TAB 3: SPHERICAL DENSITY PACKING -->
         <section id="tab-pack-sphere" class="tab-content space-y-6 hidden">
             <div class="glass-panel p-6 rounded-2xl glow-blue">
                 <div class="flex items-center gap-3 mb-6">
@@ -304,25 +402,23 @@
                     <div class="space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800">
                         <div>
                             <label class="text-[11px] text-slate-400">Container Size (cm)</label>
-                            <input type="number" id="sphere-container" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            <input type="number" id="sphere-container" value="100" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
                         </div>
                         <div>
                             <label class="text-[11px] text-slate-400">Sphere Diameter (cm)</label>
-                            <input type="number" id="sphere-diam" value="20" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            <input type="number" id="sphere-diam" value="20" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
                         </div>
                         <button onclick="calculateSpheres()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Calculate Spherical Pack</button>
                     </div>
 
                     <div class="lg:col-span-2 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
-                        <div id="sphere-results" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <!-- Populated dynamically -->
-                        </div>
+                        <div id="sphere-results" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 3: IRREGULAR OBJECT SCAN -->
+        <!-- TAB 4: IRREGULAR OBJECT SCAN -->
         <section id="tab-pack-irregular" class="tab-content space-y-6 hidden">
             <div class="glass-panel p-6 rounded-2xl glow-blue">
                 <div class="flex items-center gap-3 mb-6">
@@ -339,23 +435,21 @@
                     <div class="space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800">
                         <div>
                             <label class="text-[11px] text-slate-400">Irregular Object Volume (cm³)</label>
-                            <input type="number" id="irr-vol" value="12500" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                            <input type="number" id="irr-vol" value="12500" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
                         </div>
                         <div>
                             <label class="text-[11px] text-slate-400">Target Master Box Size (cm)</label>
                             <div class="grid grid-cols-3 gap-2 mt-1">
-                                <input type="number" id="irr-master-l" value="100" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
-                                <input type="number" id="irr-master-w" value="100" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
-                                <input type="number" id="irr-master-h" value="100" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
+                                <input type="number" id="irr-master-l" value="100" oninput="calculateIrregular()" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
+                                <input type="number" id="irr-master-w" value="100" oninput="calculateIrregular()" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
+                                <input type="number" id="irr-master-h" value="100" oninput="calculateIrregular()" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs">
                             </div>
                         </div>
                         <button onclick="calculateIrregular()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Compute Irregular Fit</button>
                     </div>
 
                     <div class="lg:col-span-2 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
-                        <div id="irr-results" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <!-- Populated dynamically -->
-                        </div>
+                        <div id="irr-results" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                     </div>
                 </div>
             </div>
@@ -365,13 +459,194 @@
 
     <!-- Footer -->
     <footer class="border-t border-slate-800 bg-slate-900/40 text-center py-4 text-xs text-slate-500 space-y-1">
-        <div>© 2026 Krautz-Temax NV. All rights reserved. Thermal Packaging & Spatial Calculation Technology.</div>
+        <div>© 2026 Krautz-Temax NV. All rights reserved. Thermal Packaging & 3D Spatial Calculation Technology.</div>
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
 
-    <!-- JavaScript Application Logic -->
+    <!-- JavaScript Application & 3D Engine -->
     <script>
         lucide.createIcons();
+
+        // Store 3D viewer instances & packed coordinate data
+        const viewers = {};
+        const packedState = {
+            dual: { container: { l: 120, w: 80, h: 100 }, boxes: [] },
+            puzzle: { container: { l: 100, w: 100, h: 100 }, boxes: [] }
+        };
+
+        // Initialize a Three.js Scene inside a DOM container
+        function init3DViewer(key, containerElId) {
+            const container = document.getElementById(containerElId);
+            if (!container) return;
+
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x060b16);
+
+            // Subtle floor grid for spatial reference
+            const gridHelper = new THREE.GridHelper(300, 30, 0x1e293b, 0x0f172a);
+            scene.add(gridHelper);
+
+            const width = container.clientWidth || 600;
+            const height = container.clientHeight || 380;
+
+            const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 5000);
+            camera.position.set(160, 140, 180);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.06;
+
+            // Lighting setup
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+            scene.add(ambientLight);
+
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.75);
+            dirLight1.position.set(200, 300, 150);
+            scene.add(dirLight1);
+
+            const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.35);
+            dirLight2.position.set(-200, 100, -150);
+            scene.add(dirLight2);
+
+            const rootGroup = new THREE.Group();
+            scene.add(rootGroup);
+
+            viewers[key] = { scene, camera, renderer, controls, rootGroup, gridHelper, container };
+
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        function handleResize() {
+            Object.values(viewers).forEach(v => {
+                if (!v.container || v.container.offsetParent === null) return;
+                const w = v.container.clientWidth;
+                const h = v.container.clientHeight;
+                if (w > 0 && h > 0) {
+                    v.camera.aspect = w / h;
+                    v.camera.updateProjectionMatrix();
+                    v.renderer.setSize(w, h);
+                }
+            });
+        }
+        window.addEventListener('resize', handleResize);
+
+        function resetCamera(key) {
+            const v = viewers[key];
+            const c = packedState[key].container;
+            if (!v || !c) return;
+            const maxDim = Math.max(c.l, c.w, c.h);
+            v.camera.position.set(maxDim * 1.45, maxDim * 1.25, maxDim * 1.65);
+            v.controls.target.set(0, c.h / 2, 0);
+            v.controls.update();
+        }
+
+        // Render 3D boxes + translucent outer container + cross-section slicing
+        function update3DScene(key) {
+            const v = viewers[key];
+            const data = packedState[key];
+            if (!v || !data) return;
+
+            // Clear old meshes
+            while (v.rootGroup.children.length > 0) {
+                const child = v.rootGroup.children[0];
+                if (child.geometry) child.geometry.dispose();
+                v.rootGroup.remove(child);
+            }
+
+            const { l: CL, w: CW, h: CH } = data.container;
+            const sliceYPercent = parseFloat(document.getElementById(`${key}SliceY`).value) || 100;
+            const sliceXPercent = parseFloat(document.getElementById(`${key}SliceX`).value) || 100;
+            const explode = document.getElementById(`${key}Explode`).checked;
+
+            document.getElementById(`${key}SliceYLabel`).innerText = sliceYPercent === 100 ? '100% (Full)' : `${sliceYPercent}% Cut`;
+            document.getElementById(`${key}SliceXLabel`).innerText = sliceXPercent === 100 ? '100% (Full)' : `${sliceXPercent}% Cut`;
+
+            const maxYCut = (sliceYPercent / 100) * CH;
+            const maxXCut = (sliceXPercent / 100) * CL;
+            const explodeFactor = explode ? 1.18 : 1.0;
+
+            // 1. Outer Master Container (Translucent Walls + Sharp Wireframe Edges)
+            const outerGeo = new THREE.BoxGeometry(CL, CH, CW);
+            const outerMat = new THREE.MeshPhongMaterial({
+                color: 0x38bdf8,
+                transparent: true,
+                opacity: 0.08,
+                depthWrite: false,
+                side: THREE.DoubleSide
+            });
+            const outerMesh = new THREE.Mesh(outerGeo, outerMat);
+            outerMesh.position.set(0, CH / 2, 0);
+            v.rootGroup.add(outerMesh);
+
+            const edgesGeo = new THREE.EdgesGeometry(outerGeo);
+            const edgesMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.75 });
+            const wireframe = new THREE.LineSegments(edgesGeo, edgesMat);
+            wireframe.position.set(0, CH / 2, 0);
+            v.rootGroup.add(wireframe);
+
+            // 2. Render Packed Inner Boxes (capped at 1,500 meshes for smooth 60fps performance)
+            const boxesToRender = data.boxes.slice(0, 1500);
+
+            const matBatch1 = new THREE.MeshLambertMaterial({ color: 0x0077ee });
+            const matBatch2 = new THREE.MeshLambertMaterial({ color: 0x10b981 });
+            const edgeMat1 = new THREE.LineBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.65 });
+            const edgeMat2 = new THREE.LineBasicMaterial({ color: 0xa7f3d0, transparent: true, opacity: 0.75 });
+
+            boxesToRender.forEach(box => {
+                // Cross-section filtering (Doorsnede)
+                if (box.y + box.h * 0.15 > maxYCut) return;
+                if (box.x + box.l * 0.15 > maxXCut) return;
+
+                // Slight 0.3cm visual gap so individual boxes are clearly distinguishable
+                const gap = 0.25;
+                const geo = new THREE.BoxGeometry(
+                    Math.max(0.5, box.l - gap),
+                    Math.max(0.5, box.h - gap),
+                    Math.max(0.5, box.w - gap)
+                );
+
+                const mesh = new THREE.Mesh(geo, box.type === 2 ? matBatch2 : matBatch1);
+
+                // Center coordinates around (0, y, 0)
+                const cx = (box.x + box.l / 2 - CL / 2) * explodeFactor;
+                const cy = (box.y + box.h / 2) * explodeFactor;
+                const cz = (box.z + box.w / 2 - CW / 2) * explodeFactor;
+
+                mesh.position.set(cx, cy, cz);
+
+                // Crisp outline border on each box
+                const bEdges = new THREE.EdgesGeometry(geo);
+                const bLine = new THREE.LineSegments(bEdges, box.type === 2 ? edgeMat2 : edgeMat1);
+                mesh.add(bLine);
+
+                v.rootGroup.add(mesh);
+            });
+
+            // Visual Cutaway Plane indicator when slicing < 100%
+            if (sliceXPercent < 100) {
+                const planeGeo = new THREE.PlaneGeometry(CW + 6, CH + 6);
+                const planeMat = new THREE.MeshBasicMaterial({
+                    color: 0xf59e0b,
+                    transparent: true,
+                    opacity: 0.15,
+                    side: THREE.DoubleSide
+                });
+                const cutPlane = new THREE.Mesh(planeGeo, planeMat);
+                cutPlane.rotation.y = Math.PI / 2;
+                cutPlane.position.set(maxXCut - CL / 2, CH / 2, 0);
+                v.rootGroup.add(cutPlane);
+            }
+        }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -385,16 +660,34 @@
             activeBtn.classList.add('bg-krautz-500', 'text-white', 'shadow');
             activeBtn.classList.remove('text-slate-400');
             lucide.createIcons();
+
+            setTimeout(() => {
+                handleResize();
+                if (tabId === 'pack-dual') resetCamera('dual');
+                if (tabId === 'pack-puzzle') resetCamera('puzzle');
+            }, 30);
         }
 
-        function calculateAll() {
-            calculateDualBoxAndVisualizer();
-            calculatePuzzle();
-            calculateSpheres();
-            calculateIrregular();
+        // Get all unique 6-axis orientations of a box
+        function getOrientations(l, w, h) {
+            const perms = [
+                [l, w, h], [l, h, w],
+                [w, l, h], [w, h, l],
+                [h, l, w], [h, w, l]
+            ];
+            const unique = [];
+            const seen = new Set();
+            perms.forEach(p => {
+                const key = p.join('x');
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    unique.push({ l: p[0], w: p[1], h: p[2] });
+                }
+            });
+            return unique;
         }
 
-        // 1. Dual Box & Visualizer Logic
+        // 1. Dual Box & 3D Visualizer Logic
         function calculateDualBoxAndVisualizer() {
             const CL = parseFloat(document.getElementById('containerL').value) || 1;
             const CW = parseFloat(document.getElementById('containerW').value) || 1;
@@ -402,93 +695,60 @@
 
             let IL = parseFloat(document.getElementById('itemL').value) || 1;
             let IW = parseFloat(document.getElementById('itemW').value) || 1;
-            const IH = parseFloat(document.getElementById('itemH').value) || 1;
+            let IH = parseFloat(document.getElementById('itemH').value) || 1;
 
-            const squeezeCheckbox = document.getElementById('squeezeMode');
-            const isSqueezeActive = squeezeCheckbox ? squeezeCheckbox.checked : false;
+            const isSqueezeActive = document.getElementById('squeezeMode').checked;
+            const autoRotate = document.getElementById('autoRotateDual').checked;
 
-            let effectiveIL = IL;
-            let effectiveIW = IW;
-            if (isSqueezeActive) {
-                effectiveIL = IL * 0.90;
-                effectiveIW = IW * 0.90;
-            }
+            const factor = isSqueezeActive ? 0.90 : 1.0;
+            const orientations = autoRotate
+                ? getOrientations(IL * factor, IW * factor, IH)
+                : [{ l: IL * factor, w: IW * factor, h: IH }];
 
-            const cols = Math.floor(CL / effectiveIL);
-            const rows = Math.floor(CW / effectiveIW);
-            const layers = Math.floor(CH / IH);
+            let best = { total: -1, cols: 0, rows: 0, layers: 0, dim: orientations[0] };
 
-            const totalUnits = cols * rows * layers;
+            orientations.forEach(o => {
+                const cols = Math.floor(CL / o.l);
+                const rows = Math.floor(CW / o.w);
+                const layers = Math.floor(CH / o.h);
+                const total = cols * rows * layers;
+                if (total > best.total) {
+                    best = { total, cols, rows, layers, dim: o };
+                }
+            });
+
             const unitVol = (IL * IW * IH) / 1000;
             const masterVol = (CL * CW * CH) / 1000;
-            const utilizedVol = totalUnits * (IL * IW * IH);
+            const utilizedVol = best.total * (IL * IW * IH);
             const efficiency = Math.min(100, ((utilizedVol / (CL * CW * CH)) * 100)).toFixed(1);
 
-            document.getElementById('maxUnits').innerText = totalUnits;
+            document.getElementById('maxUnits').innerText = best.total;
+            document.getElementById('chosenOrientation').innerText = `Placed as ${best.dim.l.toFixed(1)}×${best.dim.w.toFixed(1)}×${best.dim.h.toFixed(1)} cm`;
             document.getElementById('volumeUtil').innerText = efficiency + '%';
-            document.getElementById('packingLayout').innerText = `${cols} × ${rows} × ${layers}`;
+            document.getElementById('packingLayout').innerText = `${best.cols} × ${best.rows} × ${best.layers}`;
             document.getElementById('effectiveVolume').innerText = `Effective Master Volume: ${masterVol.toFixed(1)} L`;
             document.getElementById('unitVolume').innerText = `Unit Volume: ${unitVol.toFixed(2)} L`;
 
-            const layerSelect = document.getElementById('layerSelect');
-            const currentSelected = layerSelect.value;
-            layerSelect.innerHTML = '';
-            
-            const maxLayers = Math.max(1, layers);
-            for (let i = 0; i < maxLayers; i++) {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.innerText = `Layer ${i + 1} of ${maxLayers}`;
-                layerSelect.appendChild(opt);
-            }
-            if (currentSelected < maxLayers) {
-                layerSelect.value = currentSelected;
-            } else {
-                layerSelect.value = 0;
-            }
-
-            renderLayerGrid();
-        }
-
-        function renderLayerGrid() {
-            const display = document.getElementById('layerGridDisplay');
-            if (!display) return;
-            display.innerHTML = '';
-
-            const CL = parseFloat(document.getElementById('containerL').value) || 1;
-            const CW = parseFloat(document.getElementById('containerW').value) || 1;
-            let IL = parseFloat(document.getElementById('itemL').value) || 1;
-            let IW = parseFloat(document.getElementById('itemW').value) || 1;
-
-            const squeezeCheckbox = document.getElementById('squeezeMode');
-            const isSqueezeActive = squeezeCheckbox ? squeezeCheckbox.checked : false;
-
-            let effectiveIL = IL;
-            let effectiveIW = IW;
-            if (isSqueezeActive) {
-                effectiveIL = IL * 0.90;
-                effectiveIW = IW * 0.90;
+            // Generate exact 3D coordinates for every box
+            const boxes = [];
+            for (let y = 0; y < best.layers; y++) {
+                for (let z = 0; z < best.rows; z++) {
+                    for (let x = 0; x < best.cols; x++) {
+                        boxes.push({
+                            x: x * best.dim.l,
+                            y: y * best.dim.h,
+                            z: z * best.dim.w,
+                            l: best.dim.l,
+                            w: best.dim.w,
+                            h: best.dim.h,
+                            type: 1
+                        });
+                    }
+                }
             }
 
-            const cols = Math.max(1, Math.floor(CL / effectiveIL));
-            const rows = Math.max(1, Math.floor(CW / effectiveIW));
-            const unitsPerLayer = cols * rows;
-
-            if (unitsPerLayer === 0 || unitsPerLayer > 250) {
-                display.innerHTML = `<div class="text-slate-500 text-xs py-10 text-center col-span-full">Items are too large for this container or quantity exceeds display limit.</div>`;
-                return;
-            }
-
-            for (let i = 1; i <= unitsPerLayer; i++) {
-                const card = document.createElement('div');
-                card.className = "bg-krautz-500/25 hover:bg-krautz-500/40 border border-krautz-500/40 hover:border-krautz-400 rounded-xl p-2.5 w-full h-20 flex flex-col items-center justify-center transition shadow-sm cursor-pointer";
-                card.innerHTML = `
-                    <span class="text-krautz-400 text-xs mb-0.5">📦</span>
-                    <span class="text-[11px] font-bold text-white leading-tight">Unit #${i}</span>
-                    <span class="text-[9px] text-slate-400">${IL}×${IW}cm</span>
-                `;
-                display.appendChild(card);
-            }
+            packedState.dual = { container: { l: CL, w: CW, h: CH }, boxes };
+            update3DScene('dual');
         }
 
         function setPresetValues(cl, cw, ch, il, iw, ih) {
@@ -499,63 +759,141 @@
             document.getElementById('itemW').value = iw;
             document.getElementById('itemH').value = ih;
             calculateAll();
+            resetCamera('dual');
         }
 
-        // 1.5 Multi-Box Volume Puzzle Solver
+        // 2. True 3D Multi-Box Volume Puzzle Solver (Spatial Coordinate Placement)
         function calculatePuzzle() {
-            const outL = parseFloat(document.getElementById('pz-out-l').value) || 100;
-            const outW = parseFloat(document.getElementById('pz-out-w').value) || 100;
-            const outH = parseFloat(document.getElementById('pz-out-h').value) || 100;
+            const CL = parseFloat(document.getElementById('pz-out-l').value) || 100;
+            const CW = parseFloat(document.getElementById('pz-out-w').value) || 100;
+            const CH = parseFloat(document.getElementById('pz-out-h').value) || 100;
 
-            const b1Qty = parseFloat(document.getElementById('pz-b1-qty').value) || 100;
-            const b1Dim = parseFloat(document.getElementById('pz-b1-dim').value) || 20;
+            const b1TargetQty = Math.max(0, parseInt(document.getElementById('pz-b1-qty').value) || 0);
+            const b1L = parseFloat(document.getElementById('pz-b1-l').value) || 20;
+            const b1W = parseFloat(document.getElementById('pz-b1-w').value) || 20;
+            const b1H = parseFloat(document.getElementById('pz-b1-h').value) || 20;
 
-            const b2l = parseFloat(document.getElementById('pz-b2-l').value) || 30;
-            const b2w = parseFloat(document.getElementById('pz-b2-w').value) || 30;
-            const b2h = parseFloat(document.getElementById('pz-b2-h').value) || 30;
+            const b2L = parseFloat(document.getElementById('pz-b2-l').value) || 25;
+            const b2W = parseFloat(document.getElementById('pz-b2-w').value) || 25;
+            const b2H = parseFloat(document.getElementById('pz-b2-h').value) || 20;
 
-            const outerVol = outL * outW * outH;
-            const box1Vol = Math.pow(b1Dim, 3);
-            const totalBox1Vol = b1Qty * box1Vol;
+            const boxes = [];
 
-            const remainingVol = Math.max(0, outerVol - totalBox1Vol);
-            const box2Vol = b2l * b2w * b2h;
-            const box2Fit = box2Vol > 0 ? Math.floor(remainingVol / box2Vol) : 0;
+            // Step A: Place Batch 1 in tidy layers from bottom-left-back (0,0,0)
+            const cols1 = Math.floor(CL / b1L);
+            const rows1 = Math.floor(CW / b1W);
+            const layers1 = Math.floor(CH / b1H);
+            const maxB1Possible = cols1 * rows1 * layers1;
+            const b1Placed = Math.min(b1TargetQty, maxB1Possible);
+
+            let count1 = 0;
+            for (let y = 0; y < layers1 && count1 < b1Placed; y++) {
+                for (let z = 0; z < rows1 && count1 < b1Placed; z++) {
+                    for (let x = 0; x < cols1 && count1 < b1Placed; x++) {
+                        boxes.push({
+                            x: x * b1L,
+                            y: y * b1H,
+                            z: z * b1W,
+                            l: b1L,
+                            w: b1W,
+                            h: b1H,
+                            type: 1
+                        });
+                        count1++;
+                    }
+                }
+            }
+
+            // Helper: AABB 3D Collision Check
+            function collides(candidate) {
+                const eps = 0.01;
+                if (
+                    candidate.x + candidate.l > CL + eps ||
+                    candidate.y + candidate.h > CH + eps ||
+                    candidate.z + candidate.w > CW + eps
+                ) return true;
+
+                for (let i = 0; i < boxes.length; i++) {
+                    const b = boxes[i];
+                    const overlapX = candidate.x < b.x + b.l - eps && candidate.x + candidate.l > b.x + eps;
+                    const overlapY = candidate.y < b.y + b.h - eps && candidate.y + candidate.h > b.y + eps;
+                    const overlapZ = candidate.z < b.z + b.w - eps && candidate.z + candidate.w > b.z + eps;
+                    if (overlapX && overlapY && overlapZ) return true;
+                }
+                return false;
+            }
+
+            // Step B: Pack Secondary Batch 2 into remaining 3D free anchor points (trying all 6 orientations)
+            const b2Orientations = getOrientations(b2L, b2W, b2H);
+            let b2Placed = 0;
+            let placedNew = true;
+
+            while (placedNew && boxes.length < 1500) {
+                placedNew = false;
+
+                // Collect candidate anchor points from container origin & existing box corners
+                const anchors = [{ x: 0, y: 0, z: 0 }];
+                boxes.forEach(b => {
+                    anchors.push({ x: b.x + b.l, y: b.y, z: b.z });
+                    anchors.push({ x: b.x, y: b.y, z: b.z + b.w });
+                    anchors.push({ x: b.x, y: b.y + b.h, z: b.z });
+                });
+
+                // Sort bottom-up (lowest Y first, then Z, then X) for gravity stability
+                anchors.sort((a, b) => (a.y - b.y) || (a.z - b.z) || (a.x - b.x));
+
+                for (let a of anchors) {
+                    for (let o of b2Orientations) {
+                        const cand = { x: a.x, y: a.y, z: a.z, l: o.l, w: o.w, h: o.h, type: 2 };
+                        if (!collides(cand)) {
+                            boxes.push(cand);
+                            b2Placed++;
+                            placedNew = true;
+                            break;
+                        }
+                    }
+                    if (placedNew) break;
+                }
+            }
+
+            const outerVol = CL * CW * CH;
+            const usedVol = (b1Placed * b1L * b1W * b1H) + (b2Placed * b2L * b2W * b2H);
+            const totalUtil = ((usedVol / outerVol) * 100).toFixed(1);
 
             const resultsContainer = document.getElementById('puzzle-results');
-            if (!resultsContainer) return;
-            resultsContainer.innerHTML = `
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-slate-400 block">Outer Container Volume</span>
-                    <span class="text-xl font-bold text-white">${(outerVol/1000000).toFixed(3)} m³</span>
-                </div>
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-slate-400 block">First Box Batch Volume</span>
-                    <span class="text-xl font-bold text-krautz-400">${(totalBox1Vol/1000000).toFixed(3)} m³</span>
-                </div>
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-slate-400 block">Remaining Empty Volume</span>
-                    <span class="text-xl font-bold text-amber-400">${(remainingVol/1000000).toFixed(3)} m³</span>
-                </div>
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-slate-400 block">Secondary Box Capacity Fit</span>
-                    <span class="text-xl font-bold text-emerald-400">~${box2Fit} boxes</span>
-                </div>
-            `;
+            if (resultsContainer) {
+                resultsContainer.innerHTML = `
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Batch 1 Fitted</span>
+                        <span class="text-xl font-bold text-krautz-400">${b1Placed} <span class="text-xs font-normal text-slate-500">/ ${b1TargetQty}</span></span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Secondary Boxes Fitted</span>
+                        <span class="text-xl font-bold text-emerald-400">+${b2Placed} boxes</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Combined 3D Fill</span>
+                        <span class="text-xl font-bold text-white">${totalUtil}%</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Unfilled Residual</span>
+                        <span class="text-xl font-bold text-amber-400">${((outerVol - usedVol) / 1000).toFixed(1)} L</span>
+                    </div>
+                `;
+            }
+
+            packedState.puzzle = { container: { l: CL, w: CW, h: CH }, boxes };
+            update3DScene('puzzle');
         }
 
-        // 2. Spherical Packing Calculation
+        // 3. Spherical Packing Calculation
         function calculateSpheres() {
             const containerSize = parseFloat(document.getElementById('sphere-container').value) || 100;
             const diam = parseFloat(document.getElementById('sphere-diam').value) || 20;
 
-            const gridFitX = Math.floor(containerSize / diam);
-            const gridFitY = Math.floor(containerSize / diam);
-            const gridFitZ = Math.floor(containerSize / diam);
-            const gridTotal = gridFitX * gridFitY * gridFitZ;
-
+            const gridFit = Math.pow(Math.floor(containerSize / diam), 3);
             const containerVol = Math.pow(containerSize, 3);
-            const sphereVol = (4/3) * Math.PI * Math.pow(diam/2, 3);
+            const sphereVol = (4 / 3) * Math.PI * Math.pow(diam / 2, 3);
             const fccTotal = Math.floor((containerVol * 0.7405) / sphereVol);
 
             const resultsContainer = document.getElementById('sphere-results');
@@ -563,7 +901,7 @@
             resultsContainer.innerHTML = `
                 <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
                     <span class="text-[11px] text-slate-400 block">Standard Grid Fit</span>
-                    <span class="text-xl font-bold text-white">${gridTotal} spheres</span>
+                    <span class="text-xl font-bold text-white">${gridFit} spheres</span>
                 </div>
                 <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
                     <span class="text-[11px] text-slate-400 block">Hexagonal Close-Packing (FCC)</span>
@@ -576,7 +914,7 @@
             `;
         }
 
-        // 3. Irregular Object Scan
+        // 4. Irregular Object Scan
         function calculateIrregular() {
             const irrVol = parseFloat(document.getElementById('irr-vol').value) || 12500;
             const ml = parseFloat(document.getElementById('irr-master-l').value) || 100;
@@ -584,7 +922,7 @@
             const mh = parseFloat(document.getElementById('irr-master-h').value) || 100;
 
             const masterVol = ml * mw * mh;
-            const adjustedObjVol = irrVol * 1.15; // 15% contour void allowance
+            const adjustedObjVol = irrVol * 1.15;
             const maxFit = Math.floor(masterVol / adjustedObjVol);
 
             const resultsContainer = document.getElementById('irr-results');
@@ -601,7 +939,20 @@
             `;
         }
 
-        window.onload = calculateAll;
+        function calculateAll() {
+            calculateDualBoxAndVisualizer();
+            calculatePuzzle();
+            calculateSpheres();
+            calculateIrregular();
+        }
+
+        window.onload = function () {
+            init3DViewer('dual', 'canvas-dual');
+            init3DViewer('puzzle', 'canvas-puzzle');
+            calculateAll();
+            resetCamera('dual');
+            resetCamera('puzzle');
+        };
     </script>
 </body>
 </html>
