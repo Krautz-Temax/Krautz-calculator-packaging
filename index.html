@@ -68,7 +68,9 @@
                 <button onclick="switchTab('pack-puzzle')" id="btn-pack-puzzle" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
                     <i data-lucide="boxes" class="w-3.5 h-3.5"></i> 3D Volume Puzzle
                 </button>
-                <button onclick="switchTab('pack-sphere')" id="btn-pack-sphere" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white">Spherical Density</button>
+                <button onclick="switchTab('pack-sphere')" id="btn-pack-sphere" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+                    <i data-lucide="circle-dot" class="w-3.5 h-3.5"></i> Spherical Density 3D
+                </button>
                 <button onclick="switchTab('pack-irregular')" id="btn-pack-irregular" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white">Irregular Scan</button>
             </nav>
         </div>
@@ -256,7 +258,7 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Pallet & Floor Engine v3.2</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Pallet & Floor Engine v3.3</span>
                         </div>
                     </div>
 
@@ -417,35 +419,138 @@
             </div>
         </section>
 
-        <!-- TAB 3: SPHERICAL DENSITY PACKING -->
+        <!-- TAB 3: SPHERICAL DENSITY PACKING WITH 3D VISUALIZATION -->
         <section id="tab-pack-sphere" class="tab-content space-y-6 hidden">
-            <div class="glass-panel p-6 rounded-2xl glow-blue">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
-                        <i data-lucide="circle-dot" class="w-6 h-6"></i>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Inputs -->
+                <div class="lg:col-span-4 space-y-4 bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl">
+                    <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
+                        <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
+                            <i data-lucide="circle-dot" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-sm font-bold text-white">Spherical Density 3D Engine</h2>
+                            <p class="text-[11px] text-slate-400">Grid vs. Hexagonal Close-Packing (FCC) in 3D space.</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-white">Spherical Packing Density Estimator</h2>
-                        <p class="text-xs text-slate-400">Calculate ball or round thermal element capacity inside a master container using Grid vs. Hexagonal Close-Packing (FCC).</p>
+
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">1. Outer Container Size (cm)</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-[11px] text-slate-400">Length (X)</label>
+                                <input type="number" id="sp-out-l" value="100" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Width (Z)</label>
+                                <input type="number" id="sp-out-w" value="100" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400">Height (Y)</label>
+                                <input type="number" id="sp-out-h" value="100" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                            </div>
+                        </div>
+
+                        <!-- Placement Mode Prompt for Spherical Tab -->
+                        <div class="pt-2 space-y-1.5">
+                            <label class="block text-xs font-semibold text-slate-200">Base Placement Mode:</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" id="sphereModePalletBtn" onclick="setPlacementMode('sphere', 'pallet')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-amber-600/20 border-amber-500 text-amber-300">
+                                    <span>🪵 Palletized</span>
+                                    <span class="text-[10px] opacity-80">+15 cm Brown Pallet</span>
+                                </button>
+                                <button type="button" id="sphereModeFloorBtn" onclick="setPlacementMode('sphere', 'floor')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
+                                    <span>🏭 Direct on Floor</span>
+                                    <span class="text-[10px] opacity-80">On Grey Concrete</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="spherePlacementMode" value="pallet">
+                        </div>
                     </div>
+
+                    <hr class="border-slate-800">
+
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-sky-400">2. Sphere & Packing Geometry</h3>
+                        <div>
+                            <label class="text-[11px] text-slate-400 block mb-1">Sphere Diameter (cm)</label>
+                            <input type="number" id="sphere-diam" value="20" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                        </div>
+
+                        <!-- Packing Lattice Pattern Selector -->
+                        <div class="pt-1 space-y-1.5">
+                            <label class="block text-xs font-semibold text-slate-200">3D Packing Pattern:</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" id="spherePatternFccBtn" onclick="setSpherePattern('fcc')" class="px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-krautz-500/20 border-krautz-500 text-krautz-400">
+                                    <span>🔷 Hexagonal (FCC)</span>
+                                    <span class="text-[10px] opacity-80">Max Density (~74%)</span>
+                                </button>
+                                <button type="button" id="spherePatternGridBtn" onclick="setSpherePattern('grid')" class="px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
+                                    <span>🟦 Cubic Grid</span>
+                                    <span class="text-[10px] opacity-80">Aligned Rows (~52%)</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="spherePattern" value="fcc">
+                        </div>
+                    </div>
+
+                    <button onclick="calculateSpheres()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Calculate Spherical Pack</button>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800">
-                        <div>
-                            <label class="text-[11px] text-slate-400">Container Size (cm)</label>
-                            <input type="number" id="sphere-container" value="100" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+                <!-- Right 3D Sphere Viewport & Stats -->
+                <div class="lg:col-span-8 space-y-5">
+                    
+                    <!-- Sphere KPI Cards -->
+                    <div id="sphere-results" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+
+                    <!-- 3D Viewport for Spherical Packing -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sky-400 text-lg">⚪</span>
+                                <div>
+                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Spherical Lattice & Cross-Section (Doorsnede)</h2>
+                                    <p class="text-[11px] text-slate-400">Use sliders to slice open inner staggered sphere layers</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="resetCamera('sphere')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
+                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
+                                    <input type="checkbox" id="sphereExplode" onchange="update3DScene('sphere')" class="accent-krautz-500">
+                                    <span>Explode</span>
+                                </label>
+                            </div>
                         </div>
-                        <div>
-                            <label class="text-[11px] text-slate-400">Sphere Diameter (cm)</label>
-                            <input type="number" id="sphere-diam" value="20" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-krautz-500">
+
+                        <!-- Cross-Section Slicers -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span>
+                                    <span id="sphereSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span>
+                                </div>
+                                <input type="range" id="sphereSliceY" min="1" max="100" value="100" oninput="update3DScene('sphere')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span>
+                                    <span id="sphereSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span>
+                                </div>
+                                <input type="range" id="sphereSliceX" min="1" max="100" value="100" oninput="update3DScene('sphere')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
+                            </div>
                         </div>
-                        <button onclick="calculateSpheres()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Calculate Spherical Pack</button>
+
+                        <!-- Three.js Canvas -->
+                        <div id="canvas-sphere" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                            <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#38bdf8] inline-block"></span> Packed Sphere</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet (15cm)</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#64748b] inline-block"></span> Concrete Floor</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="lg:col-span-2 bg-slate-900/60 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
-                        <div id="sphere-results" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -495,15 +600,16 @@
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
 
-    <!-- JavaScript Application & 3D Pallet / Concrete Floor Engine -->
+    <!-- JavaScript Application & 3D Engine -->
     <script>
         lucide.createIcons();
 
-        const PALLET_HEIGHT = 15.0; // Standard 15 cm pallet height
+        const PALLET_HEIGHT = 15.0; // Standard 15 cm brown pallet height
         const viewers = {};
         const packedState = {
-            dual: { container: { l: 120, w: 80, h: 100 }, boxes: [] },
-            puzzle: { container: { l: 120, w: 80, h: 100 }, boxes: [] }
+            dual: { container: { l: 120, w: 80, h: 100 }, items: [] },
+            puzzle: { container: { l: 120, w: 80, h: 100 }, items: [] },
+            sphere: { container: { l: 100, w: 100, h: 100 }, items: [] }
         };
 
         // Switch between Palletized (+15cm Brown Pallet) and Direct on Concrete Floor
@@ -514,15 +620,32 @@
             const floorBtn = document.getElementById(`${key}ModeFloorBtn`);
 
             if (mode === 'pallet') {
-                palletBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-amber-600/20 border-amber-500 text-amber-300";
-                floorBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+                palletBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-amber-600/20 border-amber-500 text-amber-300";
+                floorBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
             } else {
-                floorBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-700/40 border-slate-400 text-white";
-                palletBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+                floorBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-700/40 border-slate-400 text-white";
+                palletBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
             }
 
             if (key === 'dual') calculateDualBoxAndVisualizer();
             if (key === 'puzzle') calculatePuzzle();
+            if (key === 'sphere') calculateSpheres();
+        }
+
+        // Switch between FCC Hexagonal Close-Packing and Cubic Grid for Spheres
+        function setSpherePattern(pattern) {
+            document.getElementById('spherePattern').value = pattern;
+            const fccBtn = document.getElementById('spherePatternFccBtn');
+            const gridBtn = document.getElementById('spherePatternGridBtn');
+
+            if (pattern === 'fcc') {
+                fccBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-krautz-500/20 border-krautz-500 text-krautz-400";
+                gridBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            } else {
+                gridBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-krautz-500/20 border-krautz-500 text-krautz-400";
+                fccBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            }
+            calculateSpheres();
         }
 
         // Initialize a Three.js Scene
@@ -551,11 +674,11 @@
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.70);
             scene.add(ambientLight);
 
-            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.80);
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.82);
             dirLight1.position.set(220, 320, 160);
             scene.add(dirLight1);
 
-            const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.32);
+            const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.35);
             dirLight2.position.set(-200, 120, -160);
             scene.add(dirLight2);
 
@@ -599,13 +722,12 @@
             v.controls.update();
         }
 
-        // Procedural Grey Concrete Warehouse Floor (Solvloer)
+        // Procedural Grey Concrete Warehouse Floor
         function buildConcreteFloorMesh(L, W) {
             const floorGroup = new THREE.Group();
             const slabSize = Math.max(L, W) * 2.6;
             const slabThickness = 3.0;
 
-            // Grey concrete slab underneath y = 0 so top surface sits exactly at y = 0
             const slabGeo = new THREE.BoxGeometry(slabSize, slabThickness, slabSize);
             const slabMat = new THREE.MeshLambertMaterial({ color: 0x525b66 });
             const slabMesh = new THREE.Mesh(slabGeo, slabMat);
@@ -616,7 +738,6 @@
             slabMesh.add(slabLine);
             floorGroup.add(slabMesh);
 
-            // Subtle expansion joint grid on top of the grey concrete floor (y = 0.05)
             const divisions = 12;
             const grid = new THREE.GridHelper(slabSize, divisions, 0x3f4752, 0x47505c);
             grid.position.set(0, 0.05, 0);
@@ -628,13 +749,13 @@
         // Procedural 3D Brown Wooden Pallet Builder (Exact 15.0 cm height, L x W footprint)
         function buildBrownPalletMesh(L, W, maxXCut) {
             const palletGroup = new THREE.Group();
-            const brownWoodTopMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });   // Rich Saddle Brown
-            const brownWoodBlockMat = new THREE.MeshLambertMaterial({ color: 0x65320D }); // Darker Brown Blocks
+            const brownWoodTopMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+            const brownWoodBlockMat = new THREE.MeshLambertMaterial({ color: 0x65320D });
             const woodEdgeMat = new THREE.LineBasicMaterial({ color: 0x3d1e07, transparent: true, opacity: 0.75 });
 
             const boardThickness = 2.3;
             const stringerThickness = 2.3;
-            const blockHeight = PALLET_HEIGHT - boardThickness * 2 - stringerThickness; // 8.1 cm -> Total = 15.0 cm
+            const blockHeight = PALLET_HEIGHT - boardThickness * 2 - stringerThickness;
 
             function addPart(px, py, pz, sx, sy, sz, mat) {
                 const startX = px - sx / 2 + L / 2;
@@ -653,14 +774,12 @@
                 palletGroup.add(mesh);
             }
 
-            // 1. Three Bottom Runner Skids resting on Concrete Floor (y = 0 to 2.3 cm)
             const skidWidth = Math.min(10, W * 0.14);
             const zSkids = [-W / 2 + skidWidth / 2, 0, W / 2 - skidWidth / 2];
             zSkids.forEach(zPos => {
                 addPart(0, boardThickness / 2, zPos, L, boardThickness, skidWidth, brownWoodTopMat);
             });
 
-            // 2. Nine Brown Spacer Blocks (3 x 3 grid)
             const blockL = Math.min(14.5, L * 0.14);
             const xBlocks = [-L / 2 + blockL / 2, 0, L / 2 - blockL / 2];
             const blockCenterY = boardThickness + blockHeight / 2;
@@ -670,13 +789,11 @@
                 });
             });
 
-            // 3. Three Transverse Stringer Boards
             const stringerCenterY = boardThickness + blockHeight + stringerThickness / 2;
             xBlocks.forEach(xPos => {
                 addPart(xPos, stringerCenterY, 0, blockL, stringerThickness, W, brownWoodTopMat);
             });
 
-            // 4. Five Top Deck Boards finishing flush at y = 15.0 cm
             const topCenterY = PALLET_HEIGHT - boardThickness / 2;
             const deckCount = 5;
             const deckWidth = Math.min(11, (W / deckCount) * 0.74);
@@ -689,7 +806,7 @@
             return palletGroup;
         }
 
-        // Render Concrete Floor + Optional 15cm Brown Pallet + Boxes + Cross-Section Slicing
+        // Unified 3D Scene Renderer (Boxes & Spheres + Pallet + Concrete Floor + Cross-Section Slicing)
         function update3DScene(key) {
             const v = viewers[key];
             const data = packedState[key];
@@ -714,17 +831,15 @@
             const maxXCut = (sliceXPercent / 100) * CL;
             const explodeFactor = explode ? 1.18 : 1.0;
 
-            // 1. Always render the Grey Concrete Floor underneath (both Palletized & Floor modes)
-            const concreteFloor = buildConcreteFloorMesh(CL, CW);
-            v.rootGroup.add(concreteFloor);
+            // 1. Grey Concrete Floor
+            v.rootGroup.add(buildConcreteFloorMesh(CL, CW));
 
-            // 2. If Palletized, render the 15.0 cm Brown Wooden Pallet on top of the Concrete Floor
+            // 2. Optional 15.0 cm Brown Wooden Pallet
             if (isPalletized) {
-                const palletMesh = buildBrownPalletMesh(CL, CW, maxXCut);
-                v.rootGroup.add(palletMesh);
+                v.rootGroup.add(buildBrownPalletMesh(CL, CW, maxXCut));
             }
 
-            // 3. Outer Load Envelope (resting on Pallet at y=15cm OR directly on Concrete at y=0cm)
+            // 3. Outer Load Envelope
             const outerGeo = new THREE.BoxGeometry(CL, CH, CW);
             const outerMat = new THREE.MeshPhongMaterial({
                 color: 0x38bdf8,
@@ -743,37 +858,60 @@
             wireframe.position.set(0, baseOffsetY + CH / 2, 0);
             v.rootGroup.add(wireframe);
 
-            // 4. Render Packed Inner Boxes
-            const boxesToRender = data.boxes.slice(0, 1500);
+            // 4. Render Packed Items (Boxes OR Spheres)
+            const itemsToRender = data.items.slice(0, 1500);
             const matBatch1 = new THREE.MeshLambertMaterial({ color: 0x0077ee });
             const matBatch2 = new THREE.MeshLambertMaterial({ color: 0x10b981 });
+            const matSphere = new THREE.MeshPhongMaterial({
+                color: 0x0ea5e9,
+                emissive: 0x0369a1,
+                emissiveIntensity: 0.25,
+                shininess: 75
+            });
             const edgeMat1 = new THREE.LineBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.65 });
             const edgeMat2 = new THREE.LineBasicMaterial({ color: 0xa7f3d0, transparent: true, opacity: 0.75 });
 
-            boxesToRender.forEach(box => {
-                if (box.y + box.h * 0.15 > maxYCut) return;
-                if (box.x + box.l * 0.15 > maxXCut) return;
+            // Shared sphere geometry if rendering spheres
+            let sharedSphereGeo = null;
+            if (itemsToRender.length > 0 && itemsToRender[0].shape === 'sphere') {
+                sharedSphereGeo = new THREE.SphereGeometry(itemsToRender[0].r * 0.985, 22, 16);
+            }
 
-                const gap = 0.25;
-                const geo = new THREE.BoxGeometry(
-                    Math.max(0.5, box.l - gap),
-                    Math.max(0.5, box.h - gap),
-                    Math.max(0.5, box.w - gap)
-                );
+            itemsToRender.forEach(item => {
+                if (item.shape === 'sphere') {
+                    // Sphere item: (x, y, z) is center in container space [0..CL, 0..CH, 0..CW]
+                    if (item.y - item.r * 0.6 > maxYCut) return;
+                    if (item.x - item.r * 0.6 > maxXCut) return;
 
-                const mesh = new THREE.Mesh(geo, box.type === 2 ? matBatch2 : matBatch1);
+                    const mesh = new THREE.Mesh(sharedSphereGeo, matSphere);
+                    const cx = (item.x - CL / 2) * explodeFactor;
+                    const cy = baseOffsetY + item.y * explodeFactor;
+                    const cz = (item.z - CW / 2) * explodeFactor;
+                    mesh.position.set(cx, cy, cz);
+                    v.rootGroup.add(mesh);
+                } else {
+                    // Box item: (x, y, z) is bottom-left-back corner
+                    if (item.y + item.h * 0.15 > maxYCut) return;
+                    if (item.x + item.l * 0.15 > maxXCut) return;
 
-                const cx = (box.x + box.l / 2 - CL / 2) * explodeFactor;
-                const cy = baseOffsetY + (box.y + box.h / 2) * explodeFactor;
-                const cz = (box.z + box.w / 2 - CW / 2) * explodeFactor;
+                    const gap = 0.25;
+                    const geo = new THREE.BoxGeometry(
+                        Math.max(0.5, item.l - gap),
+                        Math.max(0.5, item.h - gap),
+                        Math.max(0.5, item.w - gap)
+                    );
 
-                mesh.position.set(cx, cy, cz);
+                    const mesh = new THREE.Mesh(geo, item.type === 2 ? matBatch2 : matBatch1);
+                    const cx = (item.x + item.l / 2 - CL / 2) * explodeFactor;
+                    const cy = baseOffsetY + (item.y + item.h / 2) * explodeFactor;
+                    const cz = (item.z + item.w / 2 - CW / 2) * explodeFactor;
+                    mesh.position.set(cx, cy, cz);
 
-                const bEdges = new THREE.EdgesGeometry(geo);
-                const bLine = new THREE.LineSegments(bEdges, box.type === 2 ? edgeMat2 : edgeMat1);
-                mesh.add(bLine);
-
-                v.rootGroup.add(mesh);
+                    const bEdges = new THREE.EdgesGeometry(geo);
+                    const bLine = new THREE.LineSegments(bEdges, item.type === 2 ? edgeMat2 : edgeMat1);
+                    mesh.add(bLine);
+                    v.rootGroup.add(mesh);
+                }
             });
 
             // 5. Visual Cutaway Plane indicator when slicing < 100%
@@ -810,6 +948,7 @@
                 handleResize();
                 if (tabId === 'pack-dual') resetCamera('dual');
                 if (tabId === 'pack-puzzle') resetCamera('puzzle');
+                if (tabId === 'pack-sphere') resetCamera('sphere');
             }, 30);
         }
 
@@ -878,11 +1017,12 @@
             document.getElementById('effectiveVolume').innerText = `Effective Cargo Volume: ${masterVol.toFixed(1)} L`;
             document.getElementById('unitVolume').innerText = `Unit Volume: ${unitVol.toFixed(2)} L`;
 
-            const boxes = [];
+            const items = [];
             for (let y = 0; y < best.layers; y++) {
                 for (let z = 0; z < best.rows; z++) {
                     for (let x = 0; x < best.cols; x++) {
-                        boxes.push({
+                        items.push({
+                            shape: 'box',
                             x: x * best.dim.l,
                             y: y * best.dim.h,
                             z: z * best.dim.w,
@@ -895,7 +1035,7 @@
                 }
             }
 
-            packedState.dual = { container: { l: CL, w: CW, h: CH }, boxes };
+            packedState.dual = { container: { l: CL, w: CW, h: CH }, items };
             update3DScene('dual');
         }
 
@@ -926,7 +1066,7 @@
             const b2W = parseFloat(document.getElementById('pz-b2-w').value) || 20;
             const b2H = parseFloat(document.getElementById('pz-b2-h').value) || 25;
 
-            const boxes = [];
+            const items = [];
 
             const cols1 = Math.floor(CL / b1L);
             const rows1 = Math.floor(CW / b1W);
@@ -938,7 +1078,8 @@
             for (let y = 0; y < layers1 && count1 < b1Placed; y++) {
                 for (let z = 0; z < rows1 && count1 < b1Placed; z++) {
                     for (let x = 0; x < cols1 && count1 < b1Placed; x++) {
-                        boxes.push({
+                        items.push({
+                            shape: 'box',
                             x: x * b1L,
                             y: y * b1H,
                             z: z * b1W,
@@ -960,8 +1101,8 @@
                     candidate.z + candidate.w > CW + eps
                 ) return true;
 
-                for (let i = 0; i < boxes.length; i++) {
-                    const b = boxes[i];
+                for (let i = 0; i < items.length; i++) {
+                    const b = items[i];
                     const overlapX = candidate.x < b.x + b.l - eps && candidate.x + candidate.l > b.x + eps;
                     const overlapY = candidate.y < b.y + b.h - eps && candidate.y + candidate.h > b.y + eps;
                     const overlapZ = candidate.z < b.z + b.w - eps && candidate.z + candidate.w > b.z + eps;
@@ -974,11 +1115,11 @@
             let b2Placed = 0;
             let placedNew = true;
 
-            while (placedNew && boxes.length < 1500) {
+            while (placedNew && items.length < 1500) {
                 placedNew = false;
 
                 const anchors = [{ x: 0, y: 0, z: 0 }];
-                boxes.forEach(b => {
+                items.forEach(b => {
                     anchors.push({ x: b.x + b.l, y: b.y, z: b.z });
                     anchors.push({ x: b.x, y: b.y, z: b.z + b.w });
                     anchors.push({ x: b.x, y: b.y + b.h, z: b.z });
@@ -988,9 +1129,9 @@
 
                 for (let a of anchors) {
                     for (let o of b2Orientations) {
-                        const cand = { x: a.x, y: a.y, z: a.z, l: o.l, w: o.w, h: o.h, type: 2 };
+                        const cand = { shape: 'box', x: a.x, y: a.y, z: a.z, l: o.l, w: o.w, h: o.h, type: 2 };
                         if (!collides(cand)) {
-                            boxes.push(cand);
+                            items.push(cand);
                             b2Placed++;
                             placedNew = true;
                             break;
@@ -1027,36 +1168,105 @@
                 `;
             }
 
-            packedState.puzzle = { container: { l: CL, w: CW, h: CH }, boxes };
+            packedState.puzzle = { container: { l: CL, w: CW, h: CH }, items };
             update3DScene('puzzle');
         }
 
-        // 3. Spherical Packing Calculation
+        // 3. Spherical Packing Calculation & 3D Coordinate Generator
         function calculateSpheres() {
-            const containerSize = parseFloat(document.getElementById('sphere-container').value) || 100;
-            const diam = parseFloat(document.getElementById('sphere-diam').value) || 20;
+            const CL = parseFloat(document.getElementById('sp-out-l').value) || 100;
+            const CW = parseFloat(document.getElementById('sp-out-w').value) || 100;
+            const CH = parseFloat(document.getElementById('sp-out-h').value) || 100;
+            const diam = Math.max(1, parseFloat(document.getElementById('sphere-diam').value) || 20);
+            const r = diam / 2;
 
-            const gridFit = Math.pow(Math.floor(containerSize / diam), 3);
-            const containerVol = Math.pow(containerSize, 3);
-            const sphereVol = (4 / 3) * Math.PI * Math.pow(diam / 2, 3);
-            const fccTotal = Math.floor((containerVol * 0.7405) / sphereVol);
+            const pattern = document.getElementById('spherePattern').value;
+            const isPalletized = document.getElementById('spherePlacementMode').value === 'pallet';
+
+            // Compute exact 3D coordinates for Cubic Grid
+            const gridSpheres = [];
+            const gx = Math.floor(CL / diam);
+            const gy = Math.floor(CH / diam);
+            const gz = Math.floor(CW / diam);
+            for (let iy = 0; iy < gy; iy++) {
+                for (let iz = 0; iz < gz; iz++) {
+                    for (let ix = 0; ix < gx; ix++) {
+                        gridSpheres.push({
+                            shape: 'sphere',
+                            x: r + ix * diam,
+                            y: r + iy * diam,
+                            z: r + iz * diam,
+                            r: r
+                        });
+                    }
+                }
+            }
+
+            // Compute exact 3D coordinates for Hexagonal Close-Packing (FCC)
+            const fccSpheres = [];
+            const dz = diam * (Math.sqrt(3) / 2);      // Row spacing in Z
+            const dy = diam * Math.sqrt(2 / 3);        // Layer spacing in Y
+            const layerOffsetZ = diam / (2 * Math.sqrt(3)); // Nested pocket offset in Z
+
+            for (let iy = 0; ; iy++) {
+                const y = r + iy * dy;
+                if (y + r > CH + 0.001) break;
+
+                const isOddLayer = (iy % 2 === 1);
+                const zBase = r + (isOddLayer ? layerOffsetZ : 0);
+
+                for (let iz = 0; ; iz++) {
+                    const z = zBase + iz * dz;
+                    if (z + r > CW + 0.001) break;
+
+                    const isOddRow = ((iz + (isOddLayer ? 1 : 0)) % 2 === 1);
+                    const xBase = r + (isOddRow ? r : 0);
+
+                    for (let ix = 0; ; ix++) {
+                        const x = xBase + ix * diam;
+                        if (x + r > CL + 0.001) break;
+
+                        fccSpheres.push({
+                            shape: 'sphere',
+                            x: x,
+                            y: y,
+                            z: z,
+                            r: r
+                        });
+                    }
+                }
+            }
+
+            const activeSpheres = pattern === 'fcc' ? fccSpheres : gridSpheres;
+            const containerVol = CL * CW * CH;
+            const sphereVol = (4 / 3) * Math.PI * Math.pow(r, 3);
+            const efficiency = Math.min(100, ((activeSpheres.length * sphereVol) / containerVol) * 100).toFixed(1);
+            const totalHeight = isPalletized ? (CH + PALLET_HEIGHT) : CH;
 
             const resultsContainer = document.getElementById('sphere-results');
-            if (!resultsContainer) return;
-            resultsContainer.innerHTML = `
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-slate-400 block">Standard Grid Fit</span>
-                    <span class="text-xl font-bold text-white">${gridFit} spheres</span>
-                </div>
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-slate-400 block">Hexagonal Close-Packing (FCC)</span>
-                    <span class="text-xl font-bold text-krautz-400">${fccTotal} spheres</span>
-                </div>
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-slate-400 block">Volumetric Efficiency</span>
-                    <span class="text-xl font-bold text-emerald-400">${((fccTotal * sphereVol / containerVol) * 100).toFixed(1)}%</span>
-                </div>
-            `;
+            if (resultsContainer) {
+                resultsContainer.innerHTML = `
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Hexagonal (FCC) Fit</span>
+                        <span class="text-xl font-bold text-krautz-400">${fccSpheres.length} spheres</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Standard Grid Fit</span>
+                        <span class="text-xl font-bold text-white">${gridSpheres.length} spheres</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Active Fill Efficiency</span>
+                        <span class="text-xl font-bold text-emerald-400">${efficiency}%</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">${isPalletized ? 'Total Pallet Height' : 'Floor Stack Height'}</span>
+                        <span class="text-xl font-bold text-amber-400">${totalHeight.toFixed(1)} cm</span>
+                    </div>
+                `;
+            }
+
+            packedState.sphere = { container: { l: CL, w: CW, h: CH }, items: activeSpheres };
+            update3DScene('sphere');
         }
 
         // 4. Irregular Object Scan
@@ -1094,9 +1304,11 @@
         window.onload = function () {
             init3DViewer('dual', 'canvas-dual');
             init3DViewer('puzzle', 'canvas-puzzle');
+            init3DViewer('sphere', 'canvas-sphere');
             calculateAll();
             resetCamera('dual');
             resetCamera('puzzle');
+            resetCamera('sphere');
         };
     </script>
 </body>
