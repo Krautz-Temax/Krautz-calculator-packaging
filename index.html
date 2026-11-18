@@ -4,7 +4,7 @@
     <link rel="icon" type="image/png" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Krautz-Temax Pro Logistics - 3D Palletized Bin Packing & Cross-Section</title>
+    <title>Krautz-Temax Pro Logistics - 3D Palletized & Concrete Floor Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -63,7 +63,7 @@
             <!-- Tab Navigation -->
             <nav class="flex flex-wrap gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
                 <button onclick="switchTab('pack-dual')" id="btn-pack-dual" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all bg-krautz-500 text-white shadow flex items-center gap-1.5">
-                    <i data-lucide="box" class="w-3.5 h-3.5"></i> Dual Box & 3D Pallet
+                    <i data-lucide="box" class="w-3.5 h-3.5"></i> Dual Box & 3D View
                 </button>
                 <button onclick="switchTab('pack-puzzle')" id="btn-pack-puzzle" class="tab-btn px-4 py-2 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
                     <i data-lucide="boxes" class="w-3.5 h-3.5"></i> 3D Volume Puzzle
@@ -77,21 +77,21 @@
     <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full space-y-8">
 
-        <!-- TAB 1: DUAL BOX FILL CALCULATOR & 3D PALLET VISUALIZER -->
+        <!-- TAB 1: DUAL BOX FILL CALCULATOR & 3D VISUALIZER -->
         <section id="tab-pack-dual" class="tab-content space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
                 <!-- Left Panel: Inputs -->
                 <div class="lg:col-span-4 space-y-5">
                     
-                    <!-- Master Container / Pallet Footprint -->
+                    <!-- Master Container / Outer Footprint -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                             <div class="flex items-center space-x-2">
                                 <span class="text-krautz-400 text-lg">🟦</span>
-                                <h2 class="text-sm font-semibold text-white tracking-wide">Master Load / Pallet Footprint</h2>
+                                <h2 class="text-sm font-semibold text-white tracking-wide">Outer Packaging / Load Size</h2>
                             </div>
-                            <span class="text-xs text-slate-400 bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700">Inner cm</span>
+                            <span class="text-xs text-slate-400 bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700">cm</span>
                         </div>
                         
                         <div class="grid grid-cols-3 gap-3">
@@ -104,11 +104,26 @@
                                 <input type="number" id="containerW" value="80" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Load Height (Y)</label>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Height (Y)</label>
                                 <input type="number" id="containerH" value="100" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                         </div>
-                        <p class="text-[11px] text-slate-400">First two dimensions (120 × 80 cm) define the Euro-Pallet deck footprint (+14.4 cm pallet base height).</p>
+
+                        <!-- Placement Mode Prompt: Palletize vs Direct on Concrete Floor -->
+                        <div class="pt-3 border-t border-slate-800 space-y-2">
+                            <label class="block text-xs font-semibold text-slate-200">Base Placement Mode (Floor / Pallet):</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" id="dualModePalletBtn" onclick="setPlacementMode('dual', 'pallet')" class="px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-amber-600/20 border-amber-500 text-amber-300">
+                                    <span>🪵 Palletized</span>
+                                    <span class="text-[10px] opacity-80">+15 cm Brown Pallet</span>
+                                </button>
+                                <button type="button" id="dualModeFloorBtn" onclick="setPlacementMode('dual', 'floor')" class="px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
+                                    <span>🏭 Direct on Floor</span>
+                                    <span class="text-[10px] opacity-80">On Grey Concrete</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="dualPlacementMode" value="pallet">
+                        </div>
                     </div>
 
                     <!-- Small Inner Packages / Items -->
@@ -156,7 +171,7 @@
 
                     <!-- Quick Load Presets -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Quick Pallet Presets</h3>
+                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Quick Load Presets</h3>
                         <div class="grid grid-cols-2 gap-2">
                             <button onclick="setPresetValues(120, 80, 100, 30, 20, 25)" class="p-2.5 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-xs font-medium text-slate-300 transition text-left">
                                 Euro-Pallet (120×80×100)
@@ -182,7 +197,7 @@
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
                             <span class="text-xs font-medium text-slate-400 mb-1">VOLUME UTILIZATION</span>
                             <div id="volumeUtil" class="text-2xl font-extrabold text-emerald-400">100.0%</div>
-                            <span id="totalStackHeight" class="text-[10px] text-slate-400 mt-1">Total Height: 114.4 cm</span>
+                            <span id="totalStackHeight" class="text-[10px] text-amber-300 mt-1">Total Height: 115.0 cm</span>
                         </div>
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
                             <span class="text-xs font-medium text-slate-400 mb-1">3D GRID MATRIX</span>
@@ -197,16 +212,12 @@
                             <div class="flex items-center space-x-2">
                                 <span class="text-krautz-400 text-lg">🧊</span>
                                 <div>
-                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Palletized Load & Cross-Section (Doorsnede)</h2>
+                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Perspective & Cross-Section (Doorsnede)</h2>
                                     <p class="text-[11px] text-slate-400">Drag to rotate • Scroll to zoom • Right-drag to pan</p>
                                 </div>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <button onclick="resetCamera('dual')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
-                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
-                                    <input type="checkbox" id="dualShowPallet" checked onchange="update3DScene('dual')" class="accent-amber-500">
-                                    <span>Pallet Base</span>
-                                </label>
                                 <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
                                     <input type="checkbox" id="dualExplode" onchange="update3DScene('dual')" class="accent-krautz-500">
                                     <span>Explode</span>
@@ -236,16 +247,16 @@
                         <div id="canvas-dual" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Primary Unit</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#c69352] inline-block"></span> Euro-Pallet (14.4cm)</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm border border-sky-400/60 inline-block"></span> Load Envelope</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet (15cm)</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#64748b] inline-block"></span> Concrete Floor</span>
                             </div>
                         </div>
 
                         <!-- Footer Volume Specs -->
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
-                            <span id="effectiveVolume">Effective Master Volume: 960.0 L</span>
+                            <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Pallet Engine v3.1</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Pallet & Floor Engine v3.2</span>
                         </div>
                     </div>
 
@@ -262,13 +273,13 @@
                     <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
                         <i data-lucide="boxes" class="w-5 h-5 text-krautz-400"></i>
                         <div>
-                            <h2 class="text-sm font-bold text-white">Multi-Box 3D Pallet Puzzle</h2>
-                            <p class="text-[11px] text-slate-400">Packs Batch 1, then fits Batch 2 into remaining 3D pallet space.</p>
+                            <h2 class="text-sm font-bold text-white">Multi-Box 3D Volume Puzzle</h2>
+                            <p class="text-[11px] text-slate-400">Packs Batch 1, then fits Batch 2 into remaining 3D space.</p>
                         </div>
                     </div>
 
                     <div class="space-y-3">
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">1. Pallet / Outer Load (cm)</h3>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">1. Outer Packaging / Load Size (cm)</h3>
                         <div class="grid grid-cols-3 gap-2">
                             <div>
                                 <label class="text-[11px] text-slate-400">Length (X)</label>
@@ -282,6 +293,22 @@
                                 <label class="text-[11px] text-slate-400">Height (Y)</label>
                                 <input type="number" id="pz-out-h" value="100" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
                             </div>
+                        </div>
+
+                        <!-- Placement Mode Prompt for Puzzle Tab -->
+                        <div class="pt-2 space-y-1.5">
+                            <label class="block text-xs font-semibold text-slate-200">Base Placement Mode:</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" id="puzzleModePalletBtn" onclick="setPlacementMode('puzzle', 'pallet')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-amber-600/20 border-amber-500 text-amber-300">
+                                    <span>🪵 Palletized</span>
+                                    <span class="text-[10px] opacity-80">+15 cm Brown Pallet</span>
+                                </button>
+                                <button type="button" id="puzzleModeFloorBtn" onclick="setPlacementMode('puzzle', 'floor')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
+                                    <span>🏭 Direct on Floor</span>
+                                    <span class="text-[10px] opacity-80">On Grey Concrete</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="puzzlePlacementMode" value="pallet">
                         </div>
                     </div>
 
@@ -329,7 +356,7 @@
                         </div>
                     </div>
 
-                    <button onclick="calculatePuzzle()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Recalculate 3D Pallet Fit</button>
+                    <button onclick="calculatePuzzle()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Recalculate 3D Placement</button>
                 </div>
 
                 <!-- Right 3D Puzzle Viewport & Stats -->
@@ -344,16 +371,12 @@
                             <div class="flex items-center space-x-2">
                                 <span class="text-emerald-400 text-lg">📐</span>
                                 <div>
-                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Multi-SKU Pallet Placement & Cross-Section</h2>
-                                    <p class="text-[11px] text-slate-400">Shows exact physical placement of Batch 1 + Secondary Batch 2 on Pallet</p>
+                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Multi-SKU Placement & Cross-Section</h2>
+                                    <p class="text-[11px] text-slate-400">Shows Batch 1 + Secondary Batch 2 on Pallet or Concrete Floor</p>
                                 </div>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <button onclick="resetCamera('puzzle')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
-                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
-                                    <input type="checkbox" id="puzzleShowPallet" checked onchange="update3DScene('puzzle')" class="accent-amber-500">
-                                    <span>Pallet Base</span>
-                                </label>
                                 <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
                                     <input type="checkbox" id="puzzleExplode" onchange="update3DScene('puzzle')" class="accent-krautz-500">
                                     <span>Explode</span>
@@ -384,7 +407,8 @@
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Batch 1 (Primary)</span>
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#10b981] inline-block"></span> Batch 2 (Secondary)</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#c69352] inline-block"></span> Euro-Pallet (14.4cm)</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet (15cm)</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#64748b] inline-block"></span> Concrete Floor</span>
                             </div>
                         </div>
                     </div>
@@ -471,16 +495,35 @@
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
 
-    <!-- JavaScript Application & 3D Pallet Engine -->
+    <!-- JavaScript Application & 3D Pallet / Concrete Floor Engine -->
     <script>
         lucide.createIcons();
 
-        const PALLET_HEIGHT = 14.4; // Standard EPAL Euro-Pallet height in cm
+        const PALLET_HEIGHT = 15.0; // Standard 15 cm pallet height
         const viewers = {};
         const packedState = {
             dual: { container: { l: 120, w: 80, h: 100 }, boxes: [] },
             puzzle: { container: { l: 120, w: 80, h: 100 }, boxes: [] }
         };
+
+        // Switch between Palletized (+15cm Brown Pallet) and Direct on Concrete Floor
+        function setPlacementMode(key, mode) {
+            document.getElementById(`${key}PlacementMode`).value = mode;
+
+            const palletBtn = document.getElementById(`${key}ModePalletBtn`);
+            const floorBtn = document.getElementById(`${key}ModeFloorBtn`);
+
+            if (mode === 'pallet') {
+                palletBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-amber-600/20 border-amber-500 text-amber-300";
+                floorBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            } else {
+                floorBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-700/40 border-slate-400 text-white";
+                palletBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            }
+
+            if (key === 'dual') calculateDualBoxAndVisualizer();
+            if (key === 'puzzle') calculatePuzzle();
+        }
 
         // Initialize a Three.js Scene
         function init3DViewer(key, containerElId) {
@@ -489,9 +532,6 @@
 
             const scene = new THREE.Scene();
             scene.background = new THREE.Color(0x060b16);
-
-            const gridHelper = new THREE.GridHelper(320, 32, 0x1e293b, 0x0f172a);
-            scene.add(gridHelper);
 
             const width = container.clientWidth || 600;
             const height = container.clientHeight || 390;
@@ -508,21 +548,21 @@
             controls.enableDamping = true;
             controls.dampingFactor = 0.06;
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.68);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.70);
             scene.add(ambientLight);
 
-            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.78);
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.80);
             dirLight1.position.set(220, 320, 160);
             scene.add(dirLight1);
 
-            const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.35);
+            const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.32);
             dirLight2.position.set(-200, 120, -160);
             scene.add(dirLight2);
 
             const rootGroup = new THREE.Group();
             scene.add(rootGroup);
 
-            viewers[key] = { scene, camera, renderer, controls, rootGroup, gridHelper, container };
+            viewers[key] = { scene, camera, renderer, controls, rootGroup, container };
 
             function animate() {
                 requestAnimationFrame(animate);
@@ -550,8 +590,8 @@
             const v = viewers[key];
             const c = packedState[key].container;
             if (!v || !c) return;
-            const showPallet = document.getElementById(`${key}ShowPallet`)?.checked ?? true;
-            const baseOffset = showPallet ? PALLET_HEIGHT : 0;
+            const mode = document.getElementById(`${key}PlacementMode`)?.value || 'pallet';
+            const baseOffset = mode === 'pallet' ? PALLET_HEIGHT : 0;
             const totalH = c.h + baseOffset;
             const maxDim = Math.max(c.l, c.w, totalH);
             v.camera.position.set(maxDim * 1.45, maxDim * 1.2, maxDim * 1.6);
@@ -559,19 +599,44 @@
             v.controls.update();
         }
 
-        // Procedural 3D Wooden Pallet Builder matching L (X) x W (Z) dimensions
-        function buildPalletMesh(L, W, maxXCut) {
-            const palletGroup = new THREE.Group();
-            const woodTopMat = new THREE.MeshLambertMaterial({ color: 0xc69352 });
-            const woodBlockMat = new THREE.MeshLambertMaterial({ color: 0x9c6e34 });
-            const woodEdgeMat = new THREE.LineBasicMaterial({ color: 0x5c3d18, transparent: true, opacity: 0.65 });
+        // Procedural Grey Concrete Warehouse Floor (Solvloer)
+        function buildConcreteFloorMesh(L, W) {
+            const floorGroup = new THREE.Group();
+            const slabSize = Math.max(L, W) * 2.6;
+            const slabThickness = 3.0;
 
-            const boardThickness = 2.2;
-            const stringerThickness = 2.2;
-            const blockHeight = PALLET_HEIGHT - boardThickness * 2 - stringerThickness; // 7.8 cm
+            // Grey concrete slab underneath y = 0 so top surface sits exactly at y = 0
+            const slabGeo = new THREE.BoxGeometry(slabSize, slabThickness, slabSize);
+            const slabMat = new THREE.MeshLambertMaterial({ color: 0x525b66 });
+            const slabMesh = new THREE.Mesh(slabGeo, slabMat);
+            slabMesh.position.set(0, -slabThickness / 2, 0);
+
+            const slabEdges = new THREE.EdgesGeometry(slabGeo);
+            const slabLine = new THREE.LineSegments(slabEdges, new THREE.LineBasicMaterial({ color: 0x334155 }));
+            slabMesh.add(slabLine);
+            floorGroup.add(slabMesh);
+
+            // Subtle expansion joint grid on top of the grey concrete floor (y = 0.05)
+            const divisions = 12;
+            const grid = new THREE.GridHelper(slabSize, divisions, 0x3f4752, 0x47505c);
+            grid.position.set(0, 0.05, 0);
+            floorGroup.add(grid);
+
+            return floorGroup;
+        }
+
+        // Procedural 3D Brown Wooden Pallet Builder (Exact 15.0 cm height, L x W footprint)
+        function buildBrownPalletMesh(L, W, maxXCut) {
+            const palletGroup = new THREE.Group();
+            const brownWoodTopMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });   // Rich Saddle Brown
+            const brownWoodBlockMat = new THREE.MeshLambertMaterial({ color: 0x65320D }); // Darker Brown Blocks
+            const woodEdgeMat = new THREE.LineBasicMaterial({ color: 0x3d1e07, transparent: true, opacity: 0.75 });
+
+            const boardThickness = 2.3;
+            const stringerThickness = 2.3;
+            const blockHeight = PALLET_HEIGHT - boardThickness * 2 - stringerThickness; // 8.1 cm -> Total = 15.0 cm
 
             function addPart(px, py, pz, sx, sy, sz, mat) {
-                // Respect X-axis cross-section slice on pallet pieces as well
                 const startX = px - sx / 2 + L / 2;
                 if (startX >= maxXCut) return;
                 const visibleEnd = Math.min(startX + sx, maxXCut);
@@ -588,74 +653,78 @@
                 palletGroup.add(mesh);
             }
 
-            // 1. Three Bottom Runner Skids (running along Length X)
+            // 1. Three Bottom Runner Skids resting on Concrete Floor (y = 0 to 2.3 cm)
             const skidWidth = Math.min(10, W * 0.14);
             const zSkids = [-W / 2 + skidWidth / 2, 0, W / 2 - skidWidth / 2];
             zSkids.forEach(zPos => {
-                addPart(0, boardThickness / 2, zPos, L, boardThickness, skidWidth, woodTopMat);
+                addPart(0, boardThickness / 2, zPos, L, boardThickness, skidWidth, brownWoodTopMat);
             });
 
-            // 2. Nine Spacer Blocks (3 x 3 grid)
+            // 2. Nine Brown Spacer Blocks (3 x 3 grid)
             const blockL = Math.min(14.5, L * 0.14);
             const xBlocks = [-L / 2 + blockL / 2, 0, L / 2 - blockL / 2];
             const blockCenterY = boardThickness + blockHeight / 2;
             xBlocks.forEach(xPos => {
                 zSkids.forEach(zPos => {
-                    addPart(xPos, blockCenterY, zPos, blockL, blockHeight, skidWidth, woodBlockMat);
+                    addPart(xPos, blockCenterY, zPos, blockL, blockHeight, skidWidth, brownWoodBlockMat);
                 });
             });
 
-            // 3. Three Transverse Stringer Boards (running along Width Z)
+            // 3. Three Transverse Stringer Boards
             const stringerCenterY = boardThickness + blockHeight + stringerThickness / 2;
             xBlocks.forEach(xPos => {
-                addPart(xPos, stringerCenterY, 0, blockL, stringerThickness, W, woodTopMat);
+                addPart(xPos, stringerCenterY, 0, blockL, stringerThickness, W, brownWoodTopMat);
             });
 
-            // 4. Five Top Deck Boards (running along Length X)
+            // 4. Five Top Deck Boards finishing flush at y = 15.0 cm
             const topCenterY = PALLET_HEIGHT - boardThickness / 2;
             const deckCount = 5;
-            const deckWidth = Math.min(11, (W / deckCount) * 0.72);
+            const deckWidth = Math.min(11, (W / deckCount) * 0.74);
             for (let i = 0; i < deckCount; i++) {
                 const frac = i / (deckCount - 1);
                 const zPos = (-W / 2 + deckWidth / 2) + frac * (W - deckWidth);
-                addPart(0, topCenterY, zPos, L, boardThickness, deckWidth, woodTopMat);
+                addPart(0, topCenterY, zPos, L, boardThickness, deckWidth, brownWoodTopMat);
             }
 
             return palletGroup;
         }
 
-        // Render 3D Pallet + Boxes + Load Envelope + Cross-Section Slicing
+        // Render Concrete Floor + Optional 15cm Brown Pallet + Boxes + Cross-Section Slicing
         function update3DScene(key) {
             const v = viewers[key];
             const data = packedState[key];
             if (!v || !data) return;
 
             while (v.rootGroup.children.length > 0) {
-                const child = v.rootGroup.children[0];
-                v.rootGroup.remove(child);
+                v.rootGroup.remove(v.rootGroup.children[0]);
             }
 
             const { l: CL, w: CW, h: CH } = data.container;
             const sliceYPercent = parseFloat(document.getElementById(`${key}SliceY`).value) || 100;
             const sliceXPercent = parseFloat(document.getElementById(`${key}SliceX`).value) || 100;
             const explode = document.getElementById(`${key}Explode`).checked;
-            const showPallet = document.getElementById(`${key}ShowPallet`).checked;
+            const placementMode = document.getElementById(`${key}PlacementMode`).value;
+            const isPalletized = placementMode === 'pallet';
 
             document.getElementById(`${key}SliceYLabel`).innerText = sliceYPercent === 100 ? '100% (Full)' : `${sliceYPercent}% Cut`;
             document.getElementById(`${key}SliceXLabel`).innerText = sliceXPercent === 100 ? '100% (Full)' : `${sliceXPercent}% Cut`;
 
-            const baseOffsetY = showPallet ? PALLET_HEIGHT : 0;
+            const baseOffsetY = isPalletized ? PALLET_HEIGHT : 0;
             const maxYCut = (sliceYPercent / 100) * CH;
             const maxXCut = (sliceXPercent / 100) * CL;
             const explodeFactor = explode ? 1.18 : 1.0;
 
-            // 1. Add Wooden Pallet Base underneath cargo
-            if (showPallet) {
-                const palletMesh = buildPalletMesh(CL, CW, maxXCut);
+            // 1. Always render the Grey Concrete Floor underneath (both Palletized & Floor modes)
+            const concreteFloor = buildConcreteFloorMesh(CL, CW);
+            v.rootGroup.add(concreteFloor);
+
+            // 2. If Palletized, render the 15.0 cm Brown Wooden Pallet on top of the Concrete Floor
+            if (isPalletized) {
+                const palletMesh = buildBrownPalletMesh(CL, CW, maxXCut);
                 v.rootGroup.add(palletMesh);
             }
 
-            // 2. Outer Load Envelope (Translucent Walls + Wireframe) resting on top of Pallet
+            // 3. Outer Load Envelope (resting on Pallet at y=15cm OR directly on Concrete at y=0cm)
             const outerGeo = new THREE.BoxGeometry(CL, CH, CW);
             const outerMat = new THREE.MeshPhongMaterial({
                 color: 0x38bdf8,
@@ -674,7 +743,7 @@
             wireframe.position.set(0, baseOffsetY + CH / 2, 0);
             v.rootGroup.add(wireframe);
 
-            // 3. Render Packed Inner Boxes elevated on the Pallet
+            // 4. Render Packed Inner Boxes
             const boxesToRender = data.boxes.slice(0, 1500);
             const matBatch1 = new THREE.MeshLambertMaterial({ color: 0x0077ee });
             const matBatch2 = new THREE.MeshLambertMaterial({ color: 0x10b981 });
@@ -707,7 +776,7 @@
                 v.rootGroup.add(mesh);
             });
 
-            // 4. Visual Cutaway Plane indicator when slicing < 100%
+            // 5. Visual Cutaway Plane indicator when slicing < 100%
             if (sliceXPercent < 100) {
                 const totalHeight = CH + baseOffsetY + 6;
                 const planeGeo = new THREE.PlaneGeometry(CW + 8, totalHeight);
@@ -774,6 +843,7 @@
 
             const isSqueezeActive = document.getElementById('squeezeMode').checked;
             const autoRotate = document.getElementById('autoRotateDual').checked;
+            const isPalletized = document.getElementById('dualPlacementMode').value === 'pallet';
 
             const factor = isSqueezeActive ? 0.90 : 1.0;
             const orientations = autoRotate
@@ -796,11 +866,14 @@
             const masterVol = (CL * CW * CH) / 1000;
             const utilizedVol = best.total * (IL * IW * IH);
             const efficiency = Math.min(100, ((utilizedVol / (CL * CW * CH)) * 100)).toFixed(1);
+            const totalHeight = isPalletized ? (CH + PALLET_HEIGHT) : CH;
 
             document.getElementById('maxUnits').innerText = best.total;
             document.getElementById('chosenOrientation').innerText = `Placed as ${best.dim.l.toFixed(1)}×${best.dim.w.toFixed(1)}×${best.dim.h.toFixed(1)} cm`;
             document.getElementById('volumeUtil').innerText = efficiency + '%';
-            document.getElementById('totalStackHeight').innerText = `Total Palletized Height: ${(CH + PALLET_HEIGHT).toFixed(1)} cm`;
+            document.getElementById('totalStackHeight').innerText = isPalletized
+                ? `Total Palletized Height: ${totalHeight.toFixed(1)} cm`
+                : `Floor Stack Height: ${totalHeight.toFixed(1)} cm`;
             document.getElementById('packingLayout').innerText = `${best.cols} × ${best.rows} × ${best.layers}`;
             document.getElementById('effectiveVolume').innerText = `Effective Cargo Volume: ${masterVol.toFixed(1)} L`;
             document.getElementById('unitVolume').innerText = `Unit Volume: ${unitVol.toFixed(2)} L`;
@@ -843,6 +916,7 @@
             const CW = parseFloat(document.getElementById('pz-out-w').value) || 80;
             const CH = parseFloat(document.getElementById('pz-out-h').value) || 100;
 
+            const isPalletized = document.getElementById('puzzlePlacementMode').value === 'pallet';
             const b1TargetQty = Math.max(0, parseInt(document.getElementById('pz-b1-qty').value) || 0);
             const b1L = parseFloat(document.getElementById('pz-b1-l').value) || 30;
             const b1W = parseFloat(document.getElementById('pz-b1-w').value) || 20;
@@ -929,6 +1003,7 @@
             const outerVol = CL * CW * CH;
             const usedVol = (b1Placed * b1L * b1W * b1H) + (b2Placed * b2L * b2W * b2H);
             const totalUtil = ((usedVol / outerVol) * 100).toFixed(1);
+            const totalHeight = isPalletized ? (CH + PALLET_HEIGHT) : CH;
 
             const resultsContainer = document.getElementById('puzzle-results');
             if (resultsContainer) {
@@ -946,8 +1021,8 @@
                         <span class="text-xl font-bold text-white">${totalUtil}%</span>
                     </div>
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-                        <span class="text-[11px] text-slate-400 block">Palletized Height</span>
-                        <span class="text-xl font-bold text-amber-400">${(CH + PALLET_HEIGHT).toFixed(1)} cm</span>
+                        <span class="text-[11px] text-slate-400 block">${isPalletized ? 'Total Pallet Height' : 'Floor Stack Height'}</span>
+                        <span class="text-xl font-bold text-amber-400">${totalHeight.toFixed(1)} cm</span>
                     </div>
                 `;
             }
