@@ -144,7 +144,7 @@
                             <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800">
                                 <div>
                                     <label for="dualCornerGuards" class="text-xs font-medium text-slate-200 block cursor-pointer">Carton Hoeklatten (Corner Guards)</label>
-                                    <span class="text-[10px] text-slate-400">4× L-profile edge protectors (0.4 cm wall)</span>
+                                    <span class="text-[10px] text-slate-400">4× L-profile edge protectors on stack corners</span>
                                 </div>
                                 <input type="checkbox" id="dualCornerGuards" onchange="calculateDualBoxAndVisualizer()" class="w-4 h-4 accent-amber-500 rounded bg-slate-950 border-slate-700 cursor-pointer">
                             </div>
@@ -278,11 +278,16 @@
                             </div>
                         </div>
 
+                        <!-- Live 3D Dimensions & Volume Status Bar (Inclusive of Pallet vs Goods Only) -->
+                        <div id="dual-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs">
+                            <!-- Dynamically populated by update3DScene('dual') -->
+                        </div>
+
                         <!-- Footer Volume Specs -->
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Pallet & Dunnage Engine v3.4</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Pallet & Dunnage Engine v3.6</span>
                         </div>
                     </div>
 
@@ -449,6 +454,11 @@
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
                             </div>
                         </div>
+
+                        <!-- Live 3D Dimensions & Volume Status Bar -->
+                        <div id="puzzle-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs">
+                            <!-- Dynamically populated by update3DScene('puzzle') -->
+                        </div>
                     </div>
 
                 </div>
@@ -596,6 +606,11 @@
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
                             </div>
+                        </div>
+
+                        <!-- Live 3D Dimensions & Volume Status Bar -->
+                        <div id="sphere-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs">
+                            <!-- Dynamically populated by update3DScene('sphere') -->
                         </div>
                     </div>
 
@@ -747,6 +762,11 @@
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
                             </div>
                         </div>
+
+                        <!-- Live 3D Dimensions & Volume Status Bar -->
+                        <div id="irr-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs">
+                            <!-- Dynamically populated by update3DScene('irr') -->
+                        </div>
                     </div>
 
                 </div>
@@ -767,7 +787,7 @@
 
         const PALLET_HEIGHT = 15.0;      // 15 cm standard brown pallet
         const SHEET_THICKNESS = 0.4;     // 0.4 cm corrugated sheet carton (tussenlegvel)
-        const CORNER_THICKNESS = 0.4;    // 0.4 cm carton hoeklat wall thickness
+        const CORNER_THICKNESS = 0.45;   // 0.45 cm carton hoeklat wall thickness
         const CORNER_WING = 5.5;         // 5.5 cm L-profile wing width
 
         const viewers = {};
@@ -778,11 +798,9 @@
             irr:    { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] }
         };
 
-        // Custom uploaded 3D scan geometry state
         let customScanGeometry = null;
         let customScanBounds = null;
 
-        // Switch between Palletized (+15cm Brown Pallet) and Direct on Concrete Floor
         function setPlacementMode(key, mode) {
             document.getElementById(`${key}PlacementMode`).value = mode;
 
@@ -818,7 +836,6 @@
             calculateSpheres();
         }
 
-        // Initialize Three.js Scene
         function init3DViewer(key, containerElId) {
             const container = document.getElementById(containerElId);
             if (!container) return;
@@ -890,6 +907,102 @@
             v.camera.position.set(maxDim * 1.45, maxDim * 1.2, maxDim * 1.6);
             v.controls.target.set(0, totalH / 2, 0);
             v.controls.update();
+        }
+
+        // Compute exact bounding box & net volume of packed goods
+        function getPackedStackBounds(items, CL, CW, CH) {
+            if (!items || items.length === 0) {
+                return { minX: 0, maxX: 0, minZ: 0, maxZ: 0, maxY: 0, stackL: 0, stackW: 0, netGoodsVolL: 0 };
+            }
+            let minX = Infinity, maxX = -Infinity;
+            let minZ = Infinity, maxZ = -Infinity;
+            let maxY = 0;
+            let netGoodsVolCm3 = 0;
+
+            items.forEach(it => {
+                if (it.shape === 'sphere') {
+                    minX = Math.min(minX, it.x - it.r);
+                    maxX = Math.max(maxX, it.x + it.r);
+                    minZ = Math.min(minZ, it.z - it.r);
+                    maxZ = Math.max(maxZ, it.z + it.r);
+                    maxY = Math.max(maxY, it.y + it.r);
+                    netGoodsVolCm3 += (4 / 3) * Math.PI * Math.pow(it.r, 3);
+                } else {
+                    minX = Math.min(minX, it.x);
+                    maxX = Math.max(maxX, it.x + it.l);
+                    minZ = Math.min(minZ, it.z);
+                    maxZ = Math.max(maxZ, it.z + it.w);
+                    maxY = Math.max(maxY, it.y + it.h);
+                    netGoodsVolCm3 += (it.unitVolCm3 !== undefined) ? it.unitVolCm3 : (it.l * it.w * it.h);
+                }
+            });
+
+            return {
+                minX,
+                maxX,
+                minZ,
+                maxZ,
+                maxY,
+                stackL: Math.max(0, maxX - minX),
+                stackW: Math.max(0, maxZ - minZ),
+                netGoodsVolL: netGoodsVolCm3 / 1000
+            };
+        }
+
+        // Update Live Status Bar underneath the 3D Drawing (Inclusive of Pallet vs Goods Only)
+        function updateDimensionStatusBar(key, CL, CW, CH, isPalletized, stackBounds) {
+            const statusEl = document.getElementById(`${key}-dim-status`);
+            if (!statusEl) return;
+
+            const totalH = isPalletized ? (CH + PALLET_HEIGHT) : CH;
+            const totalEnvelopeVolL = (CL * CW * totalH) / 1000;
+            const totalEnvelopeVolM3 = totalEnvelopeVolL / 1000;
+
+            const goodsL = stackBounds.stackL;
+            const goodsW = stackBounds.stackW;
+            const goodsH = stackBounds.maxY;
+            const goodsEnvelopeVolL = (goodsL * goodsW * goodsH) / 1000;
+            const goodsEnvelopeVolM3 = goodsEnvelopeVolL / 1000;
+            const netGoodsVolL = stackBounds.netGoodsVolL;
+
+            const baseLabel = isPalletized ? 'Incl. 15cm Euro-Pallet' : 'Direct on Concrete Floor';
+
+            statusEl.innerHTML = `
+                <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 flex flex-col justify-between space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-400">
+                            ${isPalletized ? '🪵 Total Palletized Load' : '🏭 Total Floor Envelope'}
+                        </span>
+                        <span class="text-[10px] text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">${baseLabel}</span>
+                    </div>
+                    <div class="text-sm font-bold text-white">
+                        ${CL.toFixed(1)} × ${CW.toFixed(1)} × ${totalH.toFixed(1)} cm
+                        <span class="text-[11px] font-normal text-slate-400">(L × W × H)</span>
+                    </div>
+                    <div class="text-[11px] text-slate-300">
+                        Gross Envelope Volume: <span class="font-semibold text-amber-300">${totalEnvelopeVolL.toFixed(1)} L</span>
+                        <span class="text-slate-500">(${totalEnvelopeVolM3.toFixed(3)} m³)</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 flex flex-col justify-between space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-sky-400">
+                            📦 Goods Only (Stacked Cargo)
+                        </span>
+                        <span class="text-[10px] text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">Excl. Pallet</span>
+                    </div>
+                    <div class="text-sm font-bold text-white">
+                        ${goodsL.toFixed(1)} × ${goodsW.toFixed(1)} × ${goodsH.toFixed(1)} cm
+                        <span class="text-[11px] font-normal text-slate-400">(L × W × H)</span>
+                    </div>
+                    <div class="text-[11px] text-slate-300">
+                        Goods Stack Vol: <span class="font-semibold text-sky-300">${goodsEnvelopeVolL.toFixed(1)} L</span>
+                        <span class="text-slate-500">(${goodsEnvelopeVolM3.toFixed(3)} m³)</span>
+                        • Net Units: <span class="font-semibold text-emerald-400">${netGoodsVolL.toFixed(1)} L</span>
+                    </div>
+                </div>
+            `;
         }
 
         // Grey Concrete Warehouse Floor
@@ -969,33 +1082,35 @@
             return palletGroup;
         }
 
-        // Build 4 Vertical Carton Hoeklatten (L-Profile Corner Guards)
-        function buildCornerGuardsMesh(L, W, H, baseOffsetY, maxYCut, maxXCut, explodeFactor) {
+        // Build 4 Vertical Carton Hoeklatten snapped flush onto the 4 outer corners of the packed stack
+        function buildCornerGuardsMesh(L, W, bounds, baseOffsetY, maxYCut, maxXCut, explodeFactor) {
             const group = new THREE.Group();
             const kraftMat = new THREE.MeshLambertMaterial({ color: 0xd4a373 });
             const edgeMat = new THREE.LineBasicMaterial({ color: 0x7f5539, transparent: true, opacity: 0.85 });
 
-            const visibleH = Math.min(H, maxYCut);
-            if (visibleH <= 0.5) return group;
+            const visibleH = Math.min(bounds.maxY, maxYCut);
+            if (visibleH <= 0.5 || bounds.stackL <= 0.5 || bounds.stackW <= 0.5) return group;
 
-            const wingX = Math.min(CORNER_WING, L * 0.22);
-            const wingZ = Math.min(CORNER_WING, W * 0.22);
+            const wingX = Math.min(CORNER_WING, bounds.stackL * 0.25);
+            const wingZ = Math.min(CORNER_WING, bounds.stackW * 0.25);
             const t = CORNER_THICKNESS;
 
+            const sMinX = bounds.minX - L / 2 - t;
+            const sMaxX = bounds.maxX - L / 2 + t;
+            const sMinZ = bounds.minZ - W / 2 - t;
+            const sMaxZ = bounds.maxZ - W / 2 + t;
+
             const corners = [
-                { sx: -1, sz: -1 },
-                { sx:  1, sz: -1 },
-                { sx: -1, sz:  1 },
-                { sx:  1, sz:  1 }
+                { xEdge: sMinX, zEdge: sMinZ, dirX:  1, dirZ:  1 },
+                { xEdge: sMaxX, zEdge: sMinZ, dirX: -1, dirZ:  1 },
+                { xEdge: sMinX, zEdge: sMaxZ, dirX:  1, dirZ: -1 },
+                { xEdge: sMaxX, zEdge: sMaxZ, dirX: -1, dirZ: -1 }
             ];
 
             corners.forEach(c => {
-                // X-wing flange
-                const xCenter = c.sx * (L / 2 - wingX / 2) * explodeFactor;
-                const zFlange1 = c.sz * (W / 2 - t / 2) * explodeFactor;
-                const xPosInContainer = xCenter + L / 2;
-
-                if (xPosInContainer - wingX / 2 <= maxXCut) {
+                const xCenter = (c.xEdge + c.dirX * (wingX / 2)) * explodeFactor;
+                const zFlange1 = (c.zEdge + c.dirZ * (t / 2)) * explodeFactor;
+                if ((xCenter + L / 2) - wingX / 2 <= maxXCut) {
                     const geo1 = new THREE.BoxGeometry(wingX, visibleH, t);
                     const m1 = new THREE.Mesh(geo1, kraftMat);
                     m1.position.set(xCenter, baseOffsetY + (visibleH / 2) * explodeFactor, zFlange1);
@@ -1003,10 +1118,9 @@
                     group.add(m1);
                 }
 
-                // Z-wing flange
-                const xFlange2 = c.sx * (L / 2 - t / 2) * explodeFactor;
-                const zCenter = c.sz * (W / 2 - wingZ / 2) * explodeFactor;
-                if (xFlange2 + L / 2 <= maxXCut) {
+                const xFlange2 = (c.xEdge + c.dirX * (t / 2)) * explodeFactor;
+                const zCenter = (c.zEdge + c.dirZ * (wingZ / 2)) * explodeFactor;
+                if ((xFlange2 + L / 2) <= maxXCut) {
                     const geo2 = new THREE.BoxGeometry(t, visibleH, wingZ);
                     const m2 = new THREE.Mesh(geo2, kraftMat);
                     m2.position.set(xFlange2, baseOffsetY + (visibleH / 2) * explodeFactor, zCenter);
@@ -1018,22 +1132,25 @@
             return group;
         }
 
-        // Build Horizontal Sheet Carton Interlayers (Tussenlegvellen)
-        function buildSheetCartonsMesh(L, W, sheetYs, baseOffsetY, maxYCut, maxXCut, explodeFactor) {
+        // Build Horizontal Sheet Carton Interlayers sized cleanly to the packed stack footprint
+        function buildSheetCartonsMesh(L, W, bounds, sheetYs, baseOffsetY, maxYCut, maxXCut, explodeFactor) {
             const group = new THREE.Group();
             const sheetMat = new THREE.MeshLambertMaterial({ color: 0xd4a373 });
             const edgeMat = new THREE.LineBasicMaterial({ color: 0x7f5539, transparent: true, opacity: 0.85 });
 
-            const visibleL = Math.min(L, maxXCut);
+            const startX = bounds.minX;
+            const endX = Math.min(bounds.maxX, maxXCut);
+            const visibleL = endX - startX;
             if (visibleL <= 0.5) return group;
 
-            const centerX = (visibleL / 2 - L / 2) * explodeFactor;
+            const centerX = ((startX + visibleL / 2) - L / 2) * explodeFactor;
+            const centerZ = ((bounds.minZ + bounds.stackW / 2) - W / 2) * explodeFactor;
 
             sheetYs.forEach(yPos => {
                 if (yPos > maxYCut) return;
-                const geo = new THREE.BoxGeometry(visibleL, SHEET_THICKNESS, W);
+                const geo = new THREE.BoxGeometry(visibleL, SHEET_THICKNESS, bounds.stackW);
                 const mesh = new THREE.Mesh(geo, sheetMat);
-                mesh.position.set(centerX, baseOffsetY + (yPos + SHEET_THICKNESS / 2) * explodeFactor, 0);
+                mesh.position.set(centerX, baseOffsetY + (yPos + SHEET_THICKNESS / 2) * explodeFactor, centerZ);
                 mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeMat));
                 group.add(mesh);
             });
@@ -1041,7 +1158,6 @@
             return group;
         }
 
-        // Procedural Organic Irregular Scan Mesh (smooth bumpy potato/cut-of-meat/device geometry)
         function buildProceduralIrregularGeo(rx, ry, rz) {
             const geo = new THREE.IcosahedronGeometry(1, 3);
             const pos = geo.attributes.position;
@@ -1059,7 +1175,6 @@
             return geo;
         }
 
-        // Unified 3D Scene Renderer across all 4 Tabs
         function update3DScene(key) {
             const v = viewers[key];
             const data = packedState[key];
@@ -1113,14 +1228,19 @@
             wireframe.position.set(0, baseOffsetY + CH / 2, 0);
             v.rootGroup.add(wireframe);
 
-            // 4. Carton Hoeklatten (4 Corner Guards)
-            if (useCorners) {
-                v.rootGroup.add(buildCornerGuardsMesh(CL, CW, CH, baseOffsetY, maxYCut, maxXCut, explodeFactor));
+            const stackBounds = getPackedStackBounds(data.items, CL, CW, CH);
+
+            // Update the live dimension & volume bar directly underneath the 3D viewport
+            updateDimensionStatusBar(key, CL, CW, CH, isPalletized, stackBounds);
+
+            // 4. Carton Hoeklatten snapped tightly to the 4 corners of the actual packed stack
+            if (useCorners && data.items.length > 0) {
+                v.rootGroup.add(buildCornerGuardsMesh(CL, CW, stackBounds, baseOffsetY, maxYCut, maxXCut, explodeFactor));
             }
 
-            // 5. Sheet Carton Interlayers (Tussenlegvellen)
-            if (useSheets && data.sheetYs && data.sheetYs.length > 0) {
-                v.rootGroup.add(buildSheetCartonsMesh(CL, CW, data.sheetYs, baseOffsetY, maxYCut, maxXCut, explodeFactor));
+            // 5. Sheet Carton Interlayers matched to the packed stack footprint
+            if (useSheets && data.sheetYs && data.sheetYs.length > 0 && data.items.length > 0) {
+                v.rootGroup.add(buildSheetCartonsMesh(CL, CW, stackBounds, data.sheetYs, baseOffsetY, maxYCut, maxXCut, explodeFactor));
             }
 
             // 6. Packed Items (Boxes, Spheres, or Irregular Scanned Meshes)
@@ -1267,7 +1387,7 @@
             return unique;
         }
 
-        // 1. Dual Box & 3D Visualizer Logic (with Sheet Carton & Corner Guards)
+        // 1. Dual Box & 3D Visualizer Logic
         function calculateDualBoxAndVisualizer() {
             const CL = parseFloat(document.getElementById('containerL').value) || 1;
             const CW = parseFloat(document.getElementById('containerW').value) || 1;
@@ -1283,11 +1403,6 @@
             const useSheets = document.getElementById('dualSheetCarton').checked;
             const useCorners = document.getElementById('dualCornerGuards').checked;
 
-            // Corner guards occupy 0.4cm thickness on each side (0.8cm total per axis)
-            const cornerInset = useCorners ? CORNER_THICKNESS : 0;
-            const usableL = Math.max(1, CL - cornerInset * 2);
-            const usableW = Math.max(1, CW - cornerInset * 2);
-
             const factor = isSqueezeActive ? 0.90 : 1.0;
             const orientations = autoRotate
                 ? getOrientations(IL * factor, IW * factor, IH)
@@ -1296,9 +1411,8 @@
             let best = { total: -1, cols: 0, rows: 0, layers: 0, dim: orientations[0] };
 
             orientations.forEach(o => {
-                const cols = Math.floor(usableL / o.l);
-                const rows = Math.floor(usableW / o.w);
-                // If sheet carton is placed between layers, N layers require (N - 1) sheets
+                const cols = Math.floor(CL / o.l);
+                const rows = Math.floor(CW / o.w);
                 const layers = useSheets
                     ? Math.max(0, Math.floor((CH + SHEET_THICKNESS) / (o.h + SHEET_THICKNESS)))
                     : Math.floor(CH / o.h);
@@ -1344,12 +1458,13 @@
                     for (let x = 0; x < best.cols; x++) {
                         items.push({
                             shape: 'box',
-                            x: cornerInset + x * best.dim.l,
+                            x: x * best.dim.l,
                             y: layerY,
-                            z: cornerInset + z * best.dim.w,
+                            z: z * best.dim.w,
                             l: best.dim.l,
                             w: best.dim.w,
                             h: best.dim.h,
+                            unitVolCm3: IL * IW * IH,
                             type: 1
                         });
                     }
@@ -1379,15 +1494,6 @@
 
             const isPalletized = document.getElementById('puzzlePlacementMode').value === 'pallet';
             const useSheets = document.getElementById('puzzleSheetCarton').checked;
-            const useCorners = document.getElementById('puzzleCornerGuards').checked;
-
-            const cornerInset = useCorners ? CORNER_THICKNESS : 0;
-            const minX = cornerInset;
-            const maxX = Math.max(minX + 1, CL - cornerInset);
-            const minZ = cornerInset;
-            const maxZ = Math.max(minZ + 1, CW - cornerInset);
-            const usableL = maxX - minX;
-            const usableW = maxZ - minZ;
 
             const b1TargetQty = Math.max(0, parseInt(document.getElementById('pz-b1-qty').value) || 0);
             const b1L = parseFloat(document.getElementById('pz-b1-l').value) || 30;
@@ -1401,8 +1507,8 @@
             const items = [];
             const sheetYs = [];
 
-            const cols1 = Math.floor(usableL / b1L);
-            const rows1 = Math.floor(usableW / b1W);
+            const cols1 = Math.floor(CL / b1L);
+            const rows1 = Math.floor(CW / b1W);
             const layerStep1 = b1H + (useSheets ? SHEET_THICKNESS : 0);
             const layers1 = useSheets
                 ? Math.max(0, Math.floor((CH + SHEET_THICKNESS) / layerStep1))
@@ -1418,9 +1524,9 @@
                     for (let x = 0; x < cols1 && count1 < b1Placed; x++) {
                         items.push({
                             shape: 'box',
-                            x: minX + x * b1L,
+                            x: x * b1L,
                             y: layerY,
-                            z: minZ + z * b1W,
+                            z: z * b1W,
                             l: b1L,
                             w: b1W,
                             h: b1H,
@@ -1434,11 +1540,11 @@
             function collides(candidate) {
                 const eps = 0.01;
                 if (
-                    candidate.x < minX - eps ||
-                    candidate.z < minZ - eps ||
-                    candidate.x + candidate.l > maxX + eps ||
+                    candidate.x < -eps ||
+                    candidate.z < -eps ||
+                    candidate.x + candidate.l > CL + eps ||
                     candidate.y + candidate.h > CH + eps ||
-                    candidate.z + candidate.w > maxZ + eps
+                    candidate.z + candidate.w > CW + eps
                 ) return true;
 
                 for (let i = 0; i < items.length; i++) {
@@ -1459,7 +1565,7 @@
             while (placedNew && items.length < 1500) {
                 placedNew = false;
 
-                const anchors = [{ x: minX, y: 0, z: minZ }];
+                const anchors = [{ x: 0, y: 0, z: 0 }];
                 items.forEach(b => {
                     anchors.push({ x: b.x + b.l, y: b.y, z: b.z });
                     anchors.push({ x: b.x, y: b.y, z: b.z + b.w });
@@ -1527,16 +1633,11 @@
             const pattern = document.getElementById('spherePattern').value;
             const isPalletized = document.getElementById('spherePlacementMode').value === 'pallet';
             const useSheets = document.getElementById('sphereSheetCarton').checked;
-            const useCorners = document.getElementById('sphereCornerGuards').checked;
-
-            const cornerInset = useCorners ? CORNER_THICKNESS : 0;
-            const usableL = Math.max(1, CL - cornerInset * 2);
-            const usableW = Math.max(1, CW - cornerInset * 2);
 
             const gridSpheres = [];
             const gridSheetYs = [];
-            const gx = Math.floor(usableL / diam);
-            const gz = Math.floor(usableW / diam);
+            const gx = Math.floor(CL / diam);
+            const gz = Math.floor(CW / diam);
             const gridStepY = diam + (useSheets ? SHEET_THICKNESS : 0);
             const gy = useSheets
                 ? Math.max(0, Math.floor((CH + SHEET_THICKNESS) / gridStepY))
@@ -1549,16 +1650,15 @@
                     for (let ix = 0; ix < gx; ix++) {
                         gridSpheres.push({
                             shape: 'sphere',
-                            x: cornerInset + r + ix * diam,
+                            x: r + ix * diam,
                             y: baseY + r,
-                            z: cornerInset + r + iz * diam,
+                            z: r + iz * diam,
                             r: r
                         });
                     }
                 }
             }
 
-            // FCC Hexagonal Close-Packing (if sheet carton is enabled, layers rest flat on each sheet)
             const fccSpheres = [];
             const fccSheetYs = [];
             const dz = diam * (Math.sqrt(3) / 2);
@@ -1571,18 +1671,18 @@
                 if (useSheets && iy > 0) fccSheetYs.push(y - r - SHEET_THICKNESS);
 
                 const isOddLayer = (!useSheets && iy % 2 === 1);
-                const zBase = cornerInset + r + (isOddLayer ? layerOffsetZ : 0);
+                const zBase = r + (isOddLayer ? layerOffsetZ : 0);
 
                 for (let iz = 0; ; iz++) {
                     const z = zBase + iz * dz;
-                    if (z + r > CW - cornerInset + 0.001) break;
+                    if (z + r > CW + 0.001) break;
 
                     const isOddRow = ((iz + (isOddLayer ? 1 : 0)) % 2 === 1);
-                    const xBase = cornerInset + r + (isOddRow ? r : 0);
+                    const xBase = r + (isOddRow ? r : 0);
 
                     for (let ix = 0; ; ix++) {
                         const x = xBase + ix * diam;
-                        if (x + r > CL - cornerInset + 0.001) break;
+                        if (x + r > CL + 0.001) break;
 
                         fccSpheres.push({
                             shape: 'sphere',
@@ -1663,15 +1763,12 @@
                     const center = new THREE.Vector3();
                     box.getCenter(center);
 
-                    // Center geometry at (0,0,0)
                     geometry.translate(-center.x, -center.y, -center.z);
                     geometry.computeVertexNormals();
 
-                    // Compute signed mesh volume (if units look like mm, convert to cm)
                     let rawVol = computeMeshVolume(geometry);
                     let scaleHint = 'cm';
                     if (size.x > 150 || size.y > 150 || size.z > 150) {
-                        // Likely exported in millimeters -> convert mm³ to cm³
                         rawVol = rawVol / 1000;
                         scaleHint = 'mm → cm';
                     }
@@ -1734,15 +1831,9 @@
 
             const isPalletized = document.getElementById('irrPlacementMode').value === 'pallet';
             const useSheets = document.getElementById('irrSheetCarton').checked;
-            const useCorners = document.getElementById('irrCornerGuards').checked;
-
-            const cornerInset = useCorners ? CORNER_THICKNESS : 0;
-            const usableL = Math.max(1, ml - cornerInset * 2);
-            const usableW = Math.max(1, mw - cornerInset * 2);
 
             const adjustedObjVol = irrVol * (1 + voidPct / 100);
 
-            // Compute proportional bounding cell for each irregular unit so 3D spatial grid matches physical capacity
             let aspectX = 1.15, aspectY = 0.85, aspectZ = 1.0;
             if (customScanBounds) {
                 const maxB = Math.max(customScanBounds.x, customScanBounds.y, customScanBounds.z);
@@ -1755,16 +1846,16 @@
             const cellH = scaleCube * aspectY;
             const cellW = scaleCube * aspectZ;
 
-            const cols = Math.max(1, Math.floor(usableL / cellL));
-            const rows = Math.max(1, Math.floor(usableW / cellW));
+            const cols = Math.max(1, Math.floor(ml / cellL));
+            const rows = Math.max(1, Math.floor(mw / cellW));
             const layerStep = cellH + (useSheets ? SHEET_THICKNESS : 0);
             const layers = useSheets
                 ? Math.max(0, Math.floor((mh + SHEET_THICKNESS) / layerStep))
                 : Math.floor(mh / cellH);
 
             const spatialCapacity = cols * rows * layers;
-            const pureVolCapacity = Math.floor((usableL * usableW * mh) / adjustedObjVol);
-            const maxFit = Math.max(spatialCapacity, Math.min(pureVolCapacity, Math.ceil(usableL / cellL) * Math.ceil(usableW / cellW) * layers));
+            const pureVolCapacity = Math.floor((ml * mw * mh) / adjustedObjVol);
+            const maxFit = Math.max(spatialCapacity, Math.min(pureVolCapacity, Math.ceil(ml / cellL) * Math.ceil(mw / cellW) * layers));
 
             const items = [];
             const sheetYs = [];
@@ -1777,12 +1868,13 @@
                     for (let x = 0; x < cols && placed < maxFit; x++) {
                         items.push({
                             shape: 'irregular',
-                            x: cornerInset + x * cellL,
+                            x: x * cellL,
                             y: layerY,
-                            z: cornerInset + z * cellW,
+                            z: z * cellW,
                             l: cellL,
                             w: cellW,
                             h: cellH,
+                            unitVolCm3: irrVol,
                             rotY: ((x + z + y) % 4) * (Math.PI / 2)
                         });
                         placed++;
