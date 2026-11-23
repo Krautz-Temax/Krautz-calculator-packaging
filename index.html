@@ -3,7 +3,7 @@
 <head>
     <link rel="icon" type="image/png" href="Logo.png">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Krautz-Temax Pro Logistics - CCRM, Thermal Request & 3D Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -43,7 +43,8 @@
         .glow-blue {
             box-shadow: 0 0 25px -5px rgba(0, 102, 204, 0.4);
         }
-        canvas { display: block; outline: none; }
+        canvas { display: block; outline: none; touch-action: manipulation; }
+        .webgl-viewport { touch-action: none; }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-krautz-500 selection:text-white">
@@ -126,7 +127,7 @@
                             TEMAX INSULATION REQUEST (Dok.Nr. F05.008) → CCRM CALCULATION SHEET
                             <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Live Sync</span>
                         </div>
-                        <p data-i18n="ccrmBannerDesc" class="text-[11px] text-slate-400">Send the online request form hyperlink to your customer, or fill in received customer data to run CCRM & Roll-Cut SOPs.</p>
+                        <p data-i18n="ccrmBannerDesc" class="text-[11px] text-slate-400">Send the online request form hyperlink to your customer, or fill in received customer data to run CCRM & 3D Roll-Cut SOPs.</p>
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
@@ -359,7 +360,7 @@
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET HEADER, INSULATION RESULT, 2-BLANKET ROLL CUT, LOGGER GUIDE & ANIMATED PACKING SOP -->
+                <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET HEADER, INSULATION RESULT, 2-BLANKET ROLL CUT, LOGGER GUIDE & 3D MANUAL PACKING SOP -->
                 <div class="lg:col-span-6 space-y-5">
 
                     <!-- Internal CCRM Sheet Page 1 Metadata -->
@@ -420,43 +421,45 @@
                         <div id="ccrm-two-blankets-panel" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
                     </div>
 
-                    <!-- Step-by-Step Animated Pallet Packing & 2-Blanket Fixation SOP -->
+                    <!-- 3D Manual & Animated SOP: Pallet Packing & Fixing the 2 Blankets -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
                             <div>
                                 <h3 data-i18n="lblAnimatedSopTitle" class="text-sm font-bold text-white flex items-center gap-2">
-                                    <i data-lucide="play-circle" class="w-4 h-4 text-amber-400"></i> Animated SOP: Pallet Packing & Fixing the 2 Blankets
+                                    <i data-lucide="play-circle" class="w-4 h-4 text-amber-400"></i> 3D Manual SOP: Pallet Packing & Sealing the 2 Blankets
                                 </h3>
-                                <p id="sop-anim-caption" class="text-[11px] text-cyan-300 font-medium">Step 1/5: Lay base thermal pad on pallet</p>
+                                <p id="sop-anim-caption" class="text-[11px] text-cyan-300 font-medium">Step 1/5: Lay base thermal pad on EPAL pallet</p>
                             </div>
-                            <div class="flex items-center gap-1.5">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <button type="button" onclick="prevSopStep()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">← Prev</button>
                                 <button type="button" onclick="toggleSopAnimation()" id="sopPlayPauseBtn" class="px-2.5 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1">
-                                    <i data-lucide="pause" class="w-3.5 h-3.5"></i> <span id="sopPlayPauseLabel">Pause</span>
+                                    <i data-lucide="pause" class="w-3.5 h-3.5"></i> <span id="sopPlayPauseLabel">Auto</span>
                                 </button>
-                                <button type="button" onclick="stepSopAnimation()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Next Step →</button>
+                                <button type="button" onclick="stepSopAnimation()" class="px-2.5 py-1.5 bg-krautz-500 hover:bg-krautz-600 text-white text-xs font-semibold rounded-lg transition">Next Step →</button>
                                 <button type="button" onclick="printPackoutSop()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-emerald-300 rounded-lg border border-slate-700 transition">Print SOP</button>
                             </div>
                         </div>
 
-                        <!-- Always-Visible 2D Animated Engineering Drawing Viewport -->
-                        <div class="w-full h-[265px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
-                            <canvas id="sopAnimCanvas" width="560" height="265" class="w-full h-full"></canvas>
+                        <!-- 3D Viewport (#canvas-sop) + Animated 3D-Style Handling Stage -->
+                        <div class="w-full h-[275px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                            <div id="canvas-sop" class="webgl-viewport w-full h-full"></div>
+                            <canvas id="sopAnimCanvas" width="560" height="275" class="w-full h-full"></canvas>
                             <div class="absolute bottom-2 left-2.5 z-10 flex flex-wrap items-center gap-2 bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800 text-[10px]">
                                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#8B4513] inline-block"></span> Pallet</span>
                                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#0077ee] inline-block"></span> Cargo</span>
                                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#22d3ee] inline-block"></span> Blanket 1</span>
                                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#38bdf8] inline-block"></span> Blanket 2</span>
-                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#f59e0b] inline-block"></span> Foil Seal Tape</span>
+                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#f59e0b] inline-block"></span> Manual Foil Sealing</span>
                             </div>
                         </div>
 
-                        <!-- Clickable Step 1..5 Selector Bar -->
+                        <!-- Manual Step 1..5 Selector Bar -->
                         <div class="grid grid-cols-5 gap-1.5 text-[10px]" id="sop-visual-steps-bar">
                             <button type="button" onclick="selectSopStep(0)" class="p-1.5 rounded-lg border text-center font-semibold bg-amber-500/20 border-amber-500/50 text-amber-200">1. Base Pad</button>
                             <button type="button" onclick="selectSopStep(1)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">2. Load Cargo</button>
                             <button type="button" onclick="selectSopStep(2)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">3. Blanket 1</button>
                             <button type="button" onclick="selectSopStep(3)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">4. Blanket 2</button>
-                            <button type="button" onclick="selectSopStep(4)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">5. Seal Tape</button>
+                            <button type="button" onclick="selectSopStep(4)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">5. Manual Seal</button>
                         </div>
 
                         <!-- Data Logger & QA Sensor Placement Note -->
@@ -735,7 +738,7 @@
                             </div>
                         </div>
 
-                        <div id="canvas-dual" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                        <div id="canvas-dual" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-2.5 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Unit</span>
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#22d3ee] inline-block"></span> Temax Thermal / PCM</span>
@@ -749,7 +752,7 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.4</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.5</span>
                         </div>
                     </div>
 
@@ -824,7 +827,7 @@
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span><span id="puzzleSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span></div><input type="range" id="puzzleSliceY" min="1" max="100" value="100" oninput="update3DScene('puzzle')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span><span id="puzzleSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span></div><input type="range" id="puzzleSliceX" min="1" max="100" value="100" oninput="update3DScene('puzzle')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                         </div>
-                        <div id="canvas-puzzle" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                        <div id="canvas-puzzle" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Batch 1</span>
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#10b981] inline-block"></span> Batch 2</span>
@@ -896,7 +899,7 @@
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span><span id="sphereSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span></div><input type="range" id="sphereSliceY" min="1" max="100" value="100" oninput="update3DScene('sphere')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span><span id="sphereSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span></div><input type="range" id="sphereSliceX" min="1" max="100" value="100" oninput="update3DScene('sphere')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                         </div>
-                        <div id="canvas-sphere" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                        <div id="canvas-sphere" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#38bdf8] inline-block"></span> Packed Sphere</span>
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
@@ -967,7 +970,7 @@
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span><span id="irrSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span></div><input type="range" id="irrSliceY" min="1" max="100" value="100" oninput="update3DScene('irr')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span><span id="irrSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span></div><input type="range" id="irrSliceX" min="1" max="100" value="100" oninput="update3DScene('irr')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                         </div>
-                        <div id="canvas-irr" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                        <div id="canvas-irr" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8b5cf6] inline-block"></span> Scanned Unit</span>
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
@@ -1030,7 +1033,7 @@
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Tier Cutaway (Height)</span><span id="truckSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span></div><input type="range" id="truckSliceY" min="1" max="100" value="100" oninput="updateTruck3DScene()" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Trailer Length Cut (X-Plane)</span><span id="truckSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span></div><input type="range" id="truckSliceX" min="1" max="100" value="100" oninput="updateTruck3DScene()" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                         </div>
-                        <div id="canvas-truck" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                        <div id="canvas-truck" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Palletized Cargo</span>
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
@@ -1118,7 +1121,7 @@
         <div>© 2026 Krautz-Temax NV. All rights reserved. CCRM Cold Chain Risk Management & 3D Thermal Packaging Technology.</div>
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
-    <!-- JavaScript Application: Part 2 (4-Language I18N, CCRM Engine, Temp Graph + Legend & Step-by-Step Pallet Packing Animation) -->
+    <!-- JavaScript Application: Part 2A (4-Language I18N, CCRM Engine, Temp Graph + Legend & Manual/Animated Pallet Packing SOP) -->
     <script>
         lucide.createIcons();
 
@@ -1195,7 +1198,7 @@
                 lblRecommendedTemax: 'Recommended Krautz-Temax Insulation',
                 btnApplyTo3D: 'Apply to 3D Pallet & Cut-Sheet ✓',
                 lblTwoBlanketsTitle: '2-Blanket Roll Cut Dimensions (From 1.50m Roll)',
-                lblAnimatedSopTitle: 'Animated SOP: Pallet Packing & Fixing the 2 Blankets',
+                lblAnimatedSopTitle: 'Manual & Animated SOP: Pallet Packing & Sealing the 2 Blankets',
                 outerTitle: 'Outer Packaging / Load Size',
                 innerTitle: 'Inner Packages, Weight & Order',
                 puzzleTitle: 'Multi-Box 3D Volume Puzzle',
@@ -1230,13 +1233,13 @@
                 loggerTitle: 'QA Data Logger Placement:',
                 loggerText: 'Place primary logger at geometric top-center of cargo (warmest air zone). Never place sensors directly against PCM bricks or dry ice.',
                 sopStages: [
-                    'Step 1/5: Lay base thermal pad on EPAL pallet',
-                    'Step 2/5: Stack temperature-sensitive product load on pallet',
-                    'Step 3/5: Drape Blanket 1 lengthwise (Front → Top → Back)',
-                    'Step 4/5: Cross-wrap Blanket 2 perpendicular (Left → Top → Right)',
-                    'Step 5/5: Seal 15cm overlap flaps with foil tape & stretch-wrap'
+                    'Step 1/5: Manually lay base thermal pad on EPAL pallet',
+                    'Step 2/5: Manually load & stack cargo boxes onto pallet',
+                    'Step 3/5: Manually drape Blanket 1 lengthwise (Front → Top → Back)',
+                    'Step 4/5: Manually cross-wrap Blanket 2 over Blanket 1',
+                    'Step 5/5: Manually seal 15cm overlap flaps with foil tape & wrap'
                 ],
-                sopShort: ['1. Base Pad', '2. Load Cargo', '3. Blanket 1', '4. Blanket 2', '5. Seal Tape']
+                sopShort: ['1. Base Pad', '2. Load Cargo', '3. Blanket 1', '4. Blanket 2', '5. Manual Seal']
             },
             nl: {
                 headerSubtitle: 'Temax Isolatie Aanvraagformulier, CCRM & 3D Palletengine',
@@ -1286,7 +1289,7 @@
                 lblRecommendedTemax: 'Aanbevolen Krautz-Temax Isolatie',
                 btnApplyTo3D: 'Toepassen op 3D Pallet & Snijplan ✓',
                 lblTwoBlanketsTitle: '2-Dekens Rol-Snijmaten (Uit 1,50m Rol)',
-                lblAnimatedSopTitle: 'Geanimeerde SOP: Pallet Beladen & Bevestiging 2 Dekens',
+                lblAnimatedSopTitle: 'Manuele & Geanimeerde SOP: Pallet Beladen & Afplakken',
                 outerTitle: 'Buitenverpakking / Palletmaat',
                 innerTitle: 'Binnendozen, Gewicht & Order',
                 puzzleTitle: 'Multi-Doos 3D Volume Puzzel',
@@ -1321,13 +1324,13 @@
                 loggerTitle: 'QA Datalogger Plaatsing:',
                 loggerText: 'Plaats de datalogger midden-boven op de lading (warmste luchtzone). Plaats sensoren nooit direct tegen PCM-koelelementen of droogijs.',
                 sopStages: [
-                    'Stap 1/5: Leg thermische vloerpad op de EPAL-pallet',
-                    'Stap 2/5: Stapel de temperatuurgevoelige lading op de pallet',
-                    'Stap 3/5: Plaats Deken 1 in de lengte (Voor → Boven → Achter)',
-                    'Stap 4/5: Wikkel Deken 2 haaks erover (Links → Boven → Rechts)',
-                    'Stap 5/5: Tape de 15cm naden dicht met folietape & wikkelfolie'
+                    'Stap 1/5: Leg manueel de thermische vloerpad op de EPAL-pallet',
+                    'Stap 2/5: Plaats en stapel de dozen manueel op de pallet',
+                    'Stap 3/5: Leg Deken 1 manueel in de lengte (Voor → Boven → Achter)',
+                    'Stap 4/5: Wikkel Deken 2 manueel haaks over Deken 1',
+                    'Stap 5/5: Sluit de 15cm naden manueel met folietape & wikkelfolie'
                 ],
-                sopShort: ['1. Vloerpad', '2. Lading', '3. Deken 1', '4. Deken 2', '5. Folietape']
+                sopShort: ['1. Vloerpad', '2. Lading', '3. Deken 1', '4. Deken 2', '5. Manueel Tape']
             },
             de: {
                 headerSubtitle: 'Temax Isolieranfrage, CCRM-Berechnung & 3D-Palettierung',
@@ -1377,7 +1380,7 @@
                 lblRecommendedTemax: 'Empfohlene Krautz-Temax Isolierung',
                 btnApplyTo3D: 'Auf 3D-Palette & Zuschnitt Anwenden ✓',
                 lblTwoBlanketsTitle: '2-Hauben Rollenzuschnitt (Aus 1,50m Rolle)',
-                lblAnimatedSopTitle: 'Animierte SOP: Palettenbeladung & Fixierung der 2 Hauben',
+                lblAnimatedSopTitle: 'Manuelle & Animierte SOP: Beladen & Versiegeln der 2 Decken',
                 outerTitle: 'Außenverpackung / Palettenmaß',
                 innerTitle: 'Innenkartons, Gewicht & Auftrag',
                 puzzleTitle: 'Mehrboxen 3D Volumen-Puzzle',
@@ -1412,11 +1415,11 @@
                 loggerTitle: 'QA-Datenlogger-Platzierung:',
                 loggerText: 'Platzieren Sie den Datenlogger mittig oben auf der Ladung (wärmste Luftzone). Sensoren niemals direkt auf PCM-Akkus oder Trockeneis legen.',
                 sopStages: [
-                    'Schritt 1/5: Thermobodenmatte auf EPAL-Palette legen',
-                    'Schritt 2/5: Temperaturempfindliche Ware auf Palette stapeln',
-                    'Schritt 3/5: Decke 1 längs überlegen (Vorne → Oben → Hinten)',
-                    'Schritt 4/5: Decke 2 quer darüberwickeln (Links → Oben → Rechts)',
-                    'Schritt 5/5: 15cm Überlappung mit Aluklebeband & Stretchfolie sichern'
+                    'Schritt 1/5: Thermobodenmatte manuell auf EPAL-Palette legen',
+                    'Schritt 2/5: Ware manuell auf die Palette stapeln',
+                    'Schritt 3/5: Decke 1 manuell längs überlegen (Vorne → Oben → Hinten)',
+                    'Schritt 4/5: Decke 2 manuell quer darüberwickeln',
+                    'Schritt 5/5: 15cm Überlappung manuell mit Aluklebeband versiegeln'
                 ],
                 sopShort: ['1. Bodenmatte', '2. Ladung', '3. Decke 1', '4. Decke 2', '5. Klebeband']
             },
@@ -1468,7 +1471,7 @@
                 lblRecommendedTemax: 'Isolation Krautz-Temax Recommandée',
                 btnApplyTo3D: 'Appliquer à la Palette 3D & Découpe ✓',
                 lblTwoBlanketsTitle: 'Dimensions de Coupe 2 Housses (Rouleau 1,50m)',
-                lblAnimatedSopTitle: 'SOP Animée : Mise sur Palette & Fixation des 2 Housses',
+                lblAnimatedSopTitle: 'SOP Manuelle & Animée : Palettisation & Pose des 2 Housses',
                 outerTitle: 'Emballage Extérieur / Palette',
                 innerTitle: 'Colis Internes, Poids & Commande',
                 puzzleTitle: 'Puzzle Volume 3D Multi-Colis',
@@ -1503,13 +1506,13 @@
                 loggerTitle: 'Position Enregistreur QA :',
                 loggerText: 'Placez l’enregistreur au centre supérieur de la charge (zone la plus chaude). Ne jamais poser de sonde directement sur les plaques PCM ou la glace carbonique.',
                 sopStages: [
-                    'Étape 1/5 : Poser le tapis isolant de base sur la palette EPAL',
-                    'Étape 2/5 : Empiler les colis thermosensibles sur la palette',
-                    'Étape 3/5 : Draper la Housse 1 en longueur (Avant → Dessus → Arrière)',
-                    'Étape 4/5 : Croiser la Housse 2 perpendiculairement (Gauche → Dessus → Droite)',
-                    'Étape 5/5 : Sceller les rabats de 15cm au ruban alu et filmer'
+                    'Étape 1/5 : Poser manuellement le tapis isolant sur la palette EPAL',
+                    'Étape 2/5 : Empiler manuellement les colis sur la palette',
+                    'Étape 3/5 : Poser manuellement la Housse 1 en longueur',
+                    'Étape 4/5 : Croiser manuellement la Housse 2 perpendiculairement',
+                    'Étape 5/5 : Sceller manuellement les rabats de 15cm au ruban alu'
                 ],
-                sopShort: ['1. Base Isolante', '2. Colis', '3. Housse 1', '4. Housse 2', '5. Ruban Alu']
+                sopShort: ['1. Base Isolante', '2. Colis', '3. Housse 1', '4. Housse 2', '5. Pose Manuelle']
             }
         };
 
@@ -1552,7 +1555,7 @@
         let customScanGeometry = null;
         let customScanBounds = null;
 
-        // Step-by-Step Pallet Packing Animation State (0.0 to 5.0)
+        // Manual & Animated Pallet Packing SOP State (0.0 to 5.0)
         let sopAnimPlaying = true;
         let sopAnimProgress = 0.0;
 
@@ -1710,7 +1713,6 @@
             calculateAll();
         }
 
-        // Draws External Temp vs Internal Pallet/Goods Temp on Canvas
         function drawCcrmTemperatureChart(timeline, minTemp, maxTemp) {
             const canvas = document.getElementById('ccrmTempChart');
             if (!canvas) return;
@@ -1736,13 +1738,11 @@
             const xOf = hr => padL + (hr / maxHrs) * plotW;
             const yOf = t => padT + plotH - ((t - tMin) / Math.max(1, tMax - tMin)) * plotH;
 
-            // Safe band [minTemp, maxTemp]
             const yMaxSafe = yOf(maxTemp);
             const yMinSafe = yOf(minTemp);
             ctx.fillStyle = 'rgba(16, 185, 129, 0.14)';
             ctx.fillRect(padL, yMaxSafe, plotW, Math.max(2, yMinSafe - yMaxSafe));
 
-            // Min / Max limit dashed lines
             ctx.setLineDash([4, 4]);
             ctx.strokeStyle = '#f43f5e';
             ctx.lineWidth = 1.4;
@@ -1751,7 +1751,6 @@
             ctx.beginPath(); ctx.moveTo(padL, yMinSafe); ctx.lineTo(W - padR, yMinSafe); ctx.stroke();
             ctx.setLineDash([]);
 
-            // External temperature line (amber)
             ctx.strokeStyle = '#f59e0b';
             ctx.lineWidth = 2.2;
             ctx.beginPath();
@@ -1761,7 +1760,6 @@
             });
             ctx.stroke();
 
-            // Internal pallet / goods temperature line (cyan)
             ctx.strokeStyle = '#22d3ee';
             ctx.lineWidth = 2.8;
             ctx.beginPath();
@@ -1771,7 +1769,6 @@
             });
             ctx.stroke();
 
-            // Axis labels
             ctx.fillStyle = '#94a3b8';
             ctx.font = '10px Inter, sans-serif';
             ctx.fillText(`${Math.round(tMax)}°C`, 4, padT + 8);
@@ -1780,7 +1777,6 @@
             ctx.fillText(`${maxHrs.toFixed(0)}h`, W - padR - 24, H - 6);
         }
 
-        // Core CCRM Thermodynamic Engine
         function calculateCcrmEngine() {
             const dict = I18N[currentLang] || I18N.en;
             const company = document.getElementById('req-company')?.value || '';
@@ -2008,27 +2004,61 @@
             document.body.removeChild(link);
         }
 
-        // Step-by-Step Pallet Packing & 2-Blanket Fixation 2D Animated Drawing
+        // Manual & Animated Pallet Packing + 2-Blanket Sealing Drawing
         function toggleSopAnimation() {
             sopAnimPlaying = !sopAnimPlaying;
             const lbl = document.getElementById('sopPlayPauseLabel');
-            if (lbl) lbl.innerText = sopAnimPlaying ? 'Pause' : 'Play';
+            if (lbl) lbl.innerText = sopAnimPlaying ? 'Auto' : 'Manual';
+        }
+
+        function prevSopStep() {
+            sopAnimPlaying = false;
+            const lbl = document.getElementById('sopPlayPauseLabel');
+            if (lbl) lbl.innerText = 'Manual';
+            const cur = Math.floor(sopAnimProgress);
+            sopAnimProgress = ((cur - 1 + 5) % 5) + 0.99;
+            drawSopPackingAnimation();
         }
 
         function stepSopAnimation() {
             sopAnimPlaying = false;
             const lbl = document.getElementById('sopPlayPauseLabel');
-            if (lbl) lbl.innerText = 'Play';
-            sopAnimProgress = (Math.floor(sopAnimProgress) + 1) % 5 + 0.99;
+            if (lbl) lbl.innerText = 'Manual';
+            const cur = Math.floor(sopAnimProgress);
+            sopAnimProgress = ((cur + 1) % 5) + 0.99;
             drawSopPackingAnimation();
         }
 
         function selectSopStep(stepIdx) {
             sopAnimPlaying = false;
             const lbl = document.getElementById('sopPlayPauseLabel');
-            if (lbl) lbl.innerText = 'Play';
+            if (lbl) lbl.innerText = 'Manual';
             sopAnimProgress = stepIdx + 0.99;
             drawSopPackingAnimation();
+        }
+
+        function drawManualHandIcon(ctx, hx, hy, label) {
+            ctx.save();
+            ctx.fillStyle = '#fde68a';
+            ctx.strokeStyle = '#92400e';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(hx - 10, hy - 8, 20, 18, 5);
+            ctx.fill();
+            ctx.stroke();
+            // Fingers
+            for (let f = -6; f <= 6; f += 4) {
+                ctx.beginPath();
+                ctx.roundRect(hx + f - 1.5, hy - 14, 3, 7, 1.5);
+                ctx.fill();
+                ctx.stroke();
+            }
+            if (label) {
+                ctx.fillStyle = '#fef3c7';
+                ctx.font = 'bold 10px Inter, sans-serif';
+                ctx.fillText(label, hx + 14, hy + 2);
+            }
+            ctx.restore();
         }
 
         function drawSopPackingAnimation() {
@@ -2042,7 +2072,7 @@
 
             ctx.clearRect(0, 0, W, H);
 
-            // Grid floor background
+            // Subtle isometric/3D perspective grid floor
             ctx.strokeStyle = 'rgba(148, 163, 184, 0.08)';
             ctx.lineWidth = 1;
             for (let gx = 0; gx < W; gx += 28) {
@@ -2067,36 +2097,42 @@
                 `).join('');
             }
 
-            // Pallet geometry centered in canvas
-            const palW = 190, palH = 18;
-            const palX = (W - palW) / 2;
-            const palY = H - 48;
+            // 3D-styled Pallet with isometric depth bevel
+            const palW = 196, palH = 18, isoDx = 24, isoDy = -11;
+            const palX = (W - palW) / 2 - 10;
+            const palY = H - 52;
 
-            // 1. Brown Pallet
+            // Top isometric deck of pallet
+            ctx.fillStyle = '#a1561c';
+            ctx.beginPath();
+            ctx.moveTo(palX, palY);
+            ctx.lineTo(palX + isoDx, palY + isoDy);
+            ctx.lineTo(palX + palW + isoDx, palY + isoDy);
+            ctx.lineTo(palX + palW, palY);
+            ctx.closePath();
+            ctx.fill();
+
+            // Front face of pallet
             ctx.fillStyle = '#8B4513';
             ctx.fillRect(palX, palY, palW, palH);
             ctx.strokeStyle = '#d97706';
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 1.4;
             ctx.strokeRect(palX, palY, palW, palH);
-            // Pallet blocks
-            ctx.fillStyle = '#5c2c0c';
-            ctx.fillRect(palX + 12, palY + 4, 24, 10);
-            ctx.fillRect(palX + palW / 2 - 12, palY + 4, 24, 10);
-            ctx.fillRect(palX + palW - 36, palY + 4, 24, 10);
 
-            const cargoW = 166;
-            const cargoFullH = 98;
-            const cargoX = (W - cargoW) / 2;
+            const cargoW = 172;
+            const cargoFullH = 96;
+            const cargoX = palX + 12;
             const cargoBaseY = palY - 6;
 
-            // Stage 0+: Base Thermal Pad on Pallet
-            const padDrop = stage === 0 ? (1 - frac) * 35 : 0;
+            // Stage 0: Lay base thermal pad manually
+            const padDrop = stage === 0 ? (1 - frac) * 32 : 0;
             ctx.fillStyle = '#06b6d4';
             ctx.fillRect(cargoX - 4, cargoBaseY - 6 - padDrop, cargoW + 8, 6);
+            if (stage === 0) drawManualHandIcon(ctx, cargoX + cargoW + 24, cargoBaseY - 8 - padDrop, 'Base Pad');
 
-            // Stage 1+: Cargo boxes stacking up on pallet
+            // Stage 1+: Stack cargo boxes onto pallet
             if (stage >= 1) {
-                const curCargoH = stage === 1 ? Math.max(12, cargoFullH * Math.min(1, frac * 1.15)) : cargoFullH;
+                const curCargoH = stage === 1 ? Math.max(14, cargoFullH * Math.min(1, frac * 1.15)) : cargoFullH;
                 const curCargoTopY = cargoBaseY - 6 - curCargoH;
                 ctx.fillStyle = '#0077ee';
                 ctx.fillRect(cargoX, curCargoTopY, cargoW, curCargoH);
@@ -2104,7 +2140,6 @@
                 ctx.lineWidth = 1.5;
                 ctx.strokeRect(cargoX, curCargoTopY, cargoW, curCargoH);
 
-                // Inner box grid lines
                 ctx.strokeStyle = 'rgba(224, 242, 254, 0.35)';
                 ctx.beginPath();
                 ctx.moveTo(cargoX + cargoW / 2, curCargoTopY);
@@ -2112,35 +2147,32 @@
                 ctx.moveTo(cargoX, curCargoTopY + curCargoH / 2);
                 ctx.lineTo(cargoX + cargoW, curCargoTopY + curCargoH / 2);
                 ctx.stroke();
+
+                if (stage === 1) drawManualHandIcon(ctx, cargoX + cargoW / 2 + 30, curCargoTopY + 12, 'Pack Boxes');
             }
 
             const cargoTopY = cargoBaseY - 6 - cargoFullH;
 
-            // Stage 2+: Blanket 1 (Lengthwise Wrap draping over top & sides)
+            // Stage 2+: Blanket 1 (Lengthwise Wrap)
             if (stage >= 2) {
                 const p1 = stage === 2 ? frac : 1.0;
-                const flapDrop = p1 * 38;
                 ctx.strokeStyle = '#22d3ee';
-                ctx.fillStyle = 'rgba(34, 211, 238, 0.22)';
                 ctx.lineWidth = 4;
-
-                // Top + left/right lengthwise drape
                 ctx.beginPath();
-                ctx.moveTo(cargoX - 6 - p1 * 8, cargoTopY + 38 - flapDrop);
+                ctx.moveTo(cargoX - 6, cargoTopY + 36 * p1);
                 ctx.lineTo(cargoX - 6, cargoTopY - 4);
                 ctx.lineTo(cargoX + cargoW + 6, cargoTopY - 4);
-                ctx.lineTo(cargoX + cargoW + 6 + p1 * 8, cargoTopY + 38 - flapDrop);
+                ctx.lineTo(cargoX + cargoW + 6, cargoTopY + 36 * p1);
                 ctx.stroke();
 
-                // Dimension tag for Blanket 1
                 ctx.fillStyle = '#22d3ee';
                 ctx.font = 'bold 11px Inter, sans-serif';
-                ctx.fillText(`Blanket 1: ${c.blanketA?.l || 350}×${c.blanketA?.w || 110}cm`, 16, 22);
+                ctx.fillText(`Blanket 1: ${c.blanketA?.l || 350}×${c.blanketA?.w || 110}cm`, 14, 20);
+                if (stage === 2) drawManualHandIcon(ctx, cargoX + cargoW + 22, cargoTopY + 16, 'Draping B1');
             }
 
-            // Stage 3+: Blanket 2 (Cross-Wrap perpendicular locking Blanket 1)
+            // Stage 3+: Blanket 2 (Cross-Wrap)
             if (stage >= 3) {
-                const p2 = stage === 3 ? frac : 1.0;
                 ctx.strokeStyle = '#38bdf8';
                 ctx.lineWidth = 3.5;
                 ctx.setLineDash([7, 4]);
@@ -2149,16 +2181,17 @@
 
                 ctx.fillStyle = '#38bdf8';
                 ctx.font = 'bold 11px Inter, sans-serif';
-                ctx.fillText(`Blanket 2: ${c.blanketB?.l || 310}×${c.blanketB?.w || 150}cm (Cross-Wrap)`, W - 235, 22);
+                ctx.fillText(`Blanket 2: ${c.blanketB?.l || 310}×${c.blanketB?.w || 150}cm`, W - 210, 20);
+                if (stage === 3) drawManualHandIcon(ctx, cargoX - 24, cargoTopY + 32, 'Cross-Wrap B2');
             }
 
-            // Stage 4: Foil Seal Tape Bands & 15cm Overlap Lock
+            // Stage 4: Manual Foil Tape Sealing
             if (stage >= 4) {
+                const sealY = cargoTopY + cargoFullH * (0.25 + frac * 0.55);
                 ctx.fillStyle = '#f59e0b';
                 ctx.fillRect(cargoX - 12, cargoTopY + cargoFullH * 0.35, cargoW + 24, 5);
                 ctx.fillRect(cargoX - 12, cargoTopY + cargoFullH * 0.72, cargoW + 24, 5);
-                ctx.font = 'bold 11px Inter, sans-serif';
-                ctx.fillText(`✓ 15cm Foil Seal Tape Applied`, (W / 2) - 72, cargoTopY - 16);
+                drawManualHandIcon(ctx, cargoX + cargoW + 26, sealY, 'Manual Foil Seal');
             }
         }
 
@@ -2883,7 +2916,6 @@
             return unique;
         }
 
-        // 1. Dual Box & 3D Visualizer Logic
         function calculateDualBoxAndVisualizer() {
             const CL = parseFloat(document.getElementById('containerL').value) || 1;
             const CW = parseFloat(document.getElementById('containerW').value) || 1;
@@ -3106,7 +3138,6 @@
             resetCamera('dual');
         }
 
-        // 2. Multi-Box 3D Volume Puzzle Solver
         function calculatePuzzle() {
             const CL = parseFloat(document.getElementById('pz-out-l').value) || 120;
             const CW = parseFloat(document.getElementById('pz-out-w').value) || 80;
@@ -3242,7 +3273,6 @@
             update3DScene('puzzle');
         }
 
-        // 3. Spherical Packing Calculation & 3D Coordinate Generator
         function calculateSpheres() {
             const CL = parseFloat(document.getElementById('sp-out-l').value) || 100;
             const CW = parseFloat(document.getElementById('sp-out-w').value) || 100;
@@ -3348,7 +3378,6 @@
             update3DScene('sphere');
         }
 
-        // 4. Irregular Object Scan 3D Calculator + STL/OBJ File Parsing
         function handleScanFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -3529,7 +3558,6 @@
             update3DScene('irr');
         }
 
-        // 5. Truck / Reefer / Air ULD 3D Load Plan + Center of Gravity (CoG)
         function setTruckPreset(l, w, h, maxKg) {
             document.getElementById('tr-l').value = l;
             document.getElementById('tr-w').value = w;
@@ -3737,7 +3765,6 @@
             });
         }
 
-        // 6. Warehouse ROI, Airfreight DIM & Roll Yield Summary
         function calculateThermalAndRoi() {
             const s = packedState.dual.summary || {};
             const c = packedState.ccrm || {};
@@ -3819,7 +3846,7 @@
                 sopSteps: [
                     `Inspect EPAL pallet / floor and place base thermal pad (${c.chosenSpecName || 'Temax-4000'}).`,
                     `Load temperature-sensitive goods (${c.L || 120}×${c.W || 80}×${c.H || 100} cm, ${c.massKg || 650} kg, Cp ${c.cp || 4186} J/kg·K).`,
-                    `Drape Blanket 1 lengthwise (${cs.blanketA.l}×${cs.blanketA.w} cm) over front, top, and back with 15 cm seal flap.`,
+                    `Drap Blanket 1 lengthwise (${cs.blanketA.l}×${cs.blanketA.w} cm) over front, top, and back with 15 cm seal flap.`,
                     `Cross-wrap Blanket 2 (${cs.blanketB.l}×${cs.blanketB.w} cm) perpendicular over Blanket 1 for full thermal envelope.`,
                     `Seal all 15 cm overlap seams with reflective foil tape and stretch-wrap.`
                 ]
@@ -4163,4 +4190,3 @@
     </script>
 </body>
 </html>
-    
