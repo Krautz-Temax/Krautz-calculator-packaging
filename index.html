@@ -126,7 +126,7 @@
                             TEMAX INSULATION REQUEST (Dok.Nr. F05.008) → CCRM CALCULATION SHEET
                             <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Live Sync</span>
                         </div>
-                        <p data-i18n="ccrmBannerDesc" class="text-[11px] text-slate-400">Send the online request form hyperlink to your customer, or fill in received customer data to run CCRM & 3D Roll-Cut SOPs.</p>
+                        <p data-i18n="ccrmBannerDesc" class="text-[11px] text-slate-400">Send the online request form hyperlink to your customer, or fill in received customer data to run CCRM & Roll-Cut SOPs.</p>
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
@@ -337,21 +337,29 @@
                         </div>
                     </div>
 
-                    <!-- Hour-by-Hour Temperature Profile Curve (Canvas) -->
+                    <!-- External vs Internal Pallet Temperature Curve + Legend (Canvas) -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
                             <div>
                                 <h3 data-i18n="lblTempCurveTitle" class="text-sm font-bold text-white flex items-center gap-2">
-                                    <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i> Transit Temperature Curve (Summer vs. Limits)
+                                    <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i> External vs. Internal Pallet Temperature Graph
                                 </h3>
-                                <p class="text-[10px] text-slate-400">Plots Summer Ambient (amber), Insulated Core (cyan), and Tmi / Tma safety bounds</p>
+                                <p data-i18n="lblTempCurveDesc" class="text-[10px] text-slate-400">Compares external ambient/tarmac temperature against internal pallet/goods temperature</p>
                             </div>
+                        </div>
+                        <!-- Graph Legend -->
+                        <div class="flex flex-wrap items-center gap-3 bg-slate-950/90 px-3 py-2 rounded-xl border border-slate-800 text-[11px]">
+                            <span class="flex items-center gap-1.5 text-amber-300 font-medium"><span class="w-3 h-1 rounded bg-[#f59e0b] inline-block"></span> <span data-i18n="legExternal">External Temp (°C)</span></span>
+                            <span class="flex items-center gap-1.5 text-cyan-300 font-medium"><span class="w-3 h-1 rounded bg-[#22d3ee] inline-block"></span> <span data-i18n="legInternal">Internal Pallet / Goods Temp (°C)</span></span>
+                            <span class="flex items-center gap-1.5 text-rose-400 font-medium"><span class="w-3 h-0.5 border-t border-dashed border-[#f43f5e] inline-block"></span> <span data-i18n="legMax">Max Limit (Tma)</span></span>
+                            <span class="flex items-center gap-1.5 text-sky-400 font-medium"><span class="w-3 h-0.5 border-t border-dashed border-[#38bdf8] inline-block"></span> <span data-i18n="legMin">Min Limit (Tmi)</span></span>
+                            <span class="flex items-center gap-1.5 text-emerald-400 font-medium"><span class="w-2.5 h-2.5 rounded-sm bg-emerald-500/25 border border-emerald-500/40 inline-block"></span> <span data-i18n="legSafeBand">Safe Zone</span></span>
                         </div>
                         <canvas id="ccrmTempChart" width="540" height="175" class="w-full h-[175px] bg-slate-950 rounded-xl border border-slate-800"></canvas>
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET HEADER, INSULATION RESULT, 2-BLANKET ROLL CUT, LOGGER GUIDE & 3D SOP ANIMATION -->
+                <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET HEADER, INSULATION RESULT, 2-BLANKET ROLL CUT, LOGGER GUIDE & ANIMATED PACKING SOP -->
                 <div class="lg:col-span-6 space-y-5">
 
                     <!-- Internal CCRM Sheet Page 1 Metadata -->
@@ -412,14 +420,14 @@
                         <div id="ccrm-two-blankets-panel" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
                     </div>
 
-                    <!-- 3D Animated SOP: How to Fix Both Blankets onto the Product -->
+                    <!-- Step-by-Step Animated Pallet Packing & 2-Blanket Fixation SOP -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
                             <div>
                                 <h3 data-i18n="lblAnimatedSopTitle" class="text-sm font-bold text-white flex items-center gap-2">
-                                    <i data-lucide="play-circle" class="w-4 h-4 text-amber-400"></i> 3D Animated SOP: Fixing the 2 Blankets on Product
+                                    <i data-lucide="play-circle" class="w-4 h-4 text-amber-400"></i> Animated SOP: Pallet Packing & Fixing the 2 Blankets
                                 </h3>
-                                <p id="sop-anim-caption" class="text-[11px] text-cyan-300 font-medium">Step 1/5: Lay base thermal pad & load palletized cargo</p>
+                                <p id="sop-anim-caption" class="text-[11px] text-cyan-300 font-medium">Step 1/5: Lay base thermal pad on pallet</p>
                             </div>
                             <div class="flex items-center gap-1.5">
                                 <button type="button" onclick="toggleSopAnimation()" id="sopPlayPauseBtn" class="px-2.5 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1">
@@ -430,18 +438,26 @@
                             </div>
                         </div>
 
-                        <!-- 3D SOP Animation Viewport -->
-                        <div id="canvas-sop" class="w-full h-[255px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
-                            <div class="absolute bottom-2.5 left-2.5 z-10 flex flex-wrap items-center gap-2 bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800 text-[10px]">
+                        <!-- Always-Visible 2D Animated Engineering Drawing Viewport -->
+                        <div class="w-full h-[265px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                            <canvas id="sopAnimCanvas" width="560" height="265" class="w-full h-full"></canvas>
+                            <div class="absolute bottom-2 left-2.5 z-10 flex flex-wrap items-center gap-2 bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800 text-[10px]">
+                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#8B4513] inline-block"></span> Pallet</span>
                                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#0077ee] inline-block"></span> Cargo</span>
-                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#22d3ee] inline-block"></span> Blanket 1 (Lengthwise)</span>
-                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#38bdf8] inline-block"></span> Blanket 2 (Cross-Wrap)</span>
+                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#22d3ee] inline-block"></span> Blanket 1</span>
+                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#38bdf8] inline-block"></span> Blanket 2</span>
                                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#f59e0b] inline-block"></span> Foil Seal Tape</span>
                             </div>
                         </div>
 
-                        <!-- Visual Step-by-Step SOP Cards -->
-                        <div class="grid grid-cols-5 gap-1.5 text-[10px]" id="sop-visual-steps-bar"></div>
+                        <!-- Clickable Step 1..5 Selector Bar -->
+                        <div class="grid grid-cols-5 gap-1.5 text-[10px]" id="sop-visual-steps-bar">
+                            <button type="button" onclick="selectSopStep(0)" class="p-1.5 rounded-lg border text-center font-semibold bg-amber-500/20 border-amber-500/50 text-amber-200">1. Base Pad</button>
+                            <button type="button" onclick="selectSopStep(1)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">2. Load Cargo</button>
+                            <button type="button" onclick="selectSopStep(2)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">3. Blanket 1</button>
+                            <button type="button" onclick="selectSopStep(3)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">4. Blanket 2</button>
+                            <button type="button" onclick="selectSopStep(4)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">5. Seal Tape</button>
+                        </div>
 
                         <!-- Data Logger & QA Sensor Placement Note -->
                         <div id="logger-placement-guide" class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 text-[11px] text-slate-300"></div>
@@ -733,7 +749,7 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.2</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.4</span>
                         </div>
                     </div>
 
@@ -1102,7 +1118,7 @@
         <div>© 2026 Krautz-Temax NV. All rights reserved. CCRM Cold Chain Risk Management & 3D Thermal Packaging Technology.</div>
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
-<!-- JavaScript Application: Part 2A (4-Language I18N, Saved Profiles, CCRM Engine, Temp Chart & 3D SOP Animation) -->
+    <!-- JavaScript Application: Part 2 (4-Language I18N, CCRM Engine, Temp Graph + Legend & Step-by-Step Pallet Packing Animation) -->
     <script>
         lucide.createIcons();
 
@@ -1144,7 +1160,7 @@
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Request Quote',
                 ccrmBannerTitle: 'TEMAX INSULATION REQUEST (Dok.Nr. F05.008) → CCRM CALCULATION SHEET',
-                ccrmBannerDesc: 'Send the online request form hyperlink to your customer, or fill in received customer data to run CCRM & 3D Roll-Cut SOPs.',
+                ccrmBannerDesc: 'Send the online request form hyperlink to your customer, or fill in received customer data to run CCRM & Roll-Cut SOPs.',
                 btnSaveProfile: 'Save Profile',
                 btnCopyFormLink: 'Copy Customer Form Hyperlink',
                 btnExportCsv: 'Export CCRM (.CSV)',
@@ -1164,7 +1180,13 @@
                 lblTotalWeight: 'Total Weight (kg)',
                 sec2TempDetails: '2. Product Temperature & Specific Heat (c)',
                 sec3EnvProfile: '3. Environment Profile',
-                lblTempCurveTitle: 'Transit Temperature Curve (Summer vs. Limits)',
+                lblTempCurveTitle: 'External vs. Internal Pallet Temperature Graph',
+                lblTempCurveDesc: 'Compares external ambient/tarmac temperature against internal pallet/goods temperature',
+                legExternal: 'External Temp (°C)',
+                legInternal: 'Internal Pallet / Goods Temp (°C)',
+                legMax: 'Max Limit (Tma)',
+                legMin: 'Min Limit (Tmi)',
+                legSafeBand: 'Safe Zone',
                 lblCcrmSheetTitle: 'CCRM Internal Calculation Sheet (Page 1 & 2 Output)',
                 lblCalcDate: 'Calculation Date',
                 lblCalcRef: 'Calculation Ref #',
@@ -1173,7 +1195,7 @@
                 lblRecommendedTemax: 'Recommended Krautz-Temax Insulation',
                 btnApplyTo3D: 'Apply to 3D Pallet & Cut-Sheet ✓',
                 lblTwoBlanketsTitle: '2-Blanket Roll Cut Dimensions (From 1.50m Roll)',
-                lblAnimatedSopTitle: '3D Animated SOP: Fixing the 2 Blankets on Product',
+                lblAnimatedSopTitle: 'Animated SOP: Pallet Packing & Fixing the 2 Blankets',
                 outerTitle: 'Outer Packaging / Load Size',
                 innerTitle: 'Inner Packages, Weight & Order',
                 puzzleTitle: 'Multi-Box 3D Volume Puzzle',
@@ -1209,7 +1231,7 @@
                 loggerText: 'Place primary logger at geometric top-center of cargo (warmest air zone). Never place sensors directly against PCM bricks or dry ice.',
                 sopStages: [
                     'Step 1/5: Lay base thermal pad on EPAL pallet',
-                    'Step 2/5: Stack temperature-sensitive product load',
+                    'Step 2/5: Stack temperature-sensitive product load on pallet',
                     'Step 3/5: Drape Blanket 1 lengthwise (Front → Top → Back)',
                     'Step 4/5: Cross-wrap Blanket 2 perpendicular (Left → Top → Right)',
                     'Step 5/5: Seal 15cm overlap flaps with foil tape & stretch-wrap'
@@ -1229,7 +1251,7 @@
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Offerte Aanvragen',
                 ccrmBannerTitle: 'TEMAX ISOLATIE AANVRAAG (Dok.Nr. F05.008) → CCRM BEREKENINGSBLAD',
-                ccrmBannerDesc: 'Stuur de online formulierlink naar uw klant of vul de klantgegevens in voor CCRM & 3D snij-instructies.',
+                ccrmBannerDesc: 'Stuur de online formulierlink naar uw klant of vul de klantgegevens in voor CCRM & snij-instructies.',
                 btnSaveProfile: 'Profiel Opslaan',
                 btnCopyFormLink: 'Kopieer Klantformulier Link',
                 btnExportCsv: 'Exporteer CCRM (.CSV)',
@@ -1249,7 +1271,13 @@
                 lblTotalWeight: 'Totaalgewicht (kg)',
                 sec2TempDetails: '2. Producttemperatuur & Soortelijke Warmte (c)',
                 sec3EnvProfile: '3. Omgevingsprofiel',
-                lblTempCurveTitle: 'Transport Temperatuurcurve (Zomer vs. Limieten)',
+                lblTempCurveTitle: 'Externe vs. Interne Pallettemperatuur Grafiek',
+                lblTempCurveDesc: 'Vergelijkt externe omgevingstemperatuur met interne pallet/producttemperatuur',
+                legExternal: 'Externe Temp (°C)',
+                legInternal: 'Interne Pallet / Product Temp (°C)',
+                legMax: 'Max Limiet (Tma)',
+                legMin: 'Min Limiet (Tmi)',
+                legSafeBand: 'Veilige Zone',
                 lblCcrmSheetTitle: 'CCRM Intern Berekeningsblad (Pagina 1 & 2 Resultaat)',
                 lblCalcDate: 'Berekeningsdatum',
                 lblCalcRef: 'Berekening Ref #',
@@ -1258,7 +1286,7 @@
                 lblRecommendedTemax: 'Aanbevolen Krautz-Temax Isolatie',
                 btnApplyTo3D: 'Toepassen op 3D Pallet & Snijplan ✓',
                 lblTwoBlanketsTitle: '2-Dekens Rol-Snijmaten (Uit 1,50m Rol)',
-                lblAnimatedSopTitle: '3D Geanimeerde SOP: Bevestiging van de 2 Dekens',
+                lblAnimatedSopTitle: 'Geanimeerde SOP: Pallet Beladen & Bevestiging 2 Dekens',
                 outerTitle: 'Buitenverpakking / Palletmaat',
                 innerTitle: 'Binnendozen, Gewicht & Order',
                 puzzleTitle: 'Multi-Doos 3D Volume Puzzel',
@@ -1294,7 +1322,7 @@
                 loggerText: 'Plaats de datalogger midden-boven op de lading (warmste luchtzone). Plaats sensoren nooit direct tegen PCM-koelelementen of droogijs.',
                 sopStages: [
                     'Stap 1/5: Leg thermische vloerpad op de EPAL-pallet',
-                    'Stap 2/5: Stapel de temperatuurgevoelige lading',
+                    'Stap 2/5: Stapel de temperatuurgevoelige lading op de pallet',
                     'Stap 3/5: Plaats Deken 1 in de lengte (Voor → Boven → Achter)',
                     'Stap 4/5: Wikkel Deken 2 haaks erover (Links → Boven → Rechts)',
                     'Stap 5/5: Tape de 15cm naden dicht met folietape & wikkelfolie'
@@ -1314,7 +1342,7 @@
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Angebot Anfordern',
                 ccrmBannerTitle: 'TEMAX ISOLIERANFRAGE (Dok.Nr. F05.008) → CCRM-BERECHNUNGSBLATT',
-                ccrmBannerDesc: 'Senden Sie den Online-Formularlink an Ihren Kunden oder geben Sie Kundendaten für CCRM & 3D-Zuschnitt ein.',
+                ccrmBannerDesc: 'Senden Sie den Online-Formularlink an Ihren Kunden oder geben Sie Kundendaten für CCRM & Zuschnitt ein.',
                 btnSaveProfile: 'Profil Speichern',
                 btnCopyFormLink: 'Kundenformular-Link Kopieren',
                 btnExportCsv: 'CCRM Exportieren (.CSV)',
@@ -1334,7 +1362,13 @@
                 lblTotalWeight: 'Gesamtgewicht (kg)',
                 sec2TempDetails: '2. Produkttemperatur & Spez. Wärmekapazität (c)',
                 sec3EnvProfile: '3. Umgebungsprofil',
-                lblTempCurveTitle: 'Transport-Temperaturkurve (Sommer vs. Grenzwerte)',
+                lblTempCurveTitle: 'Außen- vs. Paletten-Innentemperatur-Grafik',
+                lblTempCurveDesc: 'Vergleicht Außentemperatur mit innerer Paletten-/Produkttemperatur',
+                legExternal: 'Außentemperatur (°C)',
+                legInternal: 'Innere Paletten- / Produkttemp (°C)',
+                legMax: 'Max. Grenzwert (Tma)',
+                legMin: 'Min. Grenzwert (Tmi)',
+                legSafeBand: 'Sicherer Bereich',
                 lblCcrmSheetTitle: 'CCRM Internes Berechnungsblatt (Seite 1 & 2 Ergebnis)',
                 lblCalcDate: 'Berechnungsdatum',
                 lblCalcRef: 'Berechnung Ref #',
@@ -1343,7 +1377,7 @@
                 lblRecommendedTemax: 'Empfohlene Krautz-Temax Isolierung',
                 btnApplyTo3D: 'Auf 3D-Palette & Zuschnitt Anwenden ✓',
                 lblTwoBlanketsTitle: '2-Hauben Rollenzuschnitt (Aus 1,50m Rolle)',
-                lblAnimatedSopTitle: '3D-Animierte SOP: Fixierung der 2 Thermohauben',
+                lblAnimatedSopTitle: 'Animierte SOP: Palettenbeladung & Fixierung der 2 Hauben',
                 outerTitle: 'Außenverpackung / Palettenmaß',
                 innerTitle: 'Innenkartons, Gewicht & Auftrag',
                 puzzleTitle: 'Mehrboxen 3D Volumen-Puzzle',
@@ -1379,7 +1413,7 @@
                 loggerText: 'Platzieren Sie den Datenlogger mittig oben auf der Ladung (wärmste Luftzone). Sensoren niemals direkt auf PCM-Akkus oder Trockeneis legen.',
                 sopStages: [
                     'Schritt 1/5: Thermobodenmatte auf EPAL-Palette legen',
-                    'Schritt 2/5: Temperaturempfindliche Ware stapeln',
+                    'Schritt 2/5: Temperaturempfindliche Ware auf Palette stapeln',
                     'Schritt 3/5: Decke 1 längs überlegen (Vorne → Oben → Hinten)',
                     'Schritt 4/5: Decke 2 quer darüberwickeln (Links → Oben → Rechts)',
                     'Schritt 5/5: 15cm Überlappung mit Aluklebeband & Stretchfolie sichern'
@@ -1399,7 +1433,7 @@
                 btnSpec: 'Fiche PDF',
                 btnQuote: 'Demander Devis',
                 ccrmBannerTitle: 'DEMANDE ISOLATION TEMAX (Dok.Nr. F05.008) → FEUILLE DE CALCUL CCRM',
-                ccrmBannerDesc: 'Envoyez le lien du formulaire en ligne au client ou saisissez ses données pour lancer le calcul CCRM & SOP 3D.',
+                ccrmBannerDesc: 'Envoyez le lien du formulaire en ligne au client ou saisissez ses données pour lancer le calcul CCRM & SOP.',
                 btnSaveProfile: 'Sauver Profil',
                 btnCopyFormLink: 'Copier Lien Formulaire Client',
                 btnExportCsv: 'Exporter CCRM (.CSV)',
@@ -1419,7 +1453,13 @@
                 lblTotalWeight: 'Poids Total (kg)',
                 sec2TempDetails: '2. Températures Produit & Chaleur Spécifique (c)',
                 sec3EnvProfile: '3. Profil Environnemental',
-                lblTempCurveTitle: 'Courbe de Température Transit (Été vs. Limites)',
+                lblTempCurveTitle: 'Graphique Température Externe vs. Interne Palette',
+                lblTempCurveDesc: 'Compare la température extérieure à la température interne de la palette/marchandise',
+                legExternal: 'Temp. Externe (°C)',
+                legInternal: 'Temp. Interne Palette / Colis (°C)',
+                legMax: 'Limite Max (Tma)',
+                legMin: 'Limite Min (Tmi)',
+                legSafeBand: 'Zone Sûre',
                 lblCcrmSheetTitle: 'Feuille de Calcul Interne CCRM (Résultat Pages 1 & 2)',
                 lblCalcDate: 'Date de Calcul',
                 lblCalcRef: 'Réf. Calcul #',
@@ -1428,7 +1468,7 @@
                 lblRecommendedTemax: 'Isolation Krautz-Temax Recommandée',
                 btnApplyTo3D: 'Appliquer à la Palette 3D & Découpe ✓',
                 lblTwoBlanketsTitle: 'Dimensions de Coupe 2 Housses (Rouleau 1,50m)',
-                lblAnimatedSopTitle: 'SOP Animée 3D : Fixation des 2 Housses sur Produit',
+                lblAnimatedSopTitle: 'SOP Animée : Mise sur Palette & Fixation des 2 Housses',
                 outerTitle: 'Emballage Extérieur / Palette',
                 innerTitle: 'Colis Internes, Poids & Commande',
                 puzzleTitle: 'Puzzle Volume 3D Multi-Colis',
@@ -1464,7 +1504,7 @@
                 loggerText: 'Placez l’enregistreur au centre supérieur de la charge (zone la plus chaude). Ne jamais poser de sonde directement sur les plaques PCM ou la glace carbonique.',
                 sopStages: [
                     'Étape 1/5 : Poser le tapis isolant de base sur la palette EPAL',
-                    'Étape 2/5 : Empiler les colis thermosensibles',
+                    'Étape 2/5 : Empiler les colis thermosensibles sur la palette',
                     'Étape 3/5 : Draper la Housse 1 en longueur (Avant → Dessus → Arrière)',
                     'Étape 4/5 : Croiser la Housse 2 perpendiculairement (Gauche → Dessus → Droite)',
                     'Étape 5/5 : Sceller les rabats de 15cm au ruban alu et filmer'
@@ -1499,7 +1539,7 @@
 
         const viewers = {};
         const packedState = {
-            ccrm:    {},
+            ccrm:    { L: 120, W: 80, H: 100, startTemp: 5, minTemp: 2, maxTemp: 8, timeline: [{ hr: 0, amb: 20, core: 5 }, { hr: 4, amb: 35, core: 6.2 }, { hr: 12, amb: 16, core: 6.8 }, { hr: 19, amb: 26, core: 7.1 }] },
             dual:    { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [], thermal: null, summary: {} },
             puzzle:  { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
             sphere:  { container: { l: 100, w: 100, h: 100 }, items: [], sheetYs: [] },
@@ -1512,10 +1552,10 @@
         let customScanGeometry = null;
         let customScanBounds = null;
 
+        // Step-by-Step Pallet Packing Animation State (0.0 to 5.0)
         let sopAnimPlaying = true;
-        let sopAnimProgress = 0;
+        let sopAnimProgress = 0.0;
 
-        // Saved Shipment Profiles (localStorage)
         function refreshSavedProfilesDropdown() {
             const sel = document.getElementById('savedProfilesSelect');
             if (!sel) return;
@@ -1670,56 +1710,62 @@
             calculateAll();
         }
 
+        // Draws External Temp vs Internal Pallet/Goods Temp on Canvas
         function drawCcrmTemperatureChart(timeline, minTemp, maxTemp) {
             const canvas = document.getElementById('ccrmTempChart');
-            if (!canvas || !timeline || timeline.length < 2) return;
+            if (!canvas) return;
             const ctx = canvas.getContext('2d');
             const W = canvas.width;
             const H = canvas.height;
             ctx.clearRect(0, 0, W, H);
 
-            const padL = 38, padR = 14, padT = 16, padB = 24;
+            const pts = (timeline && timeline.length >= 2)
+                ? timeline
+                : [{ hr: 0, amb: 20, core: 5 }, { hr: 6, amb: 35, core: 6.2 }, { hr: 14, amb: 16, core: 6.8 }, { hr: 22, amb: 28, core: 7.2 }];
+
+            const padL = 40, padR = 16, padT = 16, padB = 24;
             const plotW = W - padL - padR;
             const plotH = H - padT - padB;
 
             const allTemps = [minTemp - 4, maxTemp + 4];
-            timeline.forEach(pt => { allTemps.push(pt.amb, pt.core); });
+            pts.forEach(pt => { allTemps.push(pt.amb, pt.core); });
             const tMin = Math.min(...allTemps);
             const tMax = Math.max(...allTemps);
-            const maxHrs = Math.max(1, timeline[timeline.length - 1].hr);
+            const maxHrs = Math.max(1, pts[pts.length - 1].hr);
 
             const xOf = hr => padL + (hr / maxHrs) * plotW;
             const yOf = t => padT + plotH - ((t - tMin) / Math.max(1, tMax - tMin)) * plotH;
 
-            // Safe band fill [minTemp, maxTemp]
+            // Safe band [minTemp, maxTemp]
             const yMaxSafe = yOf(maxTemp);
             const yMinSafe = yOf(minTemp);
-            ctx.fillStyle = 'rgba(16, 185, 129, 0.12)';
+            ctx.fillStyle = 'rgba(16, 185, 129, 0.14)';
             ctx.fillRect(padL, yMaxSafe, plotW, Math.max(2, yMinSafe - yMaxSafe));
 
-            // Dashed threshold lines
+            // Min / Max limit dashed lines
             ctx.setLineDash([4, 4]);
             ctx.strokeStyle = '#f43f5e';
+            ctx.lineWidth = 1.4;
             ctx.beginPath(); ctx.moveTo(padL, yMaxSafe); ctx.lineTo(W - padR, yMaxSafe); ctx.stroke();
             ctx.strokeStyle = '#38bdf8';
             ctx.beginPath(); ctx.moveTo(padL, yMinSafe); ctx.lineTo(W - padR, yMinSafe); ctx.stroke();
             ctx.setLineDash([]);
 
-            // Ambient curve (amber)
+            // External temperature line (amber)
             ctx.strokeStyle = '#f59e0b';
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 2.2;
             ctx.beginPath();
-            timeline.forEach((pt, idx) => {
+            pts.forEach((pt, idx) => {
                 const x = xOf(pt.hr), y = yOf(pt.amb);
                 if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
             });
             ctx.stroke();
 
-            // Insulated core temp curve (cyan)
+            // Internal pallet / goods temperature line (cyan)
             ctx.strokeStyle = '#22d3ee';
             ctx.lineWidth = 2.8;
             ctx.beginPath();
-            timeline.forEach((pt, idx) => {
+            pts.forEach((pt, idx) => {
                 const x = xOf(pt.hr), y = yOf(pt.core);
                 if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
             });
@@ -1731,7 +1777,7 @@
             ctx.fillText(`${Math.round(tMax)}°C`, 4, padT + 8);
             ctx.fillText(`${Math.round(tMin)}°C`, 4, H - padB);
             ctx.fillText(`0h`, padL, H - 6);
-            ctx.fillText(`${maxHrs.toFixed(0)}h`, W - padR - 22, H - 6);
+            ctx.fillText(`${maxHrs.toFixed(0)}h`, W - padR - 24, H - 6);
         }
 
         // Core CCRM Thermodynamic Engine
@@ -1902,10 +1948,9 @@
                 blanketA: { l: blanketA_L, w: blanketA_W, areaM2: blanketA_M2 },
                 blanketB: { l: blanketB_L, w: blanketB_W, areaM2: blanketB_M2 },
                 totalBlanketsM2: totalTwoBlanketsM2,
-                rollLinearMeters
+                rollLinearMeters,
+                timeline: chosenSim?.timeline || []
             };
-
-            updateSop3DScene();
         }
 
         function applyRecommendedTemaxTo3D() {
@@ -1963,6 +2008,7 @@
             document.body.removeChild(link);
         }
 
+        // Step-by-Step Pallet Packing & 2-Blanket Fixation 2D Animated Drawing
         function toggleSopAnimation() {
             sopAnimPlaying = !sopAnimPlaying;
             const lbl = document.getElementById('sopPlayPauseLabel');
@@ -1974,116 +2020,157 @@
             const lbl = document.getElementById('sopPlayPauseLabel');
             if (lbl) lbl.innerText = 'Play';
             sopAnimProgress = (Math.floor(sopAnimProgress) + 1) % 5 + 0.99;
-            updateSop3DScene();
+            drawSopPackingAnimation();
         }
 
-        function updateSop3DScene() {
-            const v = viewers['sop'];
-            if (!v) return;
+        function selectSopStep(stepIdx) {
+            sopAnimPlaying = false;
+            const lbl = document.getElementById('sopPlayPauseLabel');
+            if (lbl) lbl.innerText = 'Play';
+            sopAnimProgress = stepIdx + 0.99;
+            drawSopPackingAnimation();
+        }
+
+        function drawSopPackingAnimation() {
+            const canvas = document.getElementById('sopAnimCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width;
+            const H = canvas.height;
             const dict = I18N[currentLang] || I18N.en;
-
-            while (v.rootGroup.children.length > 0) {
-                v.rootGroup.remove(v.rootGroup.children[0]);
-            }
-
             const c = packedState.ccrm || {};
-            const L = c.L || 120;
-            const W = c.W || 80;
-            const H = c.H || 100;
 
-            v.rootGroup.add(buildConcreteFloorMesh(L, W));
-            v.rootGroup.add(buildBrownPalletMesh(L, W, L + 10));
+            ctx.clearRect(0, 0, W, H);
+
+            // Grid floor background
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.08)';
+            ctx.lineWidth = 1;
+            for (let gx = 0; gx < W; gx += 28) {
+                ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+            }
+            for (let gy = 0; gy < H; gy += 28) {
+                ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+            }
 
             const stage = Math.min(4, Math.floor(sopAnimProgress));
             const frac = sopAnimProgress - Math.floor(sopAnimProgress);
 
-            const stepLabels = dict.sopStages;
             const capEl = document.getElementById('sop-anim-caption');
-            if (capEl) capEl.innerText = stepLabels[stage] || stepLabels[0];
+            if (capEl) capEl.innerText = dict.sopStages[stage] || dict.sopStages[0];
 
             const barEl = document.getElementById('sop-visual-steps-bar');
             if (barEl) {
-                const shortNames = dict.sopShort;
-                barEl.innerHTML = shortNames.map((nm, idx) => `
-                    <div class="p-1.5 rounded-lg border text-center font-semibold ${idx <= stage ? 'bg-amber-500/20 border-amber-500/50 text-amber-200' : 'bg-slate-950 border-slate-800 text-slate-500'}">
+                barEl.innerHTML = dict.sopShort.map((nm, idx) => `
+                    <button type="button" onclick="selectSopStep(${idx})" class="p-1.5 rounded-lg border text-center font-semibold transition ${idx <= stage ? 'bg-amber-500/20 border-amber-500/50 text-amber-200' : 'bg-slate-950 border-slate-800 text-slate-500'}">
                         ${nm}
-                    </div>
+                    </button>
                 `).join('');
             }
 
-            const padGeo = new THREE.BoxGeometry(L + 4, 2, W + 4);
-            const padMat = new THREE.MeshLambertMaterial({ color: 0x06b6d4 });
-            const padMesh = new THREE.Mesh(padGeo, padMat);
-            padMesh.position.set(0, PALLET_HEIGHT + 1, 0);
-            v.rootGroup.add(padMesh);
+            // Pallet geometry centered in canvas
+            const palW = 190, palH = 18;
+            const palX = (W - palW) / 2;
+            const palY = H - 48;
 
+            // 1. Brown Pallet
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(palX, palY, palW, palH);
+            ctx.strokeStyle = '#d97706';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(palX, palY, palW, palH);
+            // Pallet blocks
+            ctx.fillStyle = '#5c2c0c';
+            ctx.fillRect(palX + 12, palY + 4, 24, 10);
+            ctx.fillRect(palX + palW / 2 - 12, palY + 4, 24, 10);
+            ctx.fillRect(palX + palW - 36, palY + 4, 24, 10);
+
+            const cargoW = 166;
+            const cargoFullH = 98;
+            const cargoX = (W - cargoW) / 2;
+            const cargoBaseY = palY - 6;
+
+            // Stage 0+: Base Thermal Pad on Pallet
+            const padDrop = stage === 0 ? (1 - frac) * 35 : 0;
+            ctx.fillStyle = '#06b6d4';
+            ctx.fillRect(cargoX - 4, cargoBaseY - 6 - padDrop, cargoW + 8, 6);
+
+            // Stage 1+: Cargo boxes stacking up on pallet
             if (stage >= 1) {
-                const cargoScale = stage === 1 ? Math.min(1, 0.25 + frac * 0.85) : 1;
-                const curH = H * cargoScale;
-                const cargoGeo = new THREE.BoxGeometry(L - 4, curH, W - 4);
-                const cargoMat = new THREE.MeshLambertMaterial({ color: 0x0077ee });
-                const cargoMesh = new THREE.Mesh(cargoGeo, cargoMat);
-                cargoMesh.position.set(0, PALLET_HEIGHT + 2 + curH / 2, 0);
-                cargoMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(cargoGeo), new THREE.LineBasicMaterial({ color: 0x7dd3fc })));
-                v.rootGroup.add(cargoMesh);
+                const curCargoH = stage === 1 ? Math.max(12, cargoFullH * Math.min(1, frac * 1.15)) : cargoFullH;
+                const curCargoTopY = cargoBaseY - 6 - curCargoH;
+                ctx.fillStyle = '#0077ee';
+                ctx.fillRect(cargoX, curCargoTopY, cargoW, curCargoH);
+                ctx.strokeStyle = '#7dd3fc';
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(cargoX, curCargoTopY, cargoW, curCargoH);
+
+                // Inner box grid lines
+                ctx.strokeStyle = 'rgba(224, 242, 254, 0.35)';
+                ctx.beginPath();
+                ctx.moveTo(cargoX + cargoW / 2, curCargoTopY);
+                ctx.lineTo(cargoX + cargoW / 2, cargoBaseY - 6);
+                ctx.moveTo(cargoX, curCargoTopY + curCargoH / 2);
+                ctx.lineTo(cargoX + cargoW, curCargoTopY + curCargoH / 2);
+                ctx.stroke();
             }
 
+            const cargoTopY = cargoBaseY - 6 - cargoFullH;
+
+            // Stage 2+: Blanket 1 (Lengthwise Wrap draping over top & sides)
             if (stage >= 2) {
-                const dropLift = stage === 2 ? (1 - frac) * 45 : 0;
-                const b1Mat = new THREE.MeshPhongMaterial({
-                    color: 0x22d3ee,
-                    transparent: true,
-                    opacity: 0.58,
-                    side: THREE.DoubleSide
-                });
-                const b1Edge = new THREE.LineBasicMaterial({ color: 0xa5f3fc });
+                const p1 = stage === 2 ? frac : 1.0;
+                const flapDrop = p1 * 38;
+                ctx.strokeStyle = '#22d3ee';
+                ctx.fillStyle = 'rgba(34, 211, 238, 0.22)';
+                ctx.lineWidth = 4;
 
-                const top1 = new THREE.Mesh(new THREE.BoxGeometry(L + 2, 1.5, W + 10), b1Mat);
-                top1.position.set(0, PALLET_HEIGHT + H + 3 + dropLift, 0);
-                top1.add(new THREE.LineSegments(new THREE.EdgesGeometry(top1.geometry), b1Edge));
-                v.rootGroup.add(top1);
+                // Top + left/right lengthwise drape
+                ctx.beginPath();
+                ctx.moveTo(cargoX - 6 - p1 * 8, cargoTopY + 38 - flapDrop);
+                ctx.lineTo(cargoX - 6, cargoTopY - 4);
+                ctx.lineTo(cargoX + cargoW + 6, cargoTopY - 4);
+                ctx.lineTo(cargoX + cargoW + 6 + p1 * 8, cargoTopY + 38 - flapDrop);
+                ctx.stroke();
 
-                [-1, 1].forEach(dir => {
-                    const side1 = new THREE.Mesh(new THREE.BoxGeometry(1.5, H + 4, W + 10), b1Mat);
-                    side1.position.set(dir * (L / 2 + 1), PALLET_HEIGHT + H / 2 + 2 + dropLift, 0);
-                    side1.add(new THREE.LineSegments(new THREE.EdgesGeometry(side1.geometry), b1Edge));
-                    v.rootGroup.add(side1);
-                });
+                // Dimension tag for Blanket 1
+                ctx.fillStyle = '#22d3ee';
+                ctx.font = 'bold 11px Inter, sans-serif';
+                ctx.fillText(`Blanket 1: ${c.blanketA?.l || 350}×${c.blanketA?.w || 110}cm`, 16, 22);
             }
 
+            // Stage 3+: Blanket 2 (Cross-Wrap perpendicular locking Blanket 1)
             if (stage >= 3) {
-                const dropLift2 = stage === 3 ? (1 - frac) * 45 : 0;
-                const b2Mat = new THREE.MeshPhongMaterial({
-                    color: 0x38bdf8,
-                    transparent: true,
-                    opacity: 0.65,
-                    side: THREE.DoubleSide
-                });
-                const b2Edge = new THREE.LineBasicMaterial({ color: 0xe0f2fe });
+                const p2 = stage === 3 ? frac : 1.0;
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 3.5;
+                ctx.setLineDash([7, 4]);
+                ctx.strokeRect(cargoX - 10, cargoTopY - 9, cargoW + 20, cargoFullH + 14);
+                ctx.setLineDash([]);
 
-                const top2 = new THREE.Mesh(new THREE.BoxGeometry(L + 10, 1.6, W + 4), b2Mat);
-                top2.position.set(0, PALLET_HEIGHT + H + 4.8 + dropLift2, 0);
-                top2.add(new THREE.LineSegments(new THREE.EdgesGeometry(top2.geometry), b2Edge));
-                v.rootGroup.add(top2);
-
-                [-1, 1].forEach(dir => {
-                    const side2 = new THREE.Mesh(new THREE.BoxGeometry(L + 10, H + 5, 1.6), b2Mat);
-                    side2.position.set(0, PALLET_HEIGHT + H / 2 + 2.5 + dropLift2, dir * (W / 2 + 2));
-                    side2.add(new THREE.LineSegments(new THREE.EdgesGeometry(side2.geometry), b2Edge));
-                    v.rootGroup.add(side2);
-                });
+                ctx.fillStyle = '#38bdf8';
+                ctx.font = 'bold 11px Inter, sans-serif';
+                ctx.fillText(`Blanket 2: ${c.blanketB?.l || 310}×${c.blanketB?.w || 150}cm (Cross-Wrap)`, W - 235, 22);
             }
 
+            // Stage 4: Foil Seal Tape Bands & 15cm Overlap Lock
             if (stage >= 4) {
-                const tapeMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
-                const band1 = new THREE.Mesh(new THREE.BoxGeometry(L + 12, 3.5, W + 6), tapeMat);
-                band1.position.set(0, PALLET_HEIGHT + H * 0.35, 0);
-                v.rootGroup.add(band1);
-
-                const band2 = new THREE.Mesh(new THREE.BoxGeometry(L + 12, 3.5, W + 6), tapeMat);
-                band2.position.set(0, PALLET_HEIGHT + H * 0.75, 0);
-                v.rootGroup.add(band2);
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillRect(cargoX - 12, cargoTopY + cargoFullH * 0.35, cargoW + 24, 5);
+                ctx.fillRect(cargoX - 12, cargoTopY + cargoFullH * 0.72, cargoW + 24, 5);
+                ctx.font = 'bold 11px Inter, sans-serif';
+                ctx.fillText(`✓ 15cm Foil Seal Tape Applied`, (W / 2) - 72, cargoTopY - 16);
             }
+        }
+
+        function startSopLoop() {
+            function tick() {
+                if (sopAnimPlaying) {
+                    sopAnimProgress = (sopAnimProgress + 0.012) % 5.0;
+                }
+                drawSopPackingAnimation();
+                requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
         }
         function setPlacementMode(key, mode) {
             document.getElementById(`${key}PlacementMode`).value = mode;
@@ -2175,10 +2262,6 @@
 
             function animate() {
                 requestAnimationFrame(animate);
-                if (key === 'sop' && sopAnimPlaying && container.offsetParent !== null) {
-                    sopAnimProgress = (sopAnimProgress + 0.015) % 5.0;
-                    updateSop3DScene();
-                }
                 controls.update();
                 renderer.render(scene, camera);
             }
@@ -2201,18 +2284,8 @@
 
         function resetCamera(key) {
             const v = viewers[key];
-            if (!v) return;
-            if (key === 'sop') {
-                const c = packedState.ccrm || {};
-                const L = c.L || 120, W = c.W || 80, H = (c.H || 100) + PALLET_HEIGHT;
-                const maxDim = Math.max(L, W, H);
-                v.camera.position.set(maxDim * 1.55, maxDim * 1.25, maxDim * 1.65);
-                v.controls.target.set(0, H / 2, 0);
-                v.controls.update();
-                return;
-            }
             const c = packedState[key]?.container;
-            if (!c) return;
+            if (!v || !c) return;
             if (key === 'truck') {
                 const maxDim = Math.max(c.l, c.w, c.h);
                 v.camera.position.set(maxDim * 0.95, maxDim * 0.65, maxDim * 0.95);
@@ -2782,7 +2855,7 @@
 
             setTimeout(() => {
                 handleResize();
-                if (tabId === 'pack-ccrm') { calculateCcrmEngine(); resetCamera('sop'); }
+                if (tabId === 'pack-ccrm') { calculateCcrmEngine(); drawSopPackingAnimation(); }
                 if (tabId === 'pack-dual') resetCamera('dual');
                 if (tabId === 'pack-puzzle') resetCamera('puzzle');
                 if (tabId === 'pack-sphere') resetCamera('sphere');
@@ -3974,7 +4047,7 @@
         function exportSpecSheet() {
             calculateCcrmEngine();
             calculateThermalAndRoi();
-            const viewerKey = viewers[activeTabKey] ? activeTabKey : 'sop';
+            const viewerKey = viewers[activeTabKey] ? activeTabKey : 'dual';
             const v = viewers[viewerKey];
             let snapshotUrl = '';
             if (v && v.renderer) {
@@ -4066,13 +4139,13 @@
             calculateIrregular();
             calculateTruckLoad();
             calculateThermalAndRoi();
+            drawSopPackingAnimation();
         }
 
         window.onload = function () {
             document.getElementById('ccrm-calc-date').value = new Date().toISOString().split('T')[0];
             renderColdChainSteps();
             refreshSavedProfilesDropdown();
-            init3DViewer('sop', 'canvas-sop');
             init3DViewer('dual', 'canvas-dual');
             init3DViewer('puzzle', 'canvas-puzzle');
             init3DViewer('sphere', 'canvas-sphere');
@@ -4080,7 +4153,7 @@
             init3DViewer('truck', 'canvas-truck');
             loadConfigFromUrl();
             calculateAll();
-            resetCamera('sop');
+            startSopLoop();
             resetCamera('dual');
             resetCamera('puzzle');
             resetCamera('sphere');
@@ -4090,3 +4163,4 @@
     </script>
 </body>
 </html>
+    
