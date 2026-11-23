@@ -963,4 +963,1802 @@
                             </div>
                         </div>
 
-                        <div id="truck-dim-status" class="grid grid-cols-1 md:grid-cols-
+                        <div id="truck-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Commercial RFQ / Request Quote Modal -->
+    <div id="rfqModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="bg-emerald-500/20 text-emerald-400 p-2 rounded-lg"><i data-lucide="send" class="w-4 h-4"></i></span>
+                    <div>
+                        <h3 class="text-base font-bold text-white">Request Krautz-Temax Packaging Quote</h3>
+                        <p class="text-[11px] text-slate-400">Auto-populated with your current 3D thermal & pallet configuration</p>
+                    </div>
+                </div>
+                <button onclick="closeRfqModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Company Name</label>
+                    <input type="text" id="rfqCompany" placeholder="e.g. Pharma Logistics NV" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-krautz-500">
+                </div>
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Contact Email</label>
+                    <input type="email" id="rfqEmail" placeholder="name@company.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-krautz-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-[11px] text-slate-400 block mb-1">Generated Engineering & Packaging Specification</label>
+                <textarea id="rfqSummaryText" rows="8" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-krautz-500"></textarea>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
+                <button type="button" onclick="copyRfqText()" id="copyRfqBtn" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 rounded-xl border border-slate-700 transition">
+                    📋 Copy Spec to Clipboard
+                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="closeRfqModal()" class="px-3 py-2 text-xs text-slate-400 hover:text-white">Cancel</button>
+                    <button type="button" onclick="sendRfqEmail()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white rounded-xl shadow transition">
+                        Send RFQ to Krautz-Temax →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-900/40 text-center py-4 text-xs text-slate-500 space-y-1">
+        <div>© 2026 Krautz-Temax NV. All rights reserved. Thermal Packaging & 3D Spatial Calculation Technology.</div>
+        <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
+    </footer>
+
+    <!-- JavaScript Application & 3D Thermal / Pallet / Fleet / RFQ Engine -->
+    <script>
+        lucide.createIcons();
+
+        const PALLET_HEIGHT = 15.0;      // 15 cm standard brown pallet
+        const PALLET_TARE_KG = 25.0;     // 25 kg standard EPAL pallet tare weight
+        const SHEET_THICKNESS = 0.4;     // 0.4 cm corrugated sheet carton
+        const CORNER_THICKNESS = 0.45;   // 0.45 cm carton hoeklat wall thickness
+        const CORNER_WING = 5.5;         // 5.5 cm L-profile wing width
+
+        const THERMAL_SPECS = {
+            none:      { name: 'None', wallCm: 0.0, holdLabel: 'Ambient / Uninsulated', blanketKg: 0.0 },
+            temax1000: { name: 'Temax-1000 Blanket', wallCm: 1.5, holdLabel: '~24–48h Thermal Buffer', blanketKg: 2.8 },
+            temax4000: { name: 'Temax-4000 Multi-Layer', wallCm: 3.0, holdLabel: '~72–120h Cold-Chain', blanketKg: 5.2 },
+            vip:       { name: 'VIP / EPS Insulated Box', wallCm: 5.0, holdLabel: '~120h+ Pharma GDP', blanketKg: 11.5 }
+        };
+
+        const TEMP_ZONES = {
+            ambient: { name: 'Ambient (No PCM)', coolantRatio: 0.0, coolantDensityKgPerL: 0.0 },
+            chilled: { name: '+2°C to +8°C (PCM Packs)', coolantRatio: 0.12, coolantDensityKgPerL: 0.95 },
+            frozen:  { name: '-20°C Frozen (Gel / Dry Ice)', coolantRatio: 0.18, coolantDensityKgPerL: 1.15 }
+        };
+
+        const I18N = {
+            en: {
+                headerSubtitle: 'Thermal Packaging, Palletized Bin-Packing & Fleet Engine',
+                tabDual: 'Dual Box & 3D',
+                tabPuzzle: 'Volume Puzzle',
+                tabSphere: 'Spherical 3D',
+                tabIrregular: 'Irregular Scan',
+                tabTruck: 'Truck / Reefer',
+                btnSpec: 'Spec PDF',
+                btnQuote: 'Request Quote',
+                outerTitle: 'Outer Packaging / Load Size',
+                innerTitle: 'Inner Packages, Weight & Order',
+                lblLength: 'Length (X)',
+                lblWidth: 'Width (Z)',
+                lblHeight: 'Height (Y)',
+                lblBaseMode: 'Base Placement Mode (Floor / Pallet):'
+            },
+            nl: {
+                headerSubtitle: 'Thermische Verpakkingen, Palletbelading & Vloot 3D Engine',
+                tabDual: 'Doos & 3D Pallet',
+                tabPuzzle: 'Volume Puzzel',
+                tabSphere: 'Bollen 3D',
+                tabIrregular: 'Onregelmatige Scan',
+                tabTruck: 'Vrachtwagen / Koel',
+                btnSpec: 'Spec PDF',
+                btnQuote: 'Offerte Aanvragen',
+                outerTitle: 'Buitenverpakking / Palletmaat',
+                innerTitle: 'Binnendozen, Gewicht & Order',
+                lblLength: 'Lengte (X)',
+                lblWidth: 'Breedte (Z)',
+                lblHeight: 'Hoogte (Y)',
+                lblBaseMode: 'Plaatsing (Pallet of Betonvloer):'
+            },
+            de: {
+                headerSubtitle: 'Thermoverpackung, Palettenbeladung & Flotten-3D-Engine',
+                tabDual: 'Box & 3D-Palette',
+                tabPuzzle: 'Volumen-Puzzle',
+                tabSphere: 'Kugeldichte 3D',
+                tabIrregular: 'Unregelmäßiger Scan',
+                tabTruck: 'LKW / Kühlauflieger',
+                btnSpec: 'Spec PDF',
+                btnQuote: 'Angebot Anfordern',
+                outerTitle: 'Außenverpackung / Palettenmaß',
+                innerTitle: 'Innenkartons, Gewicht & Auftrag',
+                lblLength: 'Länge (X)',
+                lblWidth: 'Breite (Z)',
+                lblHeight: 'Höhe (Y)',
+                lblBaseMode: 'Platzierung (Palette / Boden):'
+            },
+            fr: {
+                headerSubtitle: 'Emballage Thermique, Palettisation & Chargement Flotte 3D',
+                tabDual: 'Boîte & Palette 3D',
+                tabPuzzle: 'Puzzle Volume',
+                tabSphere: 'Densité Sphérique',
+                tabIrregular: 'Scan Irrégulier',
+                tabTruck: 'Camion / Frigo 3D',
+                btnSpec: 'Fiche PDF',
+                btnQuote: 'Demander Devis',
+                outerTitle: 'Emballage Extérieur / Palette',
+                innerTitle: 'Colis Internes, Poids & Commande',
+                lblLength: 'Longueur (X)',
+                lblWidth: 'Largeur (Z)',
+                lblHeight: 'Hauteur (Y)',
+                lblBaseMode: 'Mode de Pose (Palette / Sol):'
+            }
+        };
+
+        function applyLanguage(lang) {
+            const dict = I18N[lang] || I18N.en;
+            document.getElementById('headerSubtitle').innerText = dict.headerSubtitle;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[key]) el.innerText = dict[key];
+            });
+        }
+
+        const viewers = {};
+        const packedState = {
+            dual:   { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [], thermal: null, summary: {} },
+            puzzle: { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
+            sphere: { container: { l: 100, w: 100, h: 100 }, items: [], sheetYs: [] },
+            irr:    { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
+            truck:  { container: { l: 1360, w: 248, h: 270 }, pallets: [], summary: {} }
+        };
+
+        let activeTabKey = 'dual';
+        let customScanGeometry = null;
+        let customScanBounds = null;
+
+        function setPlacementMode(key, mode) {
+            document.getElementById(`${key}PlacementMode`).value = mode;
+
+            const palletBtn = document.getElementById(`${key}ModePalletBtn`);
+            const floorBtn = document.getElementById(`${key}ModeFloorBtn`);
+
+            if (mode === 'pallet') {
+                palletBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-amber-600/20 border-amber-500 text-amber-300";
+                floorBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            } else {
+                floorBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-700/40 border-slate-400 text-white";
+                palletBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            }
+
+            if (key === 'dual') { calculateDualBoxAndVisualizer(); calculateTruckLoad(); }
+            if (key === 'puzzle') calculatePuzzle();
+            if (key === 'sphere') calculateSpheres();
+            if (key === 'irr') calculateIrregular();
+        }
+
+        function setStackPattern(pattern) {
+            document.getElementById('dualStackPattern').value = pattern;
+            const colBtn = document.getElementById('stackPatternColBtn');
+            const brickBtn = document.getElementById('stackPatternBrickBtn');
+
+            if (pattern === 'column') {
+                colBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-krautz-500/20 border-krautz-500 text-krautz-300";
+                brickBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            } else {
+                brickBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-krautz-500/20 border-krautz-500 text-krautz-300";
+                colBtn.className = "px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            }
+            calculateDualBoxAndVisualizer();
+        }
+
+        function setSpherePattern(pattern) {
+            document.getElementById('spherePattern').value = pattern;
+            const fccBtn = document.getElementById('spherePatternFccBtn');
+            const gridBtn = document.getElementById('spherePatternGridBtn');
+
+            if (pattern === 'fcc') {
+                fccBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-krautz-500/20 border-krautz-500 text-krautz-400";
+                gridBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            } else {
+                gridBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-krautz-500/20 border-krautz-500 text-krautz-400";
+                fccBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
+            }
+            calculateSpheres();
+        }
+
+        function init3DViewer(key, containerElId) {
+            const container = document.getElementById(containerElId);
+            if (!container) return;
+
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x060b16);
+
+            const width = container.clientWidth || 600;
+            const height = container.clientHeight || 390;
+
+            const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 10000);
+            camera.position.set(170, 150, 190);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.06;
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.72);
+            scene.add(ambientLight);
+
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.82);
+            dirLight1.position.set(320, 420, 260);
+            scene.add(dirLight1);
+
+            const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.35);
+            dirLight2.position.set(-250, 180, -200);
+            scene.add(dirLight2);
+
+            const rootGroup = new THREE.Group();
+            scene.add(rootGroup);
+
+            viewers[key] = { scene, camera, renderer, controls, rootGroup, container };
+
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        function handleResize() {
+            Object.values(viewers).forEach(v => {
+                if (!v.container || v.container.offsetParent === null) return;
+                const w = v.container.clientWidth;
+                const h = v.container.clientHeight;
+                if (w > 0 && h > 0) {
+                    v.camera.aspect = w / h;
+                    v.camera.updateProjectionMatrix();
+                    v.renderer.setSize(w, h);
+                }
+            });
+        }
+        window.addEventListener('resize', handleResize);
+
+        function resetCamera(key) {
+            const v = viewers[key];
+            const c = packedState[key].container;
+            if (!v || !c) return;
+            if (key === 'truck') {
+                const maxDim = Math.max(c.l, c.w, c.h);
+                v.camera.position.set(maxDim * 0.95, maxDim * 0.65, maxDim * 0.95);
+                v.controls.target.set(0, c.h * 0.35, 0);
+                v.controls.update();
+                return;
+            }
+            const mode = document.getElementById(`${key}PlacementMode`)?.value || 'pallet';
+            const baseOffset = mode === 'pallet' ? PALLET_HEIGHT : 0;
+            const totalH = c.h + baseOffset;
+            const maxDim = Math.max(c.l, c.w, totalH);
+            v.camera.position.set(maxDim * 1.45, maxDim * 1.2, maxDim * 1.6);
+            v.controls.target.set(0, totalH / 2, 0);
+            v.controls.update();
+        }
+
+        function getPackedStackBounds(items, CL, CW, CH) {
+            if (!items || items.length === 0) {
+                return { minX: 0, maxX: 0, minZ: 0, maxZ: 0, maxY: 0, stackL: 0, stackW: 0, netGoodsVolL: 0 };
+            }
+            let minX = Infinity, maxX = -Infinity;
+            let minZ = Infinity, maxZ = -Infinity;
+            let maxY = 0;
+            let netGoodsVolCm3 = 0;
+
+            items.forEach(it => {
+                if (it.shape === 'sphere') {
+                    minX = Math.min(minX, it.x - it.r);
+                    maxX = Math.max(maxX, it.x + it.r);
+                    minZ = Math.min(minZ, it.z - it.r);
+                    maxZ = Math.max(maxZ, it.z + it.r);
+                    maxY = Math.max(maxY, it.y + it.r);
+                    netGoodsVolCm3 += (4 / 3) * Math.PI * Math.pow(it.r, 3);
+                } else {
+                    minX = Math.min(minX, it.x);
+                    maxX = Math.max(maxX, it.x + it.l);
+                    minZ = Math.min(minZ, it.z);
+                    maxZ = Math.max(maxZ, it.z + it.w);
+                    maxY = Math.max(maxY, it.y + it.h);
+                    netGoodsVolCm3 += (it.unitVolCm3 !== undefined) ? it.unitVolCm3 : (it.l * it.w * it.h);
+                }
+            });
+
+            return {
+                minX, maxX, minZ, maxZ, maxY,
+                stackL: Math.max(0, maxX - minX),
+                stackW: Math.max(0, maxZ - minZ),
+                netGoodsVolL: netGoodsVolCm3 / 1000
+            };
+        }
+
+        function updateDimensionStatusBar(key, CL, CW, CH, isPalletized, stackBounds, weightInfo = null) {
+            const statusEl = document.getElementById(`${key}-dim-status`);
+            if (!statusEl) return;
+
+            const totalH = isPalletized ? (CH + PALLET_HEIGHT) : CH;
+            const totalEnvelopeVolL = (CL * CW * totalH) / 1000;
+            const totalEnvelopeVolM3 = totalEnvelopeVolL / 1000;
+
+            const goodsL = stackBounds.stackL;
+            const goodsW = stackBounds.stackW;
+            const goodsH = stackBounds.maxY;
+            const goodsEnvelopeVolL = (goodsL * goodsW * goodsH) / 1000;
+            const goodsEnvelopeVolM3 = goodsEnvelopeVolL / 1000;
+            const netGoodsVolL = stackBounds.netGoodsVolL;
+
+            const baseLabel = isPalletized ? 'Incl. 15cm Euro-Pallet' : 'Direct on Concrete Floor';
+            const weightLine = weightInfo
+                ? ` • Gross: <span class="font-semibold text-amber-300">${weightInfo.grossKg.toFixed(1)} kg</span> (Net: ${weightInfo.netKg.toFixed(1)} kg)`
+                : '';
+
+            statusEl.innerHTML = `
+                <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 flex flex-col justify-between space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-400">
+                            ${isPalletized ? '🪵 Total Palletized Load' : '🏭 Total Floor Envelope'}
+                        </span>
+                        <span class="text-[10px] text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">${baseLabel}</span>
+                    </div>
+                    <div class="text-sm font-bold text-white">
+                        ${CL.toFixed(1)} × ${CW.toFixed(1)} × ${totalH.toFixed(1)} cm
+                        <span class="text-[11px] font-normal text-slate-400">(L × W × H)</span>
+                    </div>
+                    <div class="text-[11px] text-slate-300">
+                        Gross Envelope: <span class="font-semibold text-amber-300">${totalEnvelopeVolL.toFixed(1)} L</span>
+                        <span class="text-slate-500">(${totalEnvelopeVolM3.toFixed(3)} m³)</span>${weightLine}
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 flex flex-col justify-between space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-sky-400">
+                            📦 Goods Only (Stacked Cargo)
+                        </span>
+                        <span class="text-[10px] text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">Excl. Pallet</span>
+                    </div>
+                    <div class="text-sm font-bold text-white">
+                        ${goodsL.toFixed(1)} × ${goodsW.toFixed(1)} × ${goodsH.toFixed(1)} cm
+                        <span class="text-[11px] font-normal text-slate-400">(L × W × H)</span>
+                    </div>
+                    <div class="text-[11px] text-slate-300">
+                        Goods Stack Vol: <span class="font-semibold text-sky-300">${goodsEnvelopeVolL.toFixed(1)} L</span>
+                        <span class="text-slate-500">(${goodsEnvelopeVolM3.toFixed(3)} m³)</span>
+                        • Net Units: <span class="font-semibold text-emerald-400">${netGoodsVolL.toFixed(1)} L</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function buildConcreteFloorMesh(L, W) {
+            const floorGroup = new THREE.Group();
+            const slabSize = Math.max(L, W) * 2.6;
+            const slabThickness = 3.0;
+
+            const slabGeo = new THREE.BoxGeometry(slabSize, slabThickness, slabSize);
+            const slabMat = new THREE.MeshLambertMaterial({ color: 0x525b66 });
+            const slabMesh = new THREE.Mesh(slabGeo, slabMat);
+            slabMesh.position.set(0, -slabThickness / 2, 0);
+
+            const slabEdges = new THREE.EdgesGeometry(slabGeo);
+            const slabLine = new THREE.LineSegments(slabEdges, new THREE.LineBasicMaterial({ color: 0x334155 }));
+            slabMesh.add(slabLine);
+            floorGroup.add(slabMesh);
+
+            const grid = new THREE.GridHelper(slabSize, 12, 0x3f4752, 0x47505c);
+            grid.position.set(0, 0.05, 0);
+            floorGroup.add(grid);
+
+            return floorGroup;
+        }
+
+        function buildBrownPalletMesh(L, W, maxXCut) {
+            const palletGroup = new THREE.Group();
+            const brownWoodTopMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+            const brownWoodBlockMat = new THREE.MeshLambertMaterial({ color: 0x65320D });
+            const woodEdgeMat = new THREE.LineBasicMaterial({ color: 0x3d1e07, transparent: true, opacity: 0.75 });
+
+            const boardThickness = 2.3;
+            const stringerThickness = 2.3;
+            const blockHeight = PALLET_HEIGHT - boardThickness * 2 - stringerThickness;
+
+            function addPart(px, py, pz, sx, sy, sz, mat) {
+                const startX = px - sx / 2 + L / 2;
+                if (startX >= maxXCut) return;
+                const visibleEnd = Math.min(startX + sx, maxXCut);
+                const clippedSx = visibleEnd - startX;
+                if (clippedSx <= 0.2) return;
+
+                const clippedPx = startX + clippedSx / 2 - L / 2;
+                const geo = new THREE.BoxGeometry(clippedSx, sy, sz);
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.position.set(clippedPx, py, pz);
+
+                const edges = new THREE.EdgesGeometry(geo);
+                mesh.add(new THREE.LineSegments(edges, woodEdgeMat));
+                palletGroup.add(mesh);
+            }
+
+            const skidWidth = Math.min(10, W * 0.14);
+            const zSkids = [-W / 2 + skidWidth / 2, 0, W / 2 - skidWidth / 2];
+            zSkids.forEach(zPos => addPart(0, boardThickness / 2, zPos, L, boardThickness, skidWidth, brownWoodTopMat));
+
+            const blockL = Math.min(14.5, L * 0.14);
+            const xBlocks = [-L / 2 + blockL / 2, 0, L / 2 - blockL / 2];
+            const blockCenterY = boardThickness + blockHeight / 2;
+            xBlocks.forEach(xPos => {
+                zSkids.forEach(zPos => addPart(xPos, blockCenterY, zPos, blockL, blockHeight, skidWidth, brownWoodBlockMat));
+            });
+
+            const stringerCenterY = boardThickness + blockHeight + stringerThickness / 2;
+            xBlocks.forEach(xPos => addPart(xPos, stringerCenterY, 0, blockL, stringerThickness, W, brownWoodTopMat));
+
+            const topCenterY = PALLET_HEIGHT - boardThickness / 2;
+            const deckCount = 5;
+            const deckWidth = Math.min(11, (W / deckCount) * 0.74);
+            for (let i = 0; i < deckCount; i++) {
+                const frac = i / (deckCount - 1);
+                const zPos = (-W / 2 + deckWidth / 2) + frac * (W - deckWidth);
+                addPart(0, topCenterY, zPos, L, boardThickness, deckWidth, brownWoodTopMat);
+            }
+
+            return palletGroup;
+        }
+
+        // Build semi-transparent Temax Thermal Liner & Top PCM Coolant Zone
+        function buildThermalLinerMesh(L, W, H, thermal, baseOffsetY, maxYCut, maxXCut) {
+            const group = new THREE.Group();
+            if (!thermal) return group;
+
+            const visibleL = Math.min(L, maxXCut);
+            const visibleH = Math.min(H, maxYCut);
+            if (visibleL <= 1 || visibleH <= 1) return group;
+
+            const centerX = visibleL / 2 - L / 2;
+
+            // Reflective cyan-silver translucent Temax thermal blanket shell
+            if (thermal.wallCm > 0) {
+                const linerGeo = new THREE.BoxGeometry(visibleL, visibleH, W);
+                const linerMat = new THREE.MeshPhongMaterial({
+                    color: 0x22d3ee,
+                    emissive: 0x0891b2,
+                    emissiveIntensity: 0.2,
+                    transparent: true,
+                    opacity: 0.16,
+                    depthWrite: false,
+                    side: THREE.DoubleSide
+                });
+                const linerMesh = new THREE.Mesh(linerGeo, linerMat);
+                linerMesh.position.set(centerX, baseOffsetY + visibleH / 2, 0);
+                group.add(linerMesh);
+            }
+
+            // Top PCM / Dry-Ice Coolant Zone
+            if (thermal.coolantHeightCm > 0.2) {
+                const coolStartY = H - thermal.wallCm - thermal.coolantHeightCm;
+                if (coolStartY < maxYCut) {
+                    const coolVisH = Math.min(thermal.coolantHeightCm, maxYCut - coolStartY);
+                    const innerL = Math.max(1, visibleL - thermal.wallCm * 2);
+                    const innerW = Math.max(1, W - thermal.wallCm * 2);
+                    const pcmGeo = new THREE.BoxGeometry(innerL, coolVisH, innerW);
+                    const pcmMat = new THREE.MeshLambertMaterial({
+                        color: 0x06b6d4,
+                        transparent: true,
+                        opacity: 0.55
+                    });
+                    const pcmMesh = new THREE.Mesh(pcmGeo, pcmMat);
+                    pcmMesh.position.set(centerX, baseOffsetY + coolStartY + coolVisH / 2, 0);
+                    pcmMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(pcmGeo), new THREE.LineBasicMaterial({ color: 0xa5f3fc })));
+                    group.add(pcmMesh);
+                }
+            }
+
+            return group;
+        }
+
+        function buildCornerGuardsMesh(L, W, bounds, baseOffsetY, maxYCut, maxXCut, explodeFactor) {
+            const group = new THREE.Group();
+            const kraftMat = new THREE.MeshLambertMaterial({ color: 0xd4a373 });
+            const edgeMat = new THREE.LineBasicMaterial({ color: 0x7f5539, transparent: true, opacity: 0.85 });
+
+            const visibleH = Math.min(bounds.maxY, maxYCut);
+            if (visibleH <= 0.5 || bounds.stackL <= 0.5 || bounds.stackW <= 0.5) return group;
+
+            const wingX = Math.min(CORNER_WING, bounds.stackL * 0.25);
+            const wingZ = Math.min(CORNER_WING, bounds.stackW * 0.25);
+            const t = CORNER_THICKNESS;
+
+            const sMinX = bounds.minX - L / 2 - t;
+            const sMaxX = bounds.maxX - L / 2 + t;
+            const sMinZ = bounds.minZ - W / 2 - t;
+            const sMaxZ = bounds.maxZ - W / 2 + t;
+
+            const corners = [
+                { xEdge: sMinX, zEdge: sMinZ, dirX:  1, dirZ:  1 },
+                { xEdge: sMaxX, zEdge: sMinZ, dirX: -1, dirZ:  1 },
+                { xEdge: sMinX, zEdge: sMaxZ, dirX:  1, dirZ: -1 },
+                { xEdge: sMaxX, zEdge: sMaxZ, dirX: -1, dirZ: -1 }
+            ];
+
+            corners.forEach(c => {
+                const xCenter = (c.xEdge + c.dirX * (wingX / 2)) * explodeFactor;
+                const zFlange1 = (c.zEdge + c.dirZ * (t / 2)) * explodeFactor;
+                if ((xCenter + L / 2) - wingX / 2 <= maxXCut) {
+                    const geo1 = new THREE.BoxGeometry(wingX, visibleH, t);
+                    const m1 = new THREE.Mesh(geo1, kraftMat);
+                    m1.position.set(xCenter, baseOffsetY + (visibleH / 2) * explodeFactor, zFlange1);
+                    m1.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo1), edgeMat));
+                    group.add(m1);
+                }
+
+                const xFlange2 = (c.xEdge + c.dirX * (t / 2)) * explodeFactor;
+                const zCenter = (c.zEdge + c.dirZ * (wingZ / 2)) * explodeFactor;
+                if ((xFlange2 + L / 2) <= maxXCut) {
+                    const geo2 = new THREE.BoxGeometry(t, visibleH, wingZ);
+                    const m2 = new THREE.Mesh(geo2, kraftMat);
+                    m2.position.set(xFlange2, baseOffsetY + (visibleH / 2) * explodeFactor, zCenter);
+                    m2.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo2), edgeMat));
+                    group.add(m2);
+                }
+            });
+
+            return group;
+        }
+
+        function buildSheetCartonsMesh(L, W, bounds, sheetYs, baseOffsetY, maxYCut, maxXCut, explodeFactor) {
+            const group = new THREE.Group();
+            const sheetMat = new THREE.MeshLambertMaterial({ color: 0xd4a373 });
+            const edgeMat = new THREE.LineBasicMaterial({ color: 0x7f5539, transparent: true, opacity: 0.85 });
+
+            const startX = bounds.minX;
+            const endX = Math.min(bounds.maxX, maxXCut);
+            const visibleL = endX - startX;
+            if (visibleL <= 0.5) return group;
+
+            const centerX = ((startX + visibleL / 2) - L / 2) * explodeFactor;
+            const centerZ = ((bounds.minZ + bounds.stackW / 2) - W / 2) * explodeFactor;
+
+            sheetYs.forEach(yPos => {
+                if (yPos > maxYCut) return;
+                const geo = new THREE.BoxGeometry(visibleL, SHEET_THICKNESS, bounds.stackW);
+                const mesh = new THREE.Mesh(geo, sheetMat);
+                mesh.position.set(centerX, baseOffsetY + (yPos + SHEET_THICKNESS / 2) * explodeFactor, centerZ);
+                mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeMat));
+                group.add(mesh);
+            });
+
+            return group;
+        }
+
+        function buildProceduralIrregularGeo(rx, ry, rz) {
+            const geo = new THREE.IcosahedronGeometry(1, 3);
+            const pos = geo.attributes.position;
+            for (let i = 0; i < pos.count; i++) {
+                let vx = pos.getX(i);
+                let vy = pos.getY(i);
+                let vz = pos.getZ(i);
+                const wave = 1
+                    + 0.16 * Math.sin(vx * 3.4 + vy * 2.1)
+                    + 0.12 * Math.cos(vy * 4.2 - vz * 2.8)
+                    + 0.08 * Math.sin(vz * 5.0 + vx * 1.9);
+                pos.setXYZ(i, vx * rx * wave, vy * ry * wave, vz * rz * wave);
+            }
+            geo.computeVertexNormals();
+            return geo;
+        }
+
+        function update3DScene(key) {
+            const v = viewers[key];
+            const data = packedState[key];
+            if (!v || !data) return;
+
+            while (v.rootGroup.children.length > 0) {
+                v.rootGroup.remove(v.rootGroup.children[0]);
+            }
+
+            const { l: CL, w: CW, h: CH } = data.container;
+            const sliceYPercent = parseFloat(document.getElementById(`${key}SliceY`).value) || 100;
+            const sliceXPercent = parseFloat(document.getElementById(`${key}SliceX`).value) || 100;
+            const explode = document.getElementById(`${key}Explode`).checked;
+            const placementMode = document.getElementById(`${key}PlacementMode`).value;
+            const useCorners = document.getElementById(`${key}CornerGuards`)?.checked || false;
+            const useSheets = document.getElementById(`${key}SheetCarton`)?.checked || false;
+            const isPalletized = placementMode === 'pallet';
+
+            document.getElementById(`${key}SliceYLabel`).innerText = sliceYPercent === 100 ? '100% (Full)' : `${sliceYPercent}% Cut`;
+            document.getElementById(`${key}SliceXLabel`).innerText = sliceXPercent === 100 ? '100% (Full)' : `${sliceXPercent}% Cut`;
+
+            const baseOffsetY = isPalletized ? PALLET_HEIGHT : 0;
+            const maxYCut = (sliceYPercent / 100) * CH;
+            const maxXCut = (sliceXPercent / 100) * CL;
+            const explodeFactor = explode ? 1.18 : 1.0;
+
+            v.rootGroup.add(buildConcreteFloorMesh(CL, CW));
+
+            if (isPalletized) {
+                v.rootGroup.add(buildBrownPalletMesh(CL, CW, maxXCut));
+            }
+
+            const outerGeo = new THREE.BoxGeometry(CL, CH, CW);
+            const outerMat = new THREE.MeshPhongMaterial({
+                color: 0x38bdf8,
+                transparent: true,
+                opacity: 0.05,
+                depthWrite: false,
+                side: THREE.DoubleSide
+            });
+            const outerMesh = new THREE.Mesh(outerGeo, outerMat);
+            outerMesh.position.set(0, baseOffsetY + CH / 2, 0);
+            v.rootGroup.add(outerMesh);
+
+            const edgesGeo = new THREE.EdgesGeometry(outerGeo);
+            const edgesMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65 });
+            const wireframe = new THREE.LineSegments(edgesGeo, edgesMat);
+            wireframe.position.set(0, baseOffsetY + CH / 2, 0);
+            v.rootGroup.add(wireframe);
+
+            // Render Temax Thermal Liner & PCM Coolant Zone if active
+            if (data.thermal) {
+                v.rootGroup.add(buildThermalLinerMesh(CL, CW, CH, data.thermal, baseOffsetY, maxYCut, maxXCut));
+            }
+
+            const stackBounds = getPackedStackBounds(data.items, CL, CW, CH);
+            updateDimensionStatusBar(key, CL, CW, CH, isPalletized, stackBounds, data.weightInfo || null);
+
+            if (useCorners && data.items.length > 0) {
+                v.rootGroup.add(buildCornerGuardsMesh(CL, CW, stackBounds, baseOffsetY, maxYCut, maxXCut, explodeFactor));
+            }
+
+            if (useSheets && data.sheetYs && data.sheetYs.length > 0 && data.items.length > 0) {
+                v.rootGroup.add(buildSheetCartonsMesh(CL, CW, stackBounds, data.sheetYs, baseOffsetY, maxYCut, maxXCut, explodeFactor));
+            }
+
+            const itemsToRender = data.items.slice(0, 1500);
+            const matBatch1 = new THREE.MeshLambertMaterial({ color: 0x0077ee });
+            const matBatch1Alt = new THREE.MeshLambertMaterial({ color: 0x0284c7 });
+            const matBatch2 = new THREE.MeshLambertMaterial({ color: 0x10b981 });
+            const matSphere = new THREE.MeshPhongMaterial({
+                color: 0x0ea5e9,
+                emissive: 0x0369a1,
+                emissiveIntensity: 0.25,
+                shininess: 75
+            });
+            const matIrregular = new THREE.MeshPhongMaterial({
+                color: 0x8b5cf6,
+                emissive: 0x4c1d95,
+                emissiveIntensity: 0.22,
+                shininess: 55
+            });
+            const edgeMat1 = new THREE.LineBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.65 });
+            const edgeMat2 = new THREE.LineBasicMaterial({ color: 0xa7f3d0, transparent: true, opacity: 0.75 });
+
+            let sharedSphereGeo = null;
+            let sharedIrregularGeo = null;
+
+            if (itemsToRender.length > 0 && itemsToRender[0].shape === 'sphere') {
+                sharedSphereGeo = new THREE.SphereGeometry(itemsToRender[0].r * 0.985, 22, 16);
+            }
+            if (itemsToRender.length > 0 && itemsToRender[0].shape === 'irregular') {
+                const first = itemsToRender[0];
+                if (customScanGeometry && customScanBounds) {
+                    sharedIrregularGeo = customScanGeometry.clone();
+                    sharedIrregularGeo.scale(
+                        (first.l * 0.88) / customScanBounds.x,
+                        (first.h * 0.88) / customScanBounds.y,
+                        (first.w * 0.88) / customScanBounds.z
+                    );
+                } else {
+                    sharedIrregularGeo = buildProceduralIrregularGeo(first.l * 0.42, first.h * 0.42, first.w * 0.42);
+                }
+            }
+
+            itemsToRender.forEach(item => {
+                if (item.shape === 'sphere') {
+                    if (item.y - item.r * 0.6 > maxYCut) return;
+                    if (item.x - item.r * 0.6 > maxXCut) return;
+
+                    const mesh = new THREE.Mesh(sharedSphereGeo, matSphere);
+                    mesh.position.set(
+                        (item.x - CL / 2) * explodeFactor,
+                        baseOffsetY + item.y * explodeFactor,
+                        (item.z - CW / 2) * explodeFactor
+                    );
+                    v.rootGroup.add(mesh);
+                } else if (item.shape === 'irregular') {
+                    if (item.y + item.h * 0.25 > maxYCut) return;
+                    if (item.x + item.l * 0.25 > maxXCut) return;
+
+                    const mesh = new THREE.Mesh(sharedIrregularGeo, matIrregular);
+                    mesh.position.set(
+                        (item.x + item.l / 2 - CL / 2) * explodeFactor,
+                        baseOffsetY + (item.y + item.h / 2) * explodeFactor,
+                        (item.z + item.w / 2 - CW / 2) * explodeFactor
+                    );
+                    if (item.rotY) mesh.rotation.y = item.rotY;
+                    v.rootGroup.add(mesh);
+                } else {
+                    if (item.y + item.h * 0.15 > maxYCut) return;
+                    if (item.x + item.l * 0.15 > maxXCut) return;
+
+                    const gap = 0.25;
+                    const geo = new THREE.BoxGeometry(
+                        Math.max(0.5, item.l - gap),
+                        Math.max(0.5, item.h - gap),
+                        Math.max(0.5, item.w - gap)
+                    );
+
+                    const mat = item.type === 2 ? matBatch2 : (item.altLayer ? matBatch1Alt : matBatch1);
+                    const mesh = new THREE.Mesh(geo, mat);
+                    mesh.position.set(
+                        (item.x + item.l / 2 - CL / 2) * explodeFactor,
+                        baseOffsetY + (item.y + item.h / 2) * explodeFactor,
+                        (item.z + item.w / 2 - CW / 2) * explodeFactor
+                    );
+
+                    const bEdges = new THREE.EdgesGeometry(geo);
+                    mesh.add(new THREE.LineSegments(bEdges, item.type === 2 ? edgeMat2 : edgeMat1));
+                    v.rootGroup.add(mesh);
+                }
+            });
+
+            if (sliceXPercent < 100) {
+                const totalHeight = CH + baseOffsetY + 6;
+                const planeGeo = new THREE.PlaneGeometry(CW + 8, totalHeight);
+                const planeMat = new THREE.MeshBasicMaterial({
+                    color: 0xf59e0b,
+                    transparent: true,
+                    opacity: 0.14,
+                    side: THREE.DoubleSide
+                });
+                const cutPlane = new THREE.Mesh(planeGeo, planeMat);
+                cutPlane.rotation.y = Math.PI / 2;
+                cutPlane.position.set(maxXCut - CL / 2, totalHeight / 2 - 2, 0);
+                v.rootGroup.add(cutPlane);
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-krautz-500', 'text-white', 'shadow');
+                el.classList.add('text-slate-400');
+            });
+
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('bg-krautz-500', 'text-white', 'shadow');
+            activeBtn.classList.remove('text-slate-400');
+            lucide.createIcons();
+
+            activeTabKey = tabId.replace('pack-', '').replace('irregular', 'irr');
+
+            setTimeout(() => {
+                handleResize();
+                if (tabId === 'pack-dual') resetCamera('dual');
+                if (tabId === 'pack-puzzle') resetCamera('puzzle');
+                if (tabId === 'pack-sphere') resetCamera('sphere');
+                if (tabId === 'pack-irregular') resetCamera('irr');
+                if (tabId === 'pack-truck') { calculateTruckLoad(); resetCamera('truck'); }
+            }, 30);
+        }
+
+        function getOrientations(l, w, h) {
+            const perms = [
+                [l, w, h], [l, h, w],
+                [w, l, h], [w, h, l],
+                [h, l, w], [h, w, l]
+            ];
+            const unique = [];
+            const seen = new Set();
+            perms.forEach(p => {
+                const key = p.join('x');
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    unique.push({ l: p[0], w: p[1], h: p[2] });
+                }
+            });
+            return unique;
+        }
+
+        // 1. Dual Box & 3D Visualizer Logic (with Temax Thermal Liner, Weight Cap, Interlocking & Order Qty)
+        function calculateDualBoxAndVisualizer() {
+            const CL = parseFloat(document.getElementById('containerL').value) || 1;
+            const CW = parseFloat(document.getElementById('containerW').value) || 1;
+            const CH = parseFloat(document.getElementById('containerH').value) || 1;
+
+            let IL = parseFloat(document.getElementById('itemL').value) || 1;
+            let IW = parseFloat(document.getElementById('itemW').value) || 1;
+            let IH = parseFloat(document.getElementById('itemH').value) || 1;
+
+            const unitWeightKg = Math.max(0, parseFloat(document.getElementById('itemWeight').value) || 0);
+            const maxPayloadKg = Math.max(1, parseFloat(document.getElementById('maxPayload').value) || 1000);
+            const orderTotalQty = Math.max(1, parseInt(document.getElementById('orderTotalQty').value) || 1);
+            const palletViewMode = document.getElementById('palletViewSelector').value;
+
+            const isSqueezeActive = document.getElementById('squeezeMode').checked;
+            const autoRotate = document.getElementById('autoRotateDual').checked;
+            const isPalletized = document.getElementById('dualPlacementMode').value === 'pallet';
+            const stackPattern = document.getElementById('dualStackPattern').value;
+            const useSheets = document.getElementById('dualSheetCarton').checked;
+            const useCorners = document.getElementById('dualCornerGuards').checked;
+
+            // Temax Thermal Liner & Coolant Deduction
+            const thermalKey = document.getElementById('temaxThermalGrade').value;
+            const tempZoneKey = document.getElementById('temaxTempZone').value;
+            const thermalSpec = THERMAL_SPECS[thermalKey] || THERMAL_SPECS.none;
+            const tempSpec = TEMP_ZONES[tempZoneKey] || TEMP_ZONES.ambient;
+
+            document.getElementById('thermalHoldBadge').innerText = thermalSpec.holdLabel;
+
+            const wall = thermalSpec.wallCm;
+            const innerL = Math.max(1, CL - wall * 2);
+            const innerW = Math.max(1, CW - wall * 2);
+            const innerHBeforeCoolant = Math.max(1, CH - wall * 2);
+            const coolantHeightCm = innerHBeforeCoolant * tempSpec.coolantRatio;
+            const usableCargoH = Math.max(1, innerHBeforeCoolant - coolantHeightCm);
+
+            const coolantVolL = (innerL * innerW * coolantHeightCm) / 1000;
+            const coolantKg = coolantVolL * tempSpec.coolantDensityKgPerL;
+
+            const factor = isSqueezeActive ? 0.90 : 1.0;
+            const orientations = autoRotate
+                ? getOrientations(IL * factor, IW * factor, IH)
+                : [{ l: IL * factor, w: IW * factor, h: IH }];
+
+            let best = { total: -1, cols: 0, rows: 0, layers: 0, dim: orientations[0] };
+
+            orientations.forEach(o => {
+                const cols = Math.floor(innerL / o.l);
+                const rows = Math.floor(innerW / o.w);
+                const layers = useSheets
+                    ? Math.max(0, Math.floor((usableCargoH + SHEET_THICKNESS) / (o.h + SHEET_THICKNESS)))
+                    : Math.floor(usableCargoH / o.h);
+                const total = cols * rows * layers;
+                if (total > best.total) {
+                    best = { total, cols, rows, layers, dim: o };
+                }
+            });
+
+            // Enforce Max Payload Weight Cap (including pallet tare, thermal blanket, and coolant)
+            const tareKg = (isPalletized ? PALLET_TARE_KG : 0) + thermalSpec.blanketKg + coolantKg;
+            const maxNetCargoKg = Math.max(0, maxPayloadKg - tareKg);
+            const weightCappedUnits = unitWeightKg > 0 ? Math.floor(maxNetCargoKg / unitWeightKg) : best.total;
+            const isWeightLimited = unitWeightKg > 0 && weightCappedUnits < best.total;
+            const maxUnitsPerPallet = Math.max(0, Math.min(best.total, weightCappedUnits));
+
+            // Order Quantity & Partial Pallet Calculation
+            const safeCap = Math.max(1, maxUnitsPerPallet);
+            const fullPallets = Math.floor(orderTotalQty / safeCap);
+            const remainderUnits = orderTotalQty % safeCap;
+            const totalPalletsNeeded = fullPallets + (remainderUnits > 0 ? 1 : 0);
+
+            const orderSummaryEl = document.getElementById('orderPalletSummary');
+            if (orderSummaryEl) {
+                orderSummaryEl.innerText = remainderUnits > 0
+                    ? `${totalPalletsNeeded} Pallets (${fullPallets} Full + 1 Partial: ${remainderUnits} u)`
+                    : `${totalPalletsNeeded} Full Pallet${totalPalletsNeeded > 1 ? 's' : ''}`;
+            }
+
+            const unitsToPack = (palletViewMode === 'partial' && remainderUnits > 0)
+                ? remainderUnits
+                : maxUnitsPerPallet;
+
+            const items = [];
+            const sheetYs = [];
+            let packedCount = 0;
+
+            const rotCols = Math.floor(innerL / best.dim.w);
+            const rotRows = Math.floor(innerW / best.dim.l);
+            const canRotateAltLayer = (stackPattern === 'interlock') && (rotCols * rotRows >= best.cols * best.rows * 0.85) && (rotCols > 0 && rotRows > 0);
+
+            for (let y = 0; y < best.layers && packedCount < unitsToPack; y++) {
+                const layerY = wall + y * (best.dim.h + (useSheets ? SHEET_THICKNESS : 0));
+                if (useSheets && y > 0) {
+                    sheetYs.push(layerY - SHEET_THICKNESS);
+                }
+
+                const isOddLayer = (y % 2 === 1);
+                if (stackPattern === 'interlock' && isOddLayer && canRotateAltLayer) {
+                    for (let z = 0; z < rotRows && packedCount < unitsToPack; z++) {
+                        for (let x = 0; x < rotCols && packedCount < unitsToPack; x++) {
+                            items.push({
+                                shape: 'box',
+                                x: wall + x * best.dim.w,
+                                y: layerY,
+                                z: wall + z * best.dim.l,
+                                l: best.dim.w,
+                                w: best.dim.l,
+                                h: best.dim.h,
+                                unitVolCm3: IL * IW * IH,
+                                altLayer: true,
+                                type: 1
+                            });
+                            packedCount++;
+                        }
+                    }
+                } else {
+                    const slackX = innerL - best.cols * best.dim.l;
+                    const shiftX = (stackPattern === 'interlock' && isOddLayer) ? slackX : 0;
+
+                    for (let z = 0; z < best.rows && packedCount < unitsToPack; z++) {
+                        for (let x = 0; x < best.cols && packedCount < unitsToPack; x++) {
+                            items.push({
+                                shape: 'box',
+                                x: wall + shiftX + x * best.dim.l,
+                                y: layerY,
+                                z: wall + z * best.dim.w,
+                                l: best.dim.l,
+                                w: best.dim.w,
+                                h: best.dim.h,
+                                unitVolCm3: IL * IW * IH,
+                                altLayer: isOddLayer && stackPattern === 'interlock',
+                                type: 1
+                            });
+                            packedCount++;
+                        }
+                    }
+                }
+            }
+
+            const dunnageKg = (useSheets ? sheetYs.length * 0.45 : 0) + (useCorners ? 1.2 : 0);
+            const netCargoKg = items.length * unitWeightKg;
+            const grossPalletKg = netCargoKg + tareKg + dunnageKg;
+
+            const unitVol = (IL * IW * IH) / 1000;
+            const masterVol = (CL * CW * CH) / 1000;
+            const utilizedVol = items.length * (IL * IW * IH);
+            const efficiency = Math.min(100, ((utilizedVol / (CL * CW * CH)) * 100)).toFixed(1);
+            const totalHeight = isPalletized ? (CH + PALLET_HEIGHT) : CH;
+
+            document.getElementById('maxUnits').innerText = items.length;
+            document.getElementById('chosenOrientation').innerText = `Placed as ${best.dim.l.toFixed(1)}×${best.dim.w.toFixed(1)}×${best.dim.h.toFixed(1)} cm`;
+            document.getElementById('volumeUtil').innerText = efficiency + '%';
+            document.getElementById('totalStackHeight').innerText = isPalletized
+                ? `Total Height: ${totalHeight.toFixed(1)} cm (Incl. Pallet)`
+                : `Floor Stack Height: ${totalHeight.toFixed(1)} cm`;
+
+            document.getElementById('grossWeightDisplay').innerText = `${grossPalletKg.toFixed(0)} kg`;
+            const badgeEl = document.getElementById('weightLimitBadge');
+            if (isWeightLimited) {
+                badgeEl.innerText = `⚠️ Weight-Limited (Max ${maxPayloadKg}kg)`;
+                badgeEl.className = "text-[10px] text-amber-400 font-semibold mt-1";
+            } else {
+                badgeEl.innerText = `Volume-Limited (${((grossPalletKg / maxPayloadKg) * 100).toFixed(0)}% Cap)`;
+                badgeEl.className = "text-[10px] text-emerald-400 mt-1";
+            }
+
+            document.getElementById('packingLayout').innerText = `${best.cols} × ${best.rows} × ${best.layers}`;
+            const dunnageNotes = [];
+            if (useSheets && sheetYs.length > 0) dunnageNotes.push(`${sheetYs.length} sheets`);
+            if (useCorners) dunnageNotes.push(`4 hoeklatten`);
+            document.getElementById('dunnageSummary').innerText = dunnageNotes.length > 0
+                ? `+ ${dunnageNotes.join(' & ')}`
+                : (stackPattern === 'interlock' ? 'Interlocking Pattern' : 'Cols × Rows × Layers');
+
+            document.getElementById('effectiveVolume').innerText = `Effective Cargo Volume: ${masterVol.toFixed(1)} L`;
+            document.getElementById('unitVolume').innerText = `Unit Volume: ${unitVol.toFixed(2)} L`;
+
+            const thermalData = (wall > 0 || coolantHeightCm > 0)
+                ? { wallCm: wall, coolantHeightCm, gradeName: thermalSpec.name, zoneName: tempSpec.name, coolantKg }
+                : null;
+
+            packedState.dual = {
+                container: { l: CL, w: CW, h: CH },
+                items,
+                sheetYs,
+                thermal: thermalData,
+                weightInfo: { netKg: netCargoKg, grossKg: grossPalletKg },
+                summary: {
+                    CL, CW, CH, totalHeight, isPalletized,
+                    IL, IW, IH, unitWeightKg, maxPayloadKg,
+                    unitsOnPallet: items.length,
+                    efficiency,
+                    grossPalletKg,
+                    netCargoKg,
+                    isWeightLimited,
+                    stackPattern,
+                    thermalName: thermalSpec.name,
+                    tempZoneName: tempSpec.name,
+                    coolantKg,
+                    sheetCount: sheetYs.length,
+                    useCorners,
+                    orderTotalQty,
+                    totalPalletsNeeded,
+                    fullPallets,
+                    remainderUnits
+                }
+            };
+            update3DScene('dual');
+        }
+
+        function setPresetValues(cl, cw, ch, il, iw, ih) {
+            document.getElementById('containerL').value = cl;
+            document.getElementById('containerW').value = cw;
+            document.getElementById('containerH').value = ch;
+            document.getElementById('itemL').value = il;
+            document.getElementById('itemW').value = iw;
+            document.getElementById('itemH').value = ih;
+            calculateAll();
+            resetCamera('dual');
+        }
+
+        // 2. Multi-Box 3D Volume Puzzle Solver
+        function calculatePuzzle() {
+            const CL = parseFloat(document.getElementById('pz-out-l').value) || 120;
+            const CW = parseFloat(document.getElementById('pz-out-w').value) || 80;
+            const CH = parseFloat(document.getElementById('pz-out-h').value) || 100;
+
+            const isPalletized = document.getElementById('puzzlePlacementMode').value === 'pallet';
+            const useSheets = document.getElementById('puzzleSheetCarton').checked;
+
+            const b1TargetQty = Math.max(0, parseInt(document.getElementById('pz-b1-qty').value) || 0);
+            const b1L = parseFloat(document.getElementById('pz-b1-l').value) || 30;
+            const b1W = parseFloat(document.getElementById('pz-b1-w').value) || 20;
+            const b1H = parseFloat(document.getElementById('pz-b1-h').value) || 25;
+
+            const b2L = parseFloat(document.getElementById('pz-b2-l').value) || 20;
+            const b2W = parseFloat(document.getElementById('pz-b2-w').value) || 20;
+            const b2H = parseFloat(document.getElementById('pz-b2-h').value) || 25;
+
+            const items = [];
+            const sheetYs = [];
+
+            const cols1 = Math.floor(CL / b1L);
+            const rows1 = Math.floor(CW / b1W);
+            const layerStep1 = b1H + (useSheets ? SHEET_THICKNESS : 0);
+            const layers1 = useSheets
+                ? Math.max(0, Math.floor((CH + SHEET_THICKNESS) / layerStep1))
+                : Math.floor(CH / b1H);
+            const maxB1Possible = cols1 * rows1 * layers1;
+            const b1Placed = Math.min(b1TargetQty, maxB1Possible);
+
+            let count1 = 0;
+            for (let y = 0; y < layers1 && count1 < b1Placed; y++) {
+                const layerY = y * layerStep1;
+                if (useSheets && y > 0) sheetYs.push(layerY - SHEET_THICKNESS);
+                for (let z = 0; z < rows1 && count1 < b1Placed; z++) {
+                    for (let x = 0; x < cols1 && count1 < b1Placed; x++) {
+                        items.push({
+                            shape: 'box',
+                            x: x * b1L,
+                            y: layerY,
+                            z: z * b1W,
+                            l: b1L,
+                            w: b1W,
+                            h: b1H,
+                            type: 1
+                        });
+                        count1++;
+                    }
+                }
+            }
+
+            function collides(candidate) {
+                const eps = 0.01;
+                if (
+                    candidate.x < -eps ||
+                    candidate.z < -eps ||
+                    candidate.x + candidate.l > CL + eps ||
+                    candidate.y + candidate.h > CH + eps ||
+                    candidate.z + candidate.w > CW + eps
+                ) return true;
+
+                for (let i = 0; i < items.length; i++) {
+                    const b = items[i];
+                    const overlapX = candidate.x < b.x + b.l - eps && candidate.x + candidate.l > b.x + eps;
+                    const overlapY = candidate.y < b.y + b.h - eps && candidate.y + candidate.h > b.y + eps;
+                    const overlapZ = candidate.z < b.z + b.w - eps && candidate.z + candidate.w > b.z + eps;
+                    if (overlapX && overlapY && overlapZ) return true;
+                }
+                return false;
+            }
+
+            const b2Orientations = getOrientations(b2L, b2W, b2H);
+            let b2Placed = 0;
+            let placedNew = true;
+            const sheetGap = useSheets ? SHEET_THICKNESS : 0;
+
+            while (placedNew && items.length < 1500) {
+                placedNew = false;
+
+                const anchors = [{ x: 0, y: 0, z: 0 }];
+                items.forEach(b => {
+                    anchors.push({ x: b.x + b.l, y: b.y, z: b.z });
+                    anchors.push({ x: b.x, y: b.y, z: b.z + b.w });
+                    anchors.push({ x: b.x, y: b.y + b.h + sheetGap, z: b.z });
+                });
+
+                anchors.sort((a, b) => (a.y - b.y) || (a.z - b.z) || (a.x - b.x));
+
+                for (let a of anchors) {
+                    for (let o of b2Orientations) {
+                        const cand = { shape: 'box', x: a.x, y: a.y, z: a.z, l: o.l, w: o.w, h: o.h, type: 2 };
+                        if (!collides(cand)) {
+                            items.push(cand);
+                            if (useSheets && a.y > 0 && !sheetYs.some(sy => Math.abs(sy - (a.y - SHEET_THICKNESS)) < 0.05)) {
+                                sheetYs.push(a.y - SHEET_THICKNESS);
+                            }
+                            b2Placed++;
+                            placedNew = true;
+                            break;
+                        }
+                    }
+                    if (placedNew) break;
+                }
+            }
+
+            const outerVol = CL * CW * CH;
+            const usedVol = (b1Placed * b1L * b1W * b1H) + (b2Placed * b2L * b2W * b2H);
+            const totalUtil = ((usedVol / outerVol) * 100).toFixed(1);
+            const totalHeight = isPalletized ? (CH + PALLET_HEIGHT) : CH;
+
+            const resultsContainer = document.getElementById('puzzle-results');
+            if (resultsContainer) {
+                resultsContainer.innerHTML = `
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Batch 1 Fitted</span>
+                        <span class="text-xl font-bold text-krautz-400">${b1Placed} <span class="text-xs font-normal text-slate-500">/ ${b1TargetQty}</span></span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Secondary Boxes Fitted</span>
+                        <span class="text-xl font-bold text-emerald-400">+${b2Placed} boxes</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Combined 3D Fill</span>
+                        <span class="text-xl font-bold text-white">${totalUtil}%</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">${isPalletized ? 'Total Pallet Height' : 'Floor Stack Height'}</span>
+                        <span class="text-xl font-bold text-amber-400">${totalHeight.toFixed(1)} cm</span>
+                    </div>
+                `;
+            }
+
+            packedState.puzzle = { container: { l: CL, w: CW, h: CH }, items, sheetYs };
+            update3DScene('puzzle');
+        }
+
+        // 3. Spherical Packing Calculation & 3D Coordinate Generator
+        function calculateSpheres() {
+            const CL = parseFloat(document.getElementById('sp-out-l').value) || 100;
+            const CW = parseFloat(document.getElementById('sp-out-w').value) || 100;
+            const CH = parseFloat(document.getElementById('sp-out-h').value) || 100;
+            const diam = Math.max(1, parseFloat(document.getElementById('sphere-diam').value) || 20);
+            const r = diam / 2;
+
+            const pattern = document.getElementById('spherePattern').value;
+            const isPalletized = document.getElementById('spherePlacementMode').value === 'pallet';
+            const useSheets = document.getElementById('sphereSheetCarton').checked;
+
+            const gridSpheres = [];
+            const gridSheetYs = [];
+            const gx = Math.floor(CL / diam);
+            const gz = Math.floor(CW / diam);
+            const gridStepY = diam + (useSheets ? SHEET_THICKNESS : 0);
+            const gy = useSheets
+                ? Math.max(0, Math.floor((CH + SHEET_THICKNESS) / gridStepY))
+                : Math.floor(CH / diam);
+
+            for (let iy = 0; iy < gy; iy++) {
+                const baseY = iy * gridStepY;
+                if (useSheets && iy > 0) gridSheetYs.push(baseY - SHEET_THICKNESS);
+                for (let iz = 0; iz < gz; iz++) {
+                    for (let ix = 0; ix < gx; ix++) {
+                        gridSpheres.push({
+                            shape: 'sphere',
+                            x: r + ix * diam,
+                            y: baseY + r,
+                            z: r + iz * diam,
+                            r: r
+                        });
+                    }
+                }
+            }
+
+            const fccSpheres = [];
+            const fccSheetYs = [];
+            const dz = diam * (Math.sqrt(3) / 2);
+            const dy = useSheets ? (diam + SHEET_THICKNESS) : (diam * Math.sqrt(2 / 3));
+            const layerOffsetZ = useSheets ? 0 : (diam / (2 * Math.sqrt(3)));
+
+            for (let iy = 0; ; iy++) {
+                const y = r + iy * dy;
+                if (y + r > CH + 0.001) break;
+                if (useSheets && iy > 0) fccSheetYs.push(y - r - SHEET_THICKNESS);
+
+                const isOddLayer = (!useSheets && iy % 2 === 1);
+                const zBase = r + (isOddLayer ? layerOffsetZ : 0);
+
+                for (let iz = 0; ; iz++) {
+                    const z = zBase + iz * dz;
+                    if (z + r > CW + 0.001) break;
+
+                    const isOddRow = ((iz + (isOddLayer ? 1 : 0)) % 2 === 1);
+                    const xBase = r + (isOddRow ? r : 0);
+
+                    for (let ix = 0; ; ix++) {
+                        const x = xBase + ix * diam;
+                        if (x + r > CL + 0.001) break;
+
+                        fccSpheres.push({
+                            shape: 'sphere',
+                            x: x,
+                            y: y,
+                            z: z,
+                            r: r
+                        });
+                    }
+                }
+            }
+
+            const activeSpheres = pattern === 'fcc' ? fccSpheres : gridSpheres;
+            const activeSheetYs = pattern === 'fcc' ? fccSheetYs : gridSheetYs;
+            const containerVol = CL * CW * CH;
+            const sphereVol = (4 / 3) * Math.PI * Math.pow(r, 3);
+            const efficiency = Math.min(100, ((activeSpheres.length * sphereVol) / containerVol) * 100).toFixed(1);
+            const totalHeight = isPalletized ? (CH + PALLET_HEIGHT) : CH;
+
+            const resultsContainer = document.getElementById('sphere-results');
+            if (resultsContainer) {
+                resultsContainer.innerHTML = `
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Hexagonal (FCC) Fit</span>
+                        <span class="text-xl font-bold text-krautz-400">${fccSpheres.length} spheres</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Standard Grid Fit</span>
+                        <span class="text-xl font-bold text-white">${gridSpheres.length} spheres</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Active Fill Efficiency</span>
+                        <span class="text-xl font-bold text-emerald-400">${efficiency}%</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">${isPalletized ? 'Total Pallet Height' : 'Floor Stack Height'}</span>
+                        <span class="text-xl font-bold text-amber-400">${totalHeight.toFixed(1)} cm</span>
+                    </div>
+                `;
+            }
+
+            packedState.sphere = { container: { l: CL, w: CW, h: CH }, items: activeSpheres, sheetYs: activeSheetYs };
+            update3DScene('sphere');
+        }
+
+        // 4. Irregular Object Scan 3D Calculator + STL/OBJ File Parsing
+        function handleScanFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const statusEl = document.getElementById('irr-scan-status');
+            const clearBtn = document.getElementById('clearScanFileBtn');
+            const ext = file.name.split('.').pop().toLowerCase();
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    let geometry = null;
+                    if (ext === 'stl') {
+                        const loader = new THREE.STLLoader();
+                        geometry = loader.parse(e.target.result);
+                    } else if (ext === 'obj') {
+                        const loader = new THREE.OBJLoader();
+                        const group = loader.parse(e.target.result);
+                        group.traverse(child => {
+                            if (child.isMesh && !geometry) {
+                                geometry = child.geometry.clone();
+                            }
+                        });
+                    }
+
+                    if (!geometry) throw new Error('Could not extract mesh geometry.');
+
+                    geometry.computeBoundingBox();
+                    const box = geometry.boundingBox;
+                    const size = new THREE.Vector3();
+                    box.getSize(size);
+                    const center = new THREE.Vector3();
+                    box.getCenter(center);
+
+                    geometry.translate(-center.x, -center.y, -center.z);
+                    geometry.computeVertexNormals();
+
+                    let rawVol = computeMeshVolume(geometry);
+                    let scaleHint = 'cm';
+                    if (size.x > 150 || size.y > 150 || size.z > 150) {
+                        rawVol = rawVol / 1000;
+                        scaleHint = 'mm → cm';
+                    }
+
+                    customScanGeometry = geometry;
+                    customScanBounds = {
+                        x: Math.max(0.001, size.x),
+                        y: Math.max(0.001, size.y),
+                        z: Math.max(0.001, size.z)
+                    };
+
+                    if (rawVol > 1) {
+                        document.getElementById('irr-vol').value = Math.round(rawVol);
+                    }
+
+                    statusEl.innerText = `Loaded "${file.name}" (${scaleHint}) • Auto-updated scan volume`;
+                    statusEl.className = "text-[10px] text-emerald-400 font-medium";
+                    clearBtn.classList.remove('hidden');
+                    calculateIrregular();
+                } catch (err) {
+                    statusEl.innerText = `Error reading 3D scan: ${err.message}`;
+                    statusEl.className = "text-[10px] text-rose-400";
+                }
+            };
+
+            if (ext === 'stl') reader.readAsArrayBuffer(file);
+            else reader.readAsText(file);
+        }
+
+        function clearUploadedScan() {
+            customScanGeometry = null;
+            customScanBounds = null;
+            document.getElementById('irr-scan-file').value = '';
+            const statusEl = document.getElementById('irr-scan-status');
+            statusEl.innerText = 'Using parametric irregular scan mesh (or upload your own 3D scan).';
+            statusEl.className = 'text-[10px] text-slate-400';
+            document.getElementById('clearScanFileBtn').classList.add('hidden');
+            calculateIrregular();
+        }
+
+        function computeMeshVolume(geometry) {
+            const pos = geometry.attributes.position;
+            let vol = 0;
+            const p1 = new THREE.Vector3(), p2 = new THREE.Vector3(), p3 = new THREE.Vector3();
+            for (let i = 0; i < pos.count; i += 3) {
+                p1.fromBufferAttribute(pos, i);
+                p2.fromBufferAttribute(pos, i + 1);
+                p3.fromBufferAttribute(pos, i + 2);
+                vol += p1.dot(p2.cross(p3)) / 6.0;
+            }
+            return Math.abs(vol);
+        }
+
+        function calculateIrregular() {
+            const irrVol = Math.max(1, parseFloat(document.getElementById('irr-vol').value) || 12500);
+            const voidPct = Math.max(0, parseFloat(document.getElementById('irr-void-pct').value) || 15);
+            const ml = parseFloat(document.getElementById('irr-master-l').value) || 120;
+            const mw = parseFloat(document.getElementById('irr-master-w').value) || 80;
+            const mh = parseFloat(document.getElementById('irr-master-h').value) || 100;
+
+            const isPalletized = document.getElementById('irrPlacementMode').value === 'pallet';
+            const useSheets = document.getElementById('irrSheetCarton').checked;
+
+            const adjustedObjVol = irrVol * (1 + voidPct / 100);
+
+            let aspectX = 1.15, aspectY = 0.85, aspectZ = 1.0;
+            if (customScanBounds) {
+                const maxB = Math.max(customScanBounds.x, customScanBounds.y, customScanBounds.z);
+                aspectX = customScanBounds.x / maxB;
+                aspectY = customScanBounds.y / maxB;
+                aspectZ = customScanBounds.z / maxB;
+            }
+            const scaleCube = Math.cbrt(adjustedObjVol / (aspectX * aspectY * aspectZ));
+            const cellL = scaleCube * aspectX;
+            const cellH = scaleCube * aspectY;
+            const cellW = scaleCube * aspectZ;
+
+            const cols = Math.max(1, Math.floor(ml / cellL));
+            const rows = Math.max(1, Math.floor(mw / cellW));
+            const layerStep = cellH + (useSheets ? SHEET_THICKNESS : 0);
+            const layers = useSheets
+                ? Math.max(0, Math.floor((mh + SHEET_THICKNESS) / layerStep))
+                : Math.floor(mh / cellH);
+
+            const spatialCapacity = cols * rows * layers;
+            const pureVolCapacity = Math.floor((ml * mw * mh) / adjustedObjVol);
+            const maxFit = Math.max(spatialCapacity, Math.min(pureVolCapacity, Math.ceil(ml / cellL) * Math.ceil(mw / cellW) * layers));
+
+            const items = [];
+            const sheetYs = [];
+            let placed = 0;
+
+            for (let y = 0; y < layers && placed < maxFit; y++) {
+                const layerY = y * layerStep;
+                if (useSheets && y > 0) sheetYs.push(layerY - SHEET_THICKNESS);
+                for (let z = 0; z < rows && placed < maxFit; z++) {
+                    for (let x = 0; x < cols && placed < maxFit; x++) {
+                        items.push({
+                            shape: 'irregular',
+                            x: x * cellL,
+                            y: layerY,
+                            z: z * cellW,
+                            l: cellL,
+                            w: cellW,
+                            h: cellH,
+                            unitVolCm3: irrVol,
+                            rotY: ((x + z + y) % 4) * (Math.PI / 2)
+                        });
+                        placed++;
+                    }
+                }
+            }
+
+            const totalHeight = isPalletized ? (mh + PALLET_HEIGHT) : mh;
+            const resultsContainer = document.getElementById('irr-results');
+            if (resultsContainer) {
+                resultsContainer.innerHTML = `
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Adjusted Vol (+${voidPct}% Void)</span>
+                        <span class="text-xl font-bold text-white">${Math.round(adjustedObjVol).toLocaleString()} cm³</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Max Container Capacity</span>
+                        <span class="text-xl font-bold text-purple-400">${placed} units</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">3D Spatial Matrix</span>
+                        <span class="text-xl font-bold text-emerald-400">${cols} × ${rows} × ${layers}</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">${isPalletized ? 'Total Pallet Height' : 'Floor Stack Height'}</span>
+                        <span class="text-xl font-bold text-amber-400">${totalHeight.toFixed(1)} cm</span>
+                    </div>
+                `;
+            }
+
+            packedState.irr = { container: { l: ml, w: mw, h: mh }, items, sheetYs };
+            update3DScene('irr');
+        }
+
+        // 5. Truck / Reefer Container 3D Load Plan (Front-to-Back Column Loading for Proper Axle Balance)
+        function setTruckPreset(l, w, h, maxKg) {
+            document.getElementById('tr-l').value = l;
+            document.getElementById('tr-w').value = w;
+            document.getElementById('tr-h').value = h;
+            document.getElementById('tr-max-kg').value = maxKg;
+            calculateTruckLoad();
+            resetCamera('truck');
+        }
+
+        function calculateTruckLoad() {
+            const TL = parseFloat(document.getElementById('tr-l').value) || 1360;
+            const TW = parseFloat(document.getElementById('tr-w').value) || 248;
+            const TH = parseFloat(document.getElementById('tr-h').value) || 270;
+            const maxTruckKg = Math.max(100, parseFloat(document.getElementById('tr-max-kg').value) || 24000);
+            const allowDoubleStack = document.getElementById('tr-double-stack').checked;
+            const allowRotate = document.getElementById('tr-rotate-pallets').checked;
+
+            const dualSum = packedState.dual.summary || {};
+            const pL = dualSum.CL || 120;
+            const pW = dualSum.CW || 80;
+            const pH = dualSum.totalHeight || 115;
+            const isPalletized = dualSum.isPalletized !== false;
+            const singlePalletGrossKg = dualSum.grossPalletKg || 825;
+            const unitsPerPallet = dualSum.unitsOnPallet || 64;
+
+            const candidates = [{ l: pL, w: pW }];
+            if (allowRotate && pL !== pW) candidates.push({ l: pW, w: pL });
+
+            let bestLayout = { total: 0, cols: 0, rows: 0, tiers: 0, dim: candidates[0] };
+            candidates.forEach(c => {
+                const cols = Math.floor(TL / c.l);
+                const rows = Math.floor(TW / c.w);
+                const maxTiers = allowDoubleStack ? Math.floor(TH / pH) : Math.min(1, Math.floor(TH / pH));
+                const total = cols * rows * maxTiers;
+                if (total > bestLayout.total) {
+                    bestLayout = { total, cols, rows, tiers: maxTiers, dim: c };
+                }
+            });
+
+            const weightCappedPallets = singlePalletGrossKg > 0 ? Math.floor(maxTruckKg / singlePalletGrossKg) : bestLayout.total;
+            const fittedPallets = Math.max(0, Math.min(bestLayout.total, weightCappedPallets));
+            const totalUnitsInTruck = fittedPallets * unitsPerPallet;
+            const totalFleetKg = fittedPallets * singlePalletGrossKg;
+
+            // Front-to-back vertical column stacking (X -> Z -> Y) so double-stacked pallets fill cleanly from nose to rear
+            const pallets = [];
+            let count = 0;
+            for (let x = 0; x < bestLayout.cols && count < fittedPallets; x++) {
+                for (let z = 0; z < bestLayout.rows && count < fittedPallets; z++) {
+                    for (let y = 0; y < bestLayout.tiers && count < fittedPallets; y++) {
+                        pallets.push({
+                            x: x * bestLayout.dim.l,
+                            y: y * pH,
+                            z: z * bestLayout.dim.w,
+                            l: bestLayout.dim.l,
+                            w: bestLayout.dim.w,
+                            h: pH,
+                            isPalletized
+                        });
+                        count++;
+                    }
+                }
+            }
+
+            const floorSpotsUsed = Math.ceil(fittedPallets / Math.max(1, bestLayout.tiers));
+            const floorFillPct = ((floorSpotsUsed * bestLayout.dim.l * bestLayout.dim.w) / (TL * TW) * 100).toFixed(1);
+
+            const resultsEl = document.getElementById('truck-results');
+            if (resultsEl) {
+                resultsEl.innerHTML = `
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Pallets in Vehicle</span>
+                        <span class="text-xl font-bold text-krautz-400">${fittedPallets} pallets</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Total Boxes Loaded</span>
+                        <span class="text-xl font-bold text-emerald-400">${totalUnitsInTruck.toLocaleString()} units</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Total Fleet Weight</span>
+                        <span class="text-xl font-bold text-amber-400">${totalFleetKg.toLocaleString()} kg</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Floor / Tier Matrix</span>
+                        <span class="text-lg font-bold text-white">${bestLayout.cols}×${bestLayout.rows} (${bestLayout.tiers} tier${bestLayout.tiers > 1 ? 's' : ''})</span>
+                    </div>
+                `;
+            }
+
+            const statusEl = document.getElementById('truck-dim-status');
+            if (statusEl) {
+                statusEl.innerHTML = `
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 space-y-1">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-sky-400 block">🚛 Vehicle Inner Envelope</span>
+                        <div class="text-sm font-bold text-white">${TL} × ${TW} × ${TH} cm <span class="text-[11px] font-normal text-slate-400">(${((TL * TW * TH) / 1000000).toFixed(2)} m³)</span></div>
+                        <div class="text-[11px] text-slate-300">Floor Space Utilization: <span class="text-emerald-400 font-semibold">${floorFillPct}%</span> • Payload Cap: ${maxTruckKg.toLocaleString()} kg</div>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 space-y-1">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-400 block">🪵 Unit Pallet Footprint Used</span>
+                        <div class="text-sm font-bold text-white">${bestLayout.dim.l} × ${bestLayout.dim.w} × ${pH.toFixed(1)} cm <span class="text-[11px] font-normal text-slate-400">(${singlePalletGrossKg.toFixed(1)} kg / pallet)</span></div>
+                        <div class="text-[11px] text-slate-300">Trucks Needed for ${dualSum.orderTotalQty || 500}-Box Order: <span class="text-krautz-400 font-bold">${Math.max(1, Math.ceil((dualSum.totalPalletsNeeded || 1) / Math.max(1, fittedPallets)))} vehicle(s)</span></div>
+                    </div>
+                `;
+            }
+
+            packedState.truck = { container: { l: TL, w: TW, h: TH }, pallets };
+            updateTruck3DScene();
+        }
+
+        function updateTruck3DScene() {
+            const v = viewers['truck'];
+            const data = packedState['truck'];
+            if (!v || !data) return;
+
+            while (v.rootGroup.children.length > 0) {
+                v.rootGroup.remove(v.rootGroup.children[0]);
+            }
+
+            const { l: TL, w: TW, h: TH } = data.container;
+            const sliceYPercent = parseFloat(document.getElementById('truckSliceY').value) || 100;
+            const sliceXPercent = parseFloat(document.getElementById('truckSliceX').value) || 100;
+            const explode = document.getElementById('truckExplode').checked;
+
+            document.getElementById('truckSliceYLabel').innerText = sliceYPercent === 100 ? '100% (Full)' : `${sliceYPercent}% Cut`;
+            document.getElementById('truckSliceXLabel').innerText = sliceXPercent === 100 ? '100% (Full)' : `${sliceXPercent}% Cut`;
+
+            const maxYCut = (sliceYPercent / 100) * TH;
+            const maxXCut = (sliceXPercent / 100) * TL;
+            const explodeFactor = explode ? 1.12 : 1.0;
+
+            v.rootGroup.add(buildConcreteFloorMesh(TL, TW));
+
+            const trailerGeo = new THREE.BoxGeometry(TL, TH, TW);
+            const trailerMat = new THREE.MeshPhongMaterial({
+                color: 0x38bdf8,
+                transparent: true,
+                opacity: 0.05,
+                depthWrite: false,
+                side: THREE.DoubleSide
+            });
+            const trailerMesh = new THREE.Mesh(trailerGeo, trailerMat);
+            trailerMesh.position.set(0, TH / 2, 0);
+            v.rootGroup.add(trailerMesh);
+
+            const edgesGeo = new THREE.EdgesGeometry(trailerGeo);
+            const wireframe = new THREE.LineSegments(edgesGeo, new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.75 }));
+            wireframe.position.set(0, TH / 2, 0);
+            v.rootGroup.add(wireframe);
+
+            const palletBaseMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+            const cargoMat = new THREE.MeshLambertMaterial({ color: 0x0077ee });
+            const cargoEdgeMat = new THREE.LineBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.65 });
+
+            data.pallets.forEach(p => {
+                if (p.y + p.h * 0.2 > maxYCut) return;
+                if (p.x + p.l * 0.2 > maxXCut) return;
+
+                const gap = 1.5;
+                const baseH = p.isPalletized ? Math.min(PALLET_HEIGHT, p.h * 0.35) : 0;
+                const cargoH = Math.max(2, p.h - baseH);
+
+                const cx = (p.x + p.l / 2 - TL / 2) * explodeFactor;
+                const cz = (p.z + p.w / 2 - TW / 2) * explodeFactor;
+
+                if (baseH > 0) {
+                    const bGeo = new THREE.BoxGeometry(p.l - gap, baseH, p.w - gap);
+                    const bMesh = new THREE.Mesh(bGeo, palletBaseMat);
+                    bMesh.position.set(cx, (p.y + baseH / 2) * explodeFactor, cz);
+                    v.rootGroup.add(bMesh);
+                }
+
+                const cGeo = new THREE.BoxGeometry(p.l - gap, cargoH - 0.5, p.w - gap);
+                const cMesh = new THREE.Mesh(cGeo, cargoMat);
+                cMesh.position.set(cx, (p.y + baseH + cargoH / 2) * explodeFactor, cz);
+                cMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(cGeo), cargoEdgeMat));
+                v.rootGroup.add(cMesh);
+            });
+        }
+
+        // Commercial RFQ Modal Handlers
+        function openRfqModal() {
+            const s = packedState.dual.summary || {};
+            const text = [
+                `KRAUTZ-TEMAX PACKAGING & COLD-CHAIN RFQ`,
+                `----------------------------------------`,
+                `Outer Load Size: ${s.CL} x ${s.CW} x ${s.CH} cm (${s.isPalletized ? 'Palletized +15cm' : 'Floor'})`,
+                `Total Palletized Height: ${s.totalHeight?.toFixed(1)} cm`,
+                `Inner Package Unit: ${s.IL} x ${s.IW} x ${s.IH} cm (${s.unitWeightKg} kg/unit)`,
+                `Units per Pallet: ${s.unitsOnPallet} units (${s.efficiency}% fill, ${s.grossPalletKg?.toFixed(1)} kg gross)`,
+                `Temax Thermal Liner: ${s.thermalName} | Zone: ${s.tempZoneName}`,
+                `Carton Dunnage: ${s.sheetCount || 0} Sheet Cartons, ${s.useCorners ? '4x Carton Hoeklatten' : 'No Hoeklatten'}`,
+                `Order Requirement: ${s.orderTotalQty} units (${s.totalPalletsNeeded} pallets total)`
+            ].join('\n');
+
+            document.getElementById('rfqSummaryText').value = text;
+            document.getElementById('rfqModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeRfqModal() {
+            document.getElementById('rfqModal').classList.add('hidden');
+        }
+
+        function copyRfqText() {
+            const ta = document.getElementById('rfqSummaryText');
+            ta.select();
+            navigator.clipboard?.writeText(ta.value);
+            const btn = document.getElementById('copyRfqBtn');
+            btn.innerText = '✅ Copied!';
+            setTimeout(() => { btn.innerText = '📋 Copy Spec to Clipboard'; }, 2000);
+        }
+
+        function sendRfqEmail() {
+            const company = document.getElementById('rfqCompany').value || 'Prospective Client';
+            const email = document.getElementById('rfqEmail').value || '';
+            const body = encodeURIComponent(
+                `Company: ${company}\nContact: ${email}\n\n` + document.getElementById('rfqSummaryText').value
+            );
+            const subject = encodeURIComponent(`Krautz-Temax Packaging Quote Request — ${company}`);
+            window.location.href = `mailto:info@krautz.org?subject=${subject}&body=${body}`;
+        }
+
+        // Export Branded Packing Spec Sheet + Live 3D Snapshot
+        function exportSpecSheet() {
+            const viewerKey = viewers[activeTabKey] ? activeTabKey : 'dual';
+            const v = viewers[viewerKey];
+            let snapshotUrl = '';
+            if (v && v.renderer) {
+                v.renderer.render(v.scene, v.camera);
+                snapshotUrl = v.renderer.domElement.toDataURL('image/png');
+            }
+
+            const s = packedState.dual.summary || {};
+            const now = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+            const printWin = window.open('', '_blank', 'width=900,height=780');
+            if (!printWin) {
+                alert('Please allow pop-ups in your browser to open the printable Spec Sheet.');
+                return;
+            }
+
+            printWin.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Krautz-Temax 3D Packing Specification Sheet</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Arial, sans-serif; color: #0f172a; margin: 32px; line-height: 1.45; }
+                        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #0066cc; padding-bottom: 14px; margin-bottom: 22px; }
+                        .brand { font-size: 22px; font-weight: 800; color: #004c99; letter-spacing: -0.5px; }
+                        .sub { font-size: 12px; color: #475569; }
+                        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+                        .card { border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; background: #f8fafc; }
+                        .card h3 { margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; color: #0066cc; letter-spacing: 0.5px; }
+                        .row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px dashed #e2e8f0; }
+                        .row:last-child { border-bottom: none; }
+                        .val { font-weight: 700; }
+                        .preview { text-align: center; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px; background: #060b16; margin-bottom: 20px; }
+                        .preview img { max-width: 100%; max-height: 320px; border-radius: 8px; }
+                        .footer { font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; }
+                        @media print { .no-print { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div>
+                            <div class="brand">KRAUTZ-TEMAX — 3D Pallet & Cold-Chain Spec Sheet</div>
+                            <div class="sub">Thermal Packaging, Spatial Optimization & Fleet Loading Report</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:12px;font-weight:700;">Date: ${now}</div>
+                            <button class="no-print" onclick="window.print()" style="margin-top:6px;padding:6px 14px;background:#0066cc;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Print / Save as PDF</button>
+                        </div>
+                    </div>
+
+                    ${snapshotUrl ? `<div class="preview"><img src="${snapshotUrl}" alt="3D Load Render"></div>` : ''}
+
+                    <div class="grid">
+                        <div class="card">
+                            <h3>1. Load Dimensions & Thermal Protection</h3>
+                            <div class="row"><span>Base Mode:</span><span class="val">${s.isPalletized ? 'Palletized (+15 cm Brown Pallet)' : 'Direct on Concrete Floor'}</span></div>
+                            <div class="row"><span>Total Load (L × W × H):</span><span class="val">${s.CL} × ${s.CW} × ${s.totalHeight?.toFixed(1)} cm</span></div>
+                            <div class="row"><span>Goods Envelope (L × W × H):</span><span class="val">${s.CL} × ${s.CW} × ${s.CH} cm</span></div>
+                            <div class="row"><span>Temax Thermal Liner:</span><span class="val">${s.thermalName} (${s.tempZoneName})</span></div>
+                            <div class="row"><span>Carton Protection:</span><span class="val">${s.sheetCount || 0} Sheets • ${s.useCorners ? '4 Hoeklatten' : 'No Hoeklatten'}</span></div>
+                        </div>
+
+                        <div class="card">
+                            <h3>2. Unit Capacity, Weight & Order Totals</h3>
+                            <div class="row"><span>Inner Unit Dimensions:</span><span class="val">${s.IL} × ${s.IW} × ${s.IH} cm</span></div>
+                            <div class="row"><span>Units per Pallet:</span><span class="val">${s.unitsOnPallet} units (${s.efficiency}% fill)</span></div>
+                            <div class="row"><span>Net / Gross Pallet Weight:</span><span class="val">${s.netCargoKg?.toFixed(1)} kg / ${s.grossPalletKg?.toFixed(1)} kg</span></div>
+                            <div class="row"><span>Limiting Factor:</span><span class="val">${s.isWeightLimited ? 'Weight-Limited' : 'Volume-Limited'}</span></div>
+                            <div class="row"><span>Order (${s.orderTotalQty} units):</span><span class="val">${s.totalPalletsNeeded} Pallets (${s.fullPallets} Full + ${s.remainderUnits} rem.)</span></div>
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        Generated by Krautz-Temax Pro Logistics 3D Engine • https://krautz.org/
+                    </div>
+                </body>
+                </html>
+            `);
+            printWin.document.close();
+        }
+
+        function calculateAll() {
+            calculateDualBoxAndVisualizer();
+            calculatePuzzle();
+            calculateSpheres();
+            calculateIrregular();
+            calculateTruckLoad();
+        }
+
+        window.onload = function () {
+            init3DViewer('dual', 'canvas-dual');
+            init3DViewer('puzzle', 'canvas-puzzle');
+            init3DViewer('sphere', 'canvas-sphere');
+            init3DViewer('irr', 'canvas-irr');
+            init3DViewer('truck', 'canvas-truck');
+            calculateAll();
+            resetCamera('dual');
+            resetCamera('puzzle');
+            resetCamera('sphere');
+            resetCamera('irr');
+            resetCamera('truck');
+        };
+    </script>
+</body>
+</html>
