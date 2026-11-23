@@ -59,7 +59,7 @@
                     <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
                         KRAUTZ-TEMAX <span class="text-[10px] px-1.5 py-0.5 rounded bg-krautz-500/20 text-krautz-400 border border-krautz-500/30">CCRM + 3D</span>
                     </h1>
-                    <p id="headerSubtitle" class="text-[11px] text-slate-400 hidden sm:block">Temax Insulation Request, CCRM Thermal Engine & 3D Palletizer</p>
+                    <p id="headerSubtitle" data-i18n="headerSubtitle" class="text-[11px] text-slate-400 hidden sm:block">Temax Insulation Request, CCRM Thermal Engine & 3D Palletizer</p>
                 </div>
             </div>
 
@@ -115,26 +115,32 @@
         <!-- TAB 0 (PRIMARY): TEMAX INSULATION REQUEST FORM & CCRM THERMAL ENGINE -->
         <section id="tab-pack-ccrm" class="tab-content space-y-6">
 
-            <!-- Customer Form Hyperlink & Workflow Banner -->
+            <!-- Customer Form Hyperlink, Saved Profiles & Workflow Banner -->
             <div class="bg-slate-900 border border-sky-500/30 rounded-2xl p-4 shadow-xl flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <div class="p-2.5 bg-sky-500/15 rounded-xl border border-sky-500/30 text-sky-400">
                         <i data-lucide="clipboard-list" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <div class="text-xs font-bold text-white flex items-center gap-2">
+                        <div data-i18n="ccrmBannerTitle" class="text-xs font-bold text-white flex items-center gap-2">
                             TEMAX INSULATION REQUEST (Dok.Nr. F05.008) → CCRM CALCULATION SHEET
                             <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Live Sync</span>
                         </div>
-                        <p class="text-[11px] text-slate-400">Send the online request form hyperlink to your customer, or fill in received customer data to run CCRM & 3D Roll-Cut SOPs.</p>
+                        <p data-i18n="ccrmBannerDesc" class="text-[11px] text-slate-400">Send the online request form hyperlink to your customer, or fill in received customer data to run CCRM & 3D Roll-Cut SOPs.</p>
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
+                    <select id="savedProfilesSelect" onchange="loadSavedProfile(this.value)" class="bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded-xl px-2.5 py-2">
+                        <option value="">Saved Profiles...</option>
+                    </select>
+                    <button type="button" onclick="saveCurrentProfile()" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-1">
+                        <i data-lucide="bookmark-plus" class="w-3.5 h-3.5 text-amber-400"></i> <span data-i18n="btnSaveProfile">Save Profile</span>
+                    </button>
                     <button type="button" onclick="copyCustomerFormLink()" id="copyFormHyperlinkBtn" class="px-3 py-2 bg-krautz-500 hover:bg-krautz-600 text-white text-xs font-semibold rounded-xl shadow transition flex items-center gap-1.5">
-                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i> <span id="copyFormLinkText">Copy Customer Form Hyperlink</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i> <span id="copyFormLinkText" data-i18n="btnCopyFormLink">Copy Customer Form Hyperlink</span>
                     </button>
                     <button type="button" onclick="exportCcrmCsv()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
-                        <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-400"></i> Export CCRM Sheet (.CSV)
+                        <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-400"></i> <span data-i18n="btnExportCsv">Export CCRM (.CSV)</span>
                     </button>
                 </div>
             </div>
@@ -148,12 +154,12 @@
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                             <div>
-                                <span class="text-[10px] uppercase tracking-wider text-sky-400 font-bold">Customer Input Form</span>
-                                <h2 class="text-sm font-bold text-white">Temax Insulation Request Form</h2>
+                                <span data-i18n="lblCustomerInputForm" class="text-[10px] uppercase tracking-wider text-sky-400 font-bold">Customer Input Form</span>
+                                <h2 data-i18n="lblTemaxRequestTitle" class="text-sm font-bold text-white">Temax Insulation Request Form</h2>
                             </div>
                             <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
-                                <button type="button" id="formPage1Btn" onclick="switchFormPage(1)" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-krautz-500 text-white transition">Page 1: Client Info</button>
-                                <button type="button" id="formPage2Btn" onclick="switchFormPage(2)" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">Page 2: Shipment & Temp</button>
+                                <button type="button" id="formPage1Btn" onclick="switchFormPage(1)" data-i18n="btnPage1" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-krautz-500 text-white transition">Page 1: Client Info</button>
+                                <button type="button" id="formPage2Btn" onclick="switchFormPage(2)" data-i18n="btnPage2" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">Page 2: Shipment & Temp</button>
                             </div>
                         </div>
 
@@ -161,44 +167,44 @@
                         <div id="request-form-page-1" class="space-y-3">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
-                                    <label class="text-[11px] text-slate-400 block mb-1">Company *</label>
+                                    <label data-i18n="lblCompany" class="text-[11px] text-slate-400 block mb-1">Company *</label>
                                     <input type="text" id="req-company" value="EuroPharma Logistics NV" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-krautz-500">
                                 </div>
                                 <div>
-                                    <label class="text-[11px] text-slate-400 block mb-1">Contact Name *</label>
+                                    <label data-i18n="lblContactName" class="text-[11px] text-slate-400 block mb-1">Contact Name *</label>
                                     <input type="text" id="req-contact" value="Jan Vermeulen" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-krautz-500">
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
-                                    <label class="text-[11px] text-slate-400 block mb-1">Address</label>
+                                    <label data-i18n="lblAddress" class="text-[11px] text-slate-400 block mb-1">Address</label>
                                     <input type="text" id="req-address" value="Industrielaan 42" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-krautz-500">
                                 </div>
                                 <div>
-                                    <label class="text-[11px] text-slate-400 block mb-1">Place / Postal Code & City</label>
+                                    <label data-i18n="lblPlace" class="text-[11px] text-slate-400 block mb-1">Place / Postal Code & City</label>
                                     <input type="text" id="req-place" value="3550 Heusden-Zolder, Belgium" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-krautz-500">
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
-                                    <label class="text-[11px] text-slate-400 block mb-1">Email Address *</label>
+                                    <label data-i18n="lblEmail" class="text-[11px] text-slate-400 block mb-1">Email Address *</label>
                                     <input type="email" id="req-email" value="j.vermeulen@europharma.be" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-krautz-500">
                                 </div>
                                 <div>
-                                    <label class="text-[11px] text-slate-400 block mb-1">Tel Number *</label>
+                                    <label data-i18n="lblPhone" class="text-[11px] text-slate-400 block mb-1">Tel Number *</label>
                                     <input type="text" id="req-phone" value="+32 11 53 00 00" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-krautz-500">
                                 </div>
                             </div>
 
                             <div class="pt-2 border-t border-slate-800">
-                                <label class="text-[11px] font-semibold text-amber-300 block mb-1">Your Shipment Reference * <span class="font-normal text-slate-400">(Used in all further CCRM communications)</span></label>
+                                <label data-i18n="lblShipRef" class="text-[11px] font-semibold text-amber-300 block mb-1">Your Shipment Reference * <span class="font-normal text-slate-400">(Used in all further CCRM communications)</span></label>
                                 <input type="text" id="req-ship-ref" value="SHP-BRU-ORL-2026-884" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-amber-500/40 rounded-xl px-3 py-2 text-xs font-bold text-amber-200 focus:outline-none focus:border-amber-400">
                             </div>
 
                             <div class="flex justify-end pt-2">
-                                <button type="button" onclick="switchFormPage(2)" class="px-4 py-2 bg-krautz-500 hover:bg-krautz-600 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
+                                <button type="button" onclick="switchFormPage(2)" data-i18n="btnNextPage2" class="px-4 py-2 bg-krautz-500 hover:bg-krautz-600 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
                                     Next: Page 2 (Shipment & Temperatures) →
                                 </button>
                             </div>
@@ -210,7 +216,7 @@
                             <!-- 1. Shipment Details -->
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider">1. Shipment Details</h3>
+                                    <h3 data-i18n="sec1ShipDetails" class="text-xs font-bold text-sky-400 uppercase tracking-wider">1. Shipment Details</h3>
                                     <span id="ccrm-dims-imperial" class="text-[10px] text-slate-400">1.20m × 0.80m × 1.00m | 47.2" × 31.5" × 39.4"</span>
                                 </div>
                                 <div class="grid grid-cols-4 gap-2">
@@ -227,7 +233,7 @@
                                         <input type="number" id="ccrm-h" value="100" min="1" oninput="syncFromCcrmDimensions()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-bold text-white">
                                     </div>
                                     <div>
-                                        <label class="text-[10px] text-amber-300 font-semibold block mb-1">Total Weight (kg)</label>
+                                        <label data-i18n="lblTotalWeight" class="text-[10px] text-amber-300 font-semibold block mb-1">Total Weight (kg)</label>
                                         <input type="number" id="ccrm-weight" value="650" min="1" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-amber-500/40 rounded-lg px-2.5 py-1.5 text-xs font-bold text-amber-200">
                                     </div>
                                 </div>
@@ -236,7 +242,7 @@
                             <!-- 2. Product Temperature Details & Specific Heat Capacity -->
                             <div class="space-y-2 pt-2 border-t border-slate-800">
                                 <div class="flex items-center justify-between">
-                                    <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-wider">2. Product Temperature & Specific Heat (c)</h3>
+                                    <h3 data-i18n="sec2TempDetails" class="text-xs font-bold text-cyan-400 uppercase tracking-wider">2. Product Temperature & Specific Heat (c)</h3>
                                     <select id="ccrm-product-preset" onchange="applyProductCpPreset(this.value)" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-[10px] text-cyan-300">
                                         <option value="custom">Product Type Preset...</option>
                                         <option value="4186">Water / Pharma Liquid (4186 J/kg·K)</option>
@@ -273,7 +279,7 @@
                             <!-- 3. Environment Mode Toggle: A. Single Excursion vs B. Total Cold Chain (10 Steps) -->
                             <div class="space-y-2.5 pt-2 border-t border-slate-800">
                                 <div class="flex flex-wrap items-center justify-between gap-2">
-                                    <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider">3. Environment Profile</h3>
+                                    <h3 data-i18n="sec3EnvProfile" class="text-xs font-bold text-amber-400 uppercase tracking-wider">3. Environment Profile</h3>
                                     <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
                                         <button type="button" id="envModeSingleBtn" onclick="setCcrmEnvMode('single')" class="px-2.5 py-1 text-[11px] font-semibold rounded-lg text-slate-400 hover:text-white transition">A. Single Excursion</button>
                                         <button type="button" id="envModeChainBtn" onclick="setCcrmEnvMode('chain')" class="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-amber-600 text-white transition">B. Total Cold Chain (10 Steps)</button>
@@ -281,7 +287,7 @@
                                     <input type="hidden" id="ccrm-env-mode" value="chain">
                                 </div>
 
-                                <!-- A. Single Excursion (Summer & Winter Temp + Hours) -->
+                                <!-- A. Single Excursion -->
                                 <div id="ccrm-single-panel" class="hidden bg-slate-950/90 border border-slate-800 rounded-xl p-3 space-y-2">
                                     <p class="text-[11px] text-slate-400">Enter extreme Summer and/or Winter outer temperature and exposure duration:</p>
                                     <div class="grid grid-cols-2 gap-3">
@@ -314,13 +320,13 @@
                                     </div>
                                 </div>
 
-                                <!-- B. Total Cold Chain (Up to 10 Specific Steps: Hours, Winter °C, Summer °C, Explication) -->
+                                <!-- B. Total Cold Chain (10 Steps) -->
                                 <div id="ccrm-chain-panel" class="bg-slate-950/90 border border-slate-800 rounded-xl p-3 space-y-2">
                                     <div class="flex items-center justify-between">
                                         <span class="text-[11px] text-slate-300 font-semibold">10-Step Cold Chain Transport / Storage Profile</span>
                                         <button type="button" onclick="loadExampleColdChain()" class="text-[10px] text-sky-400 hover:underline">Load Brussels→Orlando Example</button>
                                     </div>
-                                    <div class="max-h-[250px] overflow-y-auto pr-1 space-y-1.5" id="ccrm-10steps-container"></div>
+                                    <div class="max-h-[230px] overflow-y-auto pr-1 space-y-1.5" id="ccrm-10steps-container"></div>
                                 </div>
                             </div>
 
@@ -330,12 +336,25 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Hour-by-Hour Temperature Profile Curve (Canvas) -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                            <div>
+                                <h3 data-i18n="lblTempCurveTitle" class="text-sm font-bold text-white flex items-center gap-2">
+                                    <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i> Transit Temperature Curve (Summer vs. Limits)
+                                </h3>
+                                <p class="text-[10px] text-slate-400">Plots Summer Ambient (amber), Insulated Core (cyan), and Tmi / Tma safety bounds</p>
+                            </div>
+                        </div>
+                        <canvas id="ccrmTempChart" width="540" height="175" class="w-full h-[175px] bg-slate-950 rounded-xl border border-slate-800"></canvas>
+                    </div>
                 </div>
 
-                <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET HEADER, INSULATION RESULT, 2-BLANKET ROLL CUT & 3D SOP ANIMATION -->
+                <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET HEADER, INSULATION RESULT, 2-BLANKET ROLL CUT, LOGGER GUIDE & 3D SOP ANIMATION -->
                 <div class="lg:col-span-6 space-y-5">
 
-                    <!-- Internal CCRM Sheet Page 1 Metadata (Date, Unique Calc Ref, Shipment Ref, Handled By Manager) -->
+                    <!-- Internal CCRM Sheet Page 1 Metadata -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
                             <div class="flex items-center gap-2">
@@ -343,7 +362,7 @@
                                     <i data-lucide="shield-check" class="w-4 h-4"></i>
                                 </span>
                                 <div>
-                                    <h2 class="text-sm font-bold text-white">CCRM Internal Calculation Sheet (Page 1 & 2 Output)</h2>
+                                    <h2 data-i18n="lblCcrmSheetTitle" class="text-sm font-bold text-white">CCRM Internal Calculation Sheet (Page 1 & 2 Output)</h2>
                                     <p class="text-[10px] text-slate-400">Auto-linked to customer shipment reference & thermodynamic barrier engine</p>
                                 </div>
                             </div>
@@ -352,19 +371,19 @@
 
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                             <div>
-                                <label class="text-[10px] text-slate-400 block mb-1">Calculation Date</label>
+                                <label data-i18n="lblCalcDate" class="text-[10px] text-slate-400 block mb-1">Calculation Date</label>
                                 <input type="date" id="ccrm-calc-date" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-semibold text-white">
                             </div>
                             <div>
-                                <label class="text-[10px] text-slate-400 block mb-1">Calculation Ref #</label>
+                                <label data-i18n="lblCalcRef" class="text-[10px] text-slate-400 block mb-1">Calculation Ref #</label>
                                 <input type="text" id="ccrm-calc-ref" value="CCRM-2026-4091" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-mono font-bold text-cyan-300">
                             </div>
                             <div>
-                                <label class="text-[10px] text-slate-400 block mb-1">Customer Ship Ref</label>
+                                <label data-i18n="lblLinkedShipRef" class="text-[10px] text-slate-400 block mb-1">Customer Ship Ref</label>
                                 <input type="text" id="ccrm-linked-ship-ref" readonly class="w-full bg-slate-950/60 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-semibold text-amber-300">
                             </div>
                             <div>
-                                <label class="text-[10px] text-emerald-400 font-semibold block mb-1">Handled By (Manager)</label>
+                                <label data-i18n="lblHandledBy" class="text-[10px] text-emerald-400 font-semibold block mb-1">Handled By (Manager)</label>
                                 <input type="text" id="ccrm-manager-name" value="Eray Cankurtaranoglu" placeholder="Manager Name" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-emerald-500/40 rounded-lg px-2 py-1.5 text-xs font-bold text-white">
                             </div>
                         </div>
@@ -372,11 +391,11 @@
                         <!-- CCRM Recommended Temax Product & Thermal Excursion Verdict -->
                         <div id="ccrm-verdict-banner" class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-3">
                             <div>
-                                <span class="text-[10px] uppercase tracking-wider text-emerald-300 font-bold block">Recommended Krautz-Temax Insulation</span>
+                                <span data-i18n="lblRecommendedTemax" class="text-[10px] uppercase tracking-wider text-emerald-300 font-bold block">Recommended Krautz-Temax Insulation</span>
                                 <div id="ccrm-recommended-product" class="text-lg font-extrabold text-white">TEMAX-4000 Multi-Layer Blanket</div>
                                 <span id="ccrm-thermal-math-summary" class="text-[11px] text-slate-300">Summer Peak: +6.8°C (Limit +8°C) • Winter Low: +3.4°C (Limit +2°C)</span>
                             </div>
-                            <button type="button" onclick="applyRecommendedTemaxTo3D()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow transition">
+                            <button type="button" onclick="applyRecommendedTemaxTo3D()" data-i18n="btnApplyTo3D" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow transition">
                                 Apply to 3D Pallet & Cut-Sheet ✓
                             </button>
                         </div>
@@ -385,7 +404,7 @@
                     <!-- 2-Blanket Roll Cut Dimensions (Cutting from 1.50m Master Roll) -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <h3 data-i18n="lblTwoBlanketsTitle" class="text-sm font-bold text-white flex items-center gap-2">
                                 <i data-lucide="scissors" class="w-4 h-4 text-sky-400"></i> 2-Blanket Roll Cut Dimensions (From 1.50m Roll)
                             </h3>
                             <span class="text-[10px] px-2 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/30">Incl. 15 cm Overlap Seals</span>
@@ -397,7 +416,7 @@
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
                             <div>
-                                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <h3 data-i18n="lblAnimatedSopTitle" class="text-sm font-bold text-white flex items-center gap-2">
                                     <i data-lucide="play-circle" class="w-4 h-4 text-amber-400"></i> 3D Animated SOP: Fixing the 2 Blankets on Product
                                 </h3>
                                 <p id="sop-anim-caption" class="text-[11px] text-cyan-300 font-medium">Step 1/5: Lay base thermal pad & load palletized cargo</p>
@@ -412,7 +431,7 @@
                         </div>
 
                         <!-- 3D SOP Animation Viewport -->
-                        <div id="canvas-sop" class="w-full h-[270px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                        <div id="canvas-sop" class="w-full h-[255px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-2.5 left-2.5 z-10 flex flex-wrap items-center gap-2 bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800 text-[10px]">
                                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#0077ee] inline-block"></span> Cargo</span>
                                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#22d3ee] inline-block"></span> Blanket 1 (Lengthwise)</span>
@@ -423,6 +442,9 @@
 
                         <!-- Visual Step-by-Step SOP Cards -->
                         <div class="grid grid-cols-5 gap-1.5 text-[10px]" id="sop-visual-steps-bar"></div>
+
+                        <!-- Data Logger & QA Sensor Placement Note -->
+                        <div id="logger-placement-guide" class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 text-[11px] text-slate-300"></div>
                     </div>
 
                 </div>
@@ -507,7 +529,7 @@
                             </div>
                         </div>
 
-                        <!-- Stacking Pattern (Column vs Interlocking Brick) -->
+                        <!-- Stacking Pattern -->
                         <div class="pt-3 border-t border-slate-800 space-y-2">
                             <label data-i18n="lblStackPattern" class="block text-xs font-semibold text-sky-300">Stacking Pattern:</label>
                             <div class="grid grid-cols-2 gap-2">
@@ -568,7 +590,6 @@
                             </div>
                         </div>
 
-                        <!-- Weight & Payload Limits -->
                         <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
                             <div>
                                 <label data-i18n="lblUnitWeight" class="block text-xs font-medium text-slate-400 mb-1">Unit Weight (kg)</label>
@@ -580,7 +601,6 @@
                             </div>
                         </div>
 
-                        <!-- Total Order Quantity & Partial Pallet Preview -->
                         <div class="pt-2 border-t border-slate-800 space-y-2">
                             <div class="flex items-center justify-between">
                                 <label data-i18n="lblOrderQty" class="text-xs font-semibold text-emerald-300">Total Order Quantity (Boxes):</label>
@@ -631,7 +651,6 @@
                 <!-- Right Panel: Outputs & 3D Interactive Viewport -->
                 <div class="lg:col-span-8 space-y-5">
                     
-                    <!-- KPI Summary Cards -->
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
                             <span data-i18n="kpiUnits" class="text-[11px] font-medium text-slate-400 mb-1">UNITS ON PALLET</span>
@@ -655,7 +674,6 @@
                         </div>
                     </div>
 
-                    <!-- Interactive 3D Viewport + Cross-Section Controls -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
                             <div class="flex items-center space-x-2">
@@ -684,7 +702,6 @@
                             </div>
                         </div>
 
-                        <!-- Cross-Section Slicer Controls -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
                             <div>
                                 <div class="flex justify-between text-[11px] mb-1">
@@ -702,7 +719,6 @@
                             </div>
                         </div>
 
-                        <!-- Three.js WebGL Canvas Container -->
                         <div id="canvas-dual" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-2.5 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Unit</span>
@@ -712,14 +728,12 @@
                             </div>
                         </div>
 
-                        <!-- Live 3D Dimensions, Weight & Volume Status Bar -->
                         <div id="dual-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
 
-                        <!-- Footer Volume Specs -->
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.0</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.2</span>
                         </div>
                     </div>
 
@@ -730,8 +744,6 @@
         <!-- TAB 2: MULTI-BOX 3D VOLUME PUZZLE -->
         <section id="tab-pack-puzzle" class="tab-content space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- Left Inputs -->
                 <div class="lg:col-span-4 space-y-4 bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl">
                     <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
                         <i data-lucide="boxes" class="w-5 h-5 text-krautz-400"></i>
@@ -740,137 +752,62 @@
                             <p class="text-[11px] text-slate-400">Packs Batch 1, then fits Batch 2 into remaining 3D space.</p>
                         </div>
                     </div>
-
                     <div class="space-y-3">
                         <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">1. Outer Packaging / Load Size (cm)</h3>
                         <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="text-[11px] text-slate-400">Length (X)</label>
-                                <input type="number" id="pz-out-l" value="120" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Width (Z)</label>
-                                <input type="number" id="pz-out-w" value="80" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Height (Y)</label>
-                                <input type="number" id="pz-out-h" value="100" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
+                            <div><label class="text-[11px] text-slate-400">Length (X)</label><input type="number" id="pz-out-l" value="120" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">Width (Z)</label><input type="number" id="pz-out-w" value="80" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">Height (Y)</label><input type="number" id="pz-out-h" value="100" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
                         </div>
-
                         <div class="pt-2 space-y-1.5">
                             <label class="block text-xs font-semibold text-slate-200">Base Placement Mode:</label>
                             <div class="grid grid-cols-2 gap-2">
-                                <button type="button" id="puzzleModePalletBtn" onclick="setPlacementMode('puzzle', 'pallet')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-amber-600/20 border-amber-500 text-amber-300">
-                                    <span>🪵 Palletized</span>
-                                    <span class="text-[10px] opacity-80">+15 cm Brown Pallet</span>
-                                </button>
-                                <button type="button" id="puzzleModeFloorBtn" onclick="setPlacementMode('puzzle', 'floor')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
-                                    <span>🏭 Direct on Floor</span>
-                                    <span class="text-[10px] opacity-80">On Grey Concrete</span>
-                                </button>
+                                <button type="button" id="puzzleModePalletBtn" onclick="setPlacementMode('puzzle', 'pallet')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-amber-600/20 border-amber-500 text-amber-300"><span>🪵 Palletized</span><span class="text-[10px] opacity-80">+15 cm Brown Pallet</span></button>
+                                <button type="button" id="puzzleModeFloorBtn" onclick="setPlacementMode('puzzle', 'floor')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200"><span>🏭 Direct on Floor</span><span class="text-[10px] opacity-80">On Grey Concrete</span></button>
                             </div>
                             <input type="hidden" id="puzzlePlacementMode" value="pallet">
                         </div>
-
                         <div class="pt-2 space-y-1.5">
-                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
-                                <label for="puzzleSheetCarton" class="text-xs text-slate-200 cursor-pointer">Sheet Carton Between Layers</label>
-                                <input type="checkbox" id="puzzleSheetCarton" onchange="calculatePuzzle()" class="w-4 h-4 accent-amber-500 cursor-pointer">
-                            </div>
-                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
-                                <label for="puzzleCornerGuards" class="text-xs text-slate-200 cursor-pointer">Carton Hoeklatten (4 Corners)</label>
-                                <input type="checkbox" id="puzzleCornerGuards" onchange="calculatePuzzle()" class="w-4 h-4 accent-amber-500 cursor-pointer">
-                            </div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800"><label for="puzzleSheetCarton" class="text-xs text-slate-200 cursor-pointer">Sheet Carton Between Layers</label><input type="checkbox" id="puzzleSheetCarton" onchange="calculatePuzzle()" class="w-4 h-4 accent-amber-500 cursor-pointer"></div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800"><label for="puzzleCornerGuards" class="text-xs text-slate-200 cursor-pointer">Carton Hoeklatten (4 Corners)</label><input type="checkbox" id="puzzleCornerGuards" onchange="calculatePuzzle()" class="w-4 h-4 accent-amber-500 cursor-pointer"></div>
                         </div>
                     </div>
-
                     <hr class="border-slate-800">
-
                     <div class="space-y-3">
                         <h3 class="text-xs font-semibold uppercase tracking-wider text-sky-400">2. First Box Batch (Primary)</h3>
                         <div class="grid grid-cols-4 gap-2">
-                            <div>
-                                <label class="text-[11px] text-slate-400">Qty</label>
-                                <input type="number" id="pz-b1-qty" value="48" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">L (cm)</label>
-                                <input type="number" id="pz-b1-l" value="30" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">W (cm)</label>
-                                <input type="number" id="pz-b1-w" value="20" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">H (cm)</label>
-                                <input type="number" id="pz-b1-h" value="25" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
+                            <div><label class="text-[11px] text-slate-400">Qty</label><input type="number" id="pz-b1-qty" value="48" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">L (cm)</label><input type="number" id="pz-b1-l" value="30" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">W (cm)</label><input type="number" id="pz-b1-w" value="20" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">H (cm)</label><input type="number" id="pz-b1-h" value="25" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
                         </div>
                     </div>
-
                     <hr class="border-slate-800">
-
                     <div class="space-y-3">
                         <h3 class="text-xs font-semibold uppercase tracking-wider text-emerald-400">3. Secondary Box Type (Fill Remaining)</h3>
                         <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="text-[11px] text-slate-400">Length</label>
-                                <input type="number" id="pz-b2-l" value="20" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Width</label>
-                                <input type="number" id="pz-b2-w" value="20" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Height</label>
-                                <input type="number" id="pz-b2-h" value="25" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
+                            <div><label class="text-[11px] text-slate-400">Length</label><input type="number" id="pz-b2-l" value="20" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">Width</label><input type="number" id="pz-b2-w" value="20" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">Height</label><input type="number" id="pz-b2-h" value="25" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
                         </div>
                     </div>
-
                     <button onclick="calculatePuzzle()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Recalculate 3D Placement</button>
                 </div>
 
-                <!-- Right 3D Puzzle Viewport & Stats -->
                 <div class="lg:col-span-8 space-y-5">
                     <div id="puzzle-results" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
-
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-emerald-400 text-lg">📐</span>
-                                <div>
-                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Multi-SKU Placement & Cross-Section</h2>
-                                    <p class="text-[11px] text-slate-400">Shows Batch 1 + Secondary Batch 2 with Dunnage on Pallet or Floor</p>
-                                </div>
-                            </div>
+                            <div class="flex items-center space-x-2"><span class="text-emerald-400 text-lg">📐</span><div><h2 class="text-sm font-semibold text-white tracking-wide">3D Multi-SKU Placement & Cross-Section</h2><p class="text-[11px] text-slate-400">Shows Batch 1 + Secondary Batch 2 with Dunnage on Pallet or Floor</p></div></div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <button onclick="resetCamera('puzzle')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
-                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
-                                    <input type="checkbox" id="puzzleExplode" onchange="update3DScene('puzzle')" class="accent-krautz-500">
-                                    <span>Explode</span>
-                                </label>
+                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer"><input type="checkbox" id="puzzleExplode" onchange="update3DScene('puzzle')" class="accent-krautz-500"><span>Explode</span></label>
                             </div>
                         </div>
-
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
-                            <div>
-                                <div class="flex justify-between text-[11px] mb-1">
-                                    <span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span>
-                                    <span id="puzzleSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span>
-                                </div>
-                                <input type="range" id="puzzleSliceY" min="1" max="100" value="100" oninput="update3DScene('puzzle')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-[11px] mb-1">
-                                    <span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span>
-                                    <span id="puzzleSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span>
-                                </div>
-                                <input type="range" id="puzzleSliceX" min="1" max="100" value="100" oninput="update3DScene('puzzle')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
-                            </div>
+                            <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span><span id="puzzleSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span></div><input type="range" id="puzzleSliceY" min="1" max="100" value="100" oninput="update3DScene('puzzle')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
+                            <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span><span id="puzzleSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span></div><input type="range" id="puzzleSliceX" min="1" max="100" value="100" oninput="update3DScene('puzzle')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                         </div>
-
                         <div id="canvas-puzzle" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Batch 1</span>
@@ -879,140 +816,70 @@
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
                             </div>
                         </div>
-
                         <div id="puzzle-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 3: SPHERICAL DENSITY PACKING WITH 3D VISUALIZATION -->
+        <!-- TAB 3: SPHERICAL DENSITY PACKING -->
         <section id="tab-pack-sphere" class="tab-content space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- Left Inputs -->
                 <div class="lg:col-span-4 space-y-4 bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl">
                     <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
-                        <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
-                            <i data-lucide="circle-dot" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h2 data-i18n="sphereTitle" class="text-sm font-bold text-white">Spherical Density 3D Engine</h2>
-                            <p class="text-[11px] text-slate-400">Grid vs. Hexagonal Close-Packing (FCC) in 3D space.</p>
-                        </div>
+                        <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400"><i data-lucide="circle-dot" class="w-5 h-5"></i></div>
+                        <div><h2 data-i18n="sphereTitle" class="text-sm font-bold text-white">Spherical Density 3D Engine</h2><p class="text-[11px] text-slate-400">Grid vs. Hexagonal Close-Packing (FCC) in 3D space.</p></div>
                     </div>
-
                     <div class="space-y-3">
                         <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">1. Outer Container Size (cm)</h3>
                         <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="text-[11px] text-slate-400">Length (X)</label>
-                                <input type="number" id="sp-out-l" value="100" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Width (Z)</label>
-                                <input type="number" id="sp-out-w" value="100" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Height (Y)</label>
-                                <input type="number" id="sp-out-h" value="100" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
+                            <div><label class="text-[11px] text-slate-400">Length (X)</label><input type="number" id="sp-out-l" value="100" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">Width (Z)</label><input type="number" id="sp-out-w" value="100" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">Height (Y)</label><input type="number" id="sp-out-h" value="100" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
                         </div>
-
                         <div class="pt-2 space-y-1.5">
                             <label class="block text-xs font-semibold text-slate-200">Base Placement Mode:</label>
                             <div class="grid grid-cols-2 gap-2">
-                                <button type="button" id="sphereModePalletBtn" onclick="setPlacementMode('sphere', 'pallet')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-amber-600/20 border-amber-500 text-amber-300">
-                                    <span>🪵 Palletized</span>
-                                    <span class="text-[10px] opacity-80">+15 cm Brown Pallet</span>
-                                </button>
-                                <button type="button" id="sphereModeFloorBtn" onclick="setPlacementMode('sphere', 'floor')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
-                                    <span>🏭 Direct on Floor</span>
-                                    <span class="text-[10px] opacity-80">On Grey Concrete</span>
-                                </button>
+                                <button type="button" id="sphereModePalletBtn" onclick="setPlacementMode('sphere', 'pallet')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-amber-600/20 border-amber-500 text-amber-300"><span>🪵 Palletized</span><span class="text-[10px] opacity-80">+15 cm Brown Pallet</span></button>
+                                <button type="button" id="sphereModeFloorBtn" onclick="setPlacementMode('sphere', 'floor')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200"><span>🏭 Direct on Floor</span><span class="text-[10px] opacity-80">On Grey Concrete</span></button>
                             </div>
                             <input type="hidden" id="spherePlacementMode" value="pallet">
                         </div>
-
                         <div class="pt-2 space-y-1.5">
-                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
-                                <label for="sphereSheetCarton" class="text-xs text-slate-200 cursor-pointer">Sheet Carton Between Layers</label>
-                                <input type="checkbox" id="sphereSheetCarton" onchange="calculateSpheres()" class="w-4 h-4 accent-amber-500 cursor-pointer">
-                            </div>
-                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
-                                <label for="sphereCornerGuards" class="text-xs text-slate-200 cursor-pointer">Carton Hoeklatten (4 Corners)</label>
-                                <input type="checkbox" id="sphereCornerGuards" onchange="calculateSpheres()" class="w-4 h-4 accent-amber-500 cursor-pointer">
-                            </div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800"><label for="sphereSheetCarton" class="text-xs text-slate-200 cursor-pointer">Sheet Carton Between Layers</label><input type="checkbox" id="sphereSheetCarton" onchange="calculateSpheres()" class="w-4 h-4 accent-amber-500 cursor-pointer"></div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800"><label for="sphereCornerGuards" class="text-xs text-slate-200 cursor-pointer">Carton Hoeklatten (4 Corners)</label><input type="checkbox" id="sphereCornerGuards" onchange="calculateSpheres()" class="w-4 h-4 accent-amber-500 cursor-pointer"></div>
                         </div>
                     </div>
-
                     <hr class="border-slate-800">
-
                     <div class="space-y-3">
                         <h3 class="text-xs font-semibold uppercase tracking-wider text-sky-400">2. Sphere & Packing Geometry</h3>
-                        <div>
-                            <label class="text-[11px] text-slate-400 block mb-1">Sphere Diameter (cm)</label>
-                            <input type="number" id="sphere-diam" value="20" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                        </div>
-
+                        <div><label class="text-[11px] text-slate-400 block mb-1">Sphere Diameter (cm)</label><input type="number" id="sphere-diam" value="20" min="1" oninput="calculateSpheres()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-semibold"></div>
                         <div class="pt-1 space-y-1.5">
                             <label class="block text-xs font-semibold text-slate-200">3D Packing Pattern:</label>
                             <div class="grid grid-cols-2 gap-2">
-                                <button type="button" id="spherePatternFccBtn" onclick="setSpherePattern('fcc')" class="px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-krautz-500/20 border-krautz-500 text-krautz-400">
-                                    <span>🔷 Hexagonal (FCC)</span>
-                                    <span class="text-[10px] opacity-80">Max Density (~74%)</span>
-                                </button>
-                                <button type="button" id="spherePatternGridBtn" onclick="setSpherePattern('grid')" class="px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
-                                    <span>🟦 Cubic Grid</span>
-                                    <span class="text-[10px] opacity-80">Aligned Rows (~52%)</span>
-                                </button>
+                                <button type="button" id="spherePatternFccBtn" onclick="setSpherePattern('fcc')" class="px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-krautz-500/20 border-krautz-500 text-krautz-400"><span>🔷 Hexagonal (FCC)</span><span class="text-[10px] opacity-80">Max Density (~74%)</span></button>
+                                <button type="button" id="spherePatternGridBtn" onclick="setSpherePattern('grid')" class="px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200"><span>🟦 Cubic Grid</span><span class="text-[10px] opacity-80">Aligned Rows (~52%)</span></button>
                             </div>
                             <input type="hidden" id="spherePattern" value="fcc">
                         </div>
                     </div>
-
                     <button onclick="calculateSpheres()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Calculate Spherical Pack</button>
                 </div>
 
-                <!-- Right 3D Sphere Viewport & Stats -->
                 <div class="lg:col-span-8 space-y-5">
                     <div id="sphere-results" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
-
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-sky-400 text-lg">⚪</span>
-                                <div>
-                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Spherical Lattice & Cross-Section</h2>
-                                    <p class="text-[11px] text-slate-400">Use sliders to slice open inner staggered sphere layers</p>
-                                </div>
-                            </div>
+                            <div class="flex items-center space-x-2"><span class="text-sky-400 text-lg">⚪</span><div><h2 class="text-sm font-semibold text-white tracking-wide">3D Spherical Lattice & Cross-Section</h2><p class="text-[11px] text-slate-400">Use sliders to slice open inner staggered sphere layers</p></div></div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <button onclick="resetCamera('sphere')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
-                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
-                                    <input type="checkbox" id="sphereExplode" onchange="update3DScene('sphere')" class="accent-krautz-500">
-                                    <span>Explode</span>
-                                </label>
+                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer"><input type="checkbox" id="sphereExplode" onchange="update3DScene('sphere')" class="accent-krautz-500"><span>Explode</span></label>
                             </div>
                         </div>
-
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
-                            <div>
-                                <div class="flex justify-between text-[11px] mb-1">
-                                    <span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span>
-                                    <span id="sphereSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span>
-                                </div>
-                                <input type="range" id="sphereSliceY" min="1" max="100" value="100" oninput="update3DScene('sphere')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-[11px] mb-1">
-                                    <span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span>
-                                    <span id="sphereSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span>
-                                </div>
-                                <input type="range" id="sphereSliceX" min="1" max="100" value="100" oninput="update3DScene('sphere')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
-                            </div>
+                            <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span><span id="sphereSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span></div><input type="range" id="sphereSliceY" min="1" max="100" value="100" oninput="update3DScene('sphere')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
+                            <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span><span id="sphereSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span></div><input type="range" id="sphereSliceX" min="1" max="100" value="100" oninput="update3DScene('sphere')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                         </div>
-
                         <div id="canvas-sphere" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#38bdf8] inline-block"></span> Packed Sphere</span>
@@ -1020,142 +887,70 @@
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
                             </div>
                         </div>
-
                         <div id="sphere-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 4: IRREGULAR OBJECT SCAN WITH 3D VISUALIZATION & STL/OBJ UPLOAD -->
+        <!-- TAB 4: IRREGULAR OBJECT SCAN -->
         <section id="tab-pack-irregular" class="tab-content space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- Left Inputs -->
                 <div class="lg:col-span-4 space-y-4 bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl">
                     <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
-                        <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
-                            <i data-lucide="scan" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h2 data-i18n="irrTitle" class="text-sm font-bold text-white">Irregular Object Scan 3D</h2>
-                            <p class="text-[11px] text-slate-400">Upload .STL / .OBJ 3D scan or input displacement volume.</p>
-                        </div>
+                        <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400"><i data-lucide="scan" class="w-5 h-5"></i></div>
+                        <div><h2 data-i18n="irrTitle" class="text-sm font-bold text-white">Irregular Object Scan 3D</h2><p class="text-[11px] text-slate-400">Upload .STL / .OBJ 3D scan or input displacement volume.</p></div>
                     </div>
-
                     <div class="space-y-2 bg-slate-950/80 p-3 rounded-xl border border-dashed border-krautz-500/40">
-                        <div class="flex items-center justify-between">
-                            <label class="text-xs font-semibold text-krautz-400 flex items-center gap-1.5">
-                                <i data-lucide="upload-cloud" class="w-4 h-4"></i> Upload 3D Scan (.STL / .OBJ)
-                            </label>
-                            <button type="button" id="clearScanFileBtn" onclick="clearUploadedScan()" class="hidden text-[10px] text-rose-400 hover:underline">Clear File</button>
-                        </div>
+                        <div class="flex items-center justify-between"><label class="text-xs font-semibold text-krautz-400 flex items-center gap-1.5"><i data-lucide="upload-cloud" class="w-4 h-4"></i> Upload 3D Scan (.STL / .OBJ)</label><button type="button" id="clearScanFileBtn" onclick="clearUploadedScan()" class="hidden text-[10px] text-rose-400 hover:underline">Clear File</button></div>
                         <input type="file" id="irr-scan-file" accept=".stl,.obj" onchange="handleScanFileUpload(event)" class="block w-full text-[11px] text-slate-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-krautz-500/20 file:text-krautz-300 hover:file:bg-krautz-500/30 cursor-pointer">
                         <p id="irr-scan-status" class="text-[10px] text-slate-400">Using parametric irregular scan mesh (or upload your own 3D scan).</p>
                     </div>
-
                     <div class="space-y-3">
                         <h3 class="text-xs font-semibold uppercase tracking-wider text-sky-400">1. Scanned Object Parameters</h3>
                         <div class="grid grid-cols-2 gap-2.5">
-                            <div>
-                                <label class="text-[11px] text-slate-400">Scan Volume (cm³)</label>
-                                <input type="number" id="irr-vol" value="12500" min="1" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Contour Void (%)</label>
-                                <input type="number" id="irr-void-pct" value="15" min="0" max="80" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
+                            <div><label class="text-[11px] text-slate-400">Scan Volume (cm³)</label><input type="number" id="irr-vol" value="12500" min="1" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">Contour Void (%)</label><input type="number" id="irr-void-pct" value="15" min="0" max="80" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
                         </div>
                     </div>
-
                     <hr class="border-slate-800">
-
                     <div class="space-y-3">
                         <h3 class="text-xs font-semibold uppercase tracking-wider text-krautz-400">2. Target Master Box Size (cm)</h3>
                         <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="text-[11px] text-slate-400">Length (X)</label>
-                                <input type="number" id="irr-master-l" value="120" min="1" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Width (Z)</label>
-                                <input type="number" id="irr-master-w" value="80" min="1" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Height (Y)</label>
-                                <input type="number" id="irr-master-h" value="100" min="1" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
+                            <div><label class="text-[11px] text-slate-400">Length (X)</label><input type="number" id="irr-master-l" value="120" min="1" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">Width (Z)</label><input type="number" id="irr-master-w" value="80" min="1" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">Height (Y)</label><input type="number" id="irr-master-h" value="100" min="1" oninput="calculateIrregular()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
                         </div>
-
                         <div class="pt-2 space-y-1.5">
                             <label class="block text-xs font-semibold text-slate-200">Base Placement Mode:</label>
                             <div class="grid grid-cols-2 gap-2">
-                                <button type="button" id="irrModePalletBtn" onclick="setPlacementMode('irr', 'pallet')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-amber-600/20 border-amber-500 text-amber-300">
-                                    <span>🪵 Palletized</span>
-                                    <span class="text-[10px] opacity-80">+15 cm Brown Pallet</span>
-                                </button>
-                                <button type="button" id="irrModeFloorBtn" onclick="setPlacementMode('irr', 'floor')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
-                                    <span>🏭 Direct on Floor</span>
-                                    <span class="text-[10px] opacity-80">On Grey Concrete</span>
-                                </button>
+                                <button type="button" id="irrModePalletBtn" onclick="setPlacementMode('irr', 'pallet')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-amber-600/20 border-amber-500 text-amber-300"><span>🪵 Palletized</span><span class="text-[10px] opacity-80">+15 cm Brown Pallet</span></button>
+                                <button type="button" id="irrModeFloorBtn" onclick="setPlacementMode('irr', 'floor')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200"><span>🏭 Direct on Floor</span><span class="text-[10px] opacity-80">On Grey Concrete</span></button>
                             </div>
                             <input type="hidden" id="irrPlacementMode" value="pallet">
                         </div>
-
                         <div class="pt-2 space-y-1.5">
-                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
-                                <label for="irrSheetCarton" class="text-xs text-slate-200 cursor-pointer">Sheet Carton Between Layers</label>
-                                <input type="checkbox" id="irrSheetCarton" onchange="calculateIrregular()" class="w-4 h-4 accent-amber-500 cursor-pointer">
-                            </div>
-                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800">
-                                <label for="irrCornerGuards" class="text-xs text-slate-200 cursor-pointer">Carton Hoeklatten (4 Corners)</label>
-                                <input type="checkbox" id="irrCornerGuards" onchange="calculateIrregular()" class="w-4 h-4 accent-amber-500 cursor-pointer">
-                            </div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800"><label for="irrSheetCarton" class="text-xs text-slate-200 cursor-pointer">Sheet Carton Between Layers</label><input type="checkbox" id="irrSheetCarton" onchange="calculateIrregular()" class="w-4 h-4 accent-amber-500 cursor-pointer"></div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800"><label for="irrCornerGuards" class="text-xs text-slate-200 cursor-pointer">Carton Hoeklatten (4 Corners)</label><input type="checkbox" id="irrCornerGuards" onchange="calculateIrregular()" class="w-4 h-4 accent-amber-500 cursor-pointer"></div>
                         </div>
                     </div>
-
                     <button onclick="calculateIrregular()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Compute Irregular 3D Fit</button>
                 </div>
 
-                <!-- Right 3D Irregular Viewport & Stats -->
                 <div class="lg:col-span-8 space-y-5">
                     <div id="irr-results" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
-
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-purple-400 text-lg">🧬</span>
-                                <div>
-                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Irregular Scan Packing & Cross-Section</h2>
-                                    <p class="text-[11px] text-slate-400">Visualizes non-uniform cargo units inside master envelope</p>
-                                </div>
-                            </div>
+                            <div class="flex items-center space-x-2"><span class="text-purple-400 text-lg">🧬</span><div><h2 class="text-sm font-semibold text-white tracking-wide">3D Irregular Scan Packing & Cross-Section</h2><p class="text-[11px] text-slate-400">Visualizes non-uniform cargo units inside master envelope</p></div></div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <button onclick="resetCamera('irr')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
-                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
-                                    <input type="checkbox" id="irrExplode" onchange="update3DScene('irr')" class="accent-krautz-500">
-                                    <span>Explode</span>
-                                </label>
+                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer"><input type="checkbox" id="irrExplode" onchange="update3DScene('irr')" class="accent-krautz-500"><span>Explode</span></label>
                             </div>
                         </div>
-
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
-                            <div>
-                                <div class="flex justify-between text-[11px] mb-1">
-                                    <span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span>
-                                    <span id="irrSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span>
-                                </div>
-                                <input type="range" id="irrSliceY" min="1" max="100" value="100" oninput="update3DScene('irr')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-[11px] mb-1">
-                                    <span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span>
-                                    <span id="irrSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span>
-                                </div>
-                                <input type="range" id="irrSliceX" min="1" max="100" value="100" oninput="update3DScene('irr')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
-                            </div>
+                            <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span><span id="irrSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span></div><input type="range" id="irrSliceY" min="1" max="100" value="100" oninput="update3DScene('irr')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
+                            <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span><span id="irrSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span></div><input type="range" id="irrSliceX" min="1" max="100" value="100" oninput="update3DScene('irr')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                         </div>
-
                         <div id="canvas-irr" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8b5cf6] inline-block"></span> Scanned Unit</span>
@@ -1163,7 +958,6 @@
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
                             </div>
                         </div>
-
                         <div id="irr-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
                     </div>
                 </div>
@@ -1173,127 +967,53 @@
         <!-- TAB 5: TRUCK / REEFER / AIRFREIGHT ULD CONTAINER 3D LOAD PLAN -->
         <section id="tab-pack-truck" class="tab-content space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- Left Panel: Vehicle / Reefer / ULD Specs -->
                 <div class="lg:col-span-4 space-y-4 bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl">
                     <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
-                        <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
-                            <i data-lucide="truck" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h2 data-i18n="truckTitle" class="text-sm font-bold text-white">Truck, Reefer & Air ULD 3D Load</h2>
-                            <p class="text-[11px] text-slate-400">Column stacking & Center of Gravity (CoG) check.</p>
-                        </div>
+                        <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400"><i data-lucide="truck" class="w-5 h-5"></i></div>
+                        <div><h2 data-i18n="truckTitle" class="text-sm font-bold text-white">Truck, Reefer & Air ULD 3D Load</h2><p class="text-[11px] text-slate-400">Column stacking & Center of Gravity (CoG) check.</p></div>
                     </div>
-
                     <div class="space-y-2">
                         <label class="text-xs font-semibold uppercase tracking-wider text-krautz-400">1. Road, Reefer & Air ULD Presets</label>
                         <div class="grid grid-cols-2 gap-2">
-                            <button type="button" onclick="setTruckPreset(1360, 248, 270, 24000)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
-                                🚛 13.6m Euro-Trailer<br><span class="text-[10px] text-slate-400">1360×248×270 cm</span>
-                            </button>
-                            <button type="button" onclick="setTruckPreset(1203, 235, 269, 26000)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
-                                ❄️ 40' HC Reefer<br><span class="text-[10px] text-slate-400">1203×235×269 cm</span>
-                            </button>
-                            <button type="button" onclick="setTruckPreset(545, 229, 226, 21000)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
-                                🧊 20' Std Reefer<br><span class="text-[10px] text-slate-400">545×229×226 cm</span>
-                            </button>
-                            <button type="button" onclick="setTruckPreset(610, 245, 240, 3500)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
-                                🚚 7.5T Box Truck<br><span class="text-[10px] text-slate-400">610×245×240 cm</span>
-                            </button>
-                            <button type="button" onclick="setTruckPreset(317.5, 243.8, 244, 6800)" class="p-2 bg-cyan-950/40 hover:bg-cyan-900/40 border border-cyan-500/30 rounded-xl text-[11px] font-medium text-cyan-200 text-left transition">
-                                ✈️ PMC ULD (Main Deck)<br><span class="text-[10px] text-cyan-400/80">317.5×243.8×244 cm</span>
-                            </button>
-                            <button type="button" onclick="setTruckPreset(317.5, 243.8, 160, 4625)" class="p-2 bg-cyan-950/40 hover:bg-cyan-900/40 border border-cyan-500/30 rounded-xl text-[11px] font-medium text-cyan-200 text-left transition">
-                                🛫 PMC ULD (Lower Deck)<br><span class="text-[10px] text-cyan-400/80">317.5×243.8×160 cm</span>
-                            </button>
+                            <button type="button" onclick="setTruckPreset(1360, 248, 270, 24000)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">🚛 13.6m Euro-Trailer<br><span class="text-[10px] text-slate-400">1360×248×270 cm</span></button>
+                            <button type="button" onclick="setTruckPreset(1203, 235, 269, 26000)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">❄️ 40' HC Reefer<br><span class="text-[10px] text-slate-400">1203×235×269 cm</span></button>
+                            <button type="button" onclick="setTruckPreset(545, 229, 226, 21000)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">🧊 20' Std Reefer<br><span class="text-[10px] text-slate-400">545×229×226 cm</span></button>
+                            <button type="button" onclick="setTruckPreset(610, 245, 240, 3500)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">🚚 7.5T Box Truck<br><span class="text-[10px] text-slate-400">610×245×240 cm</span></button>
+                            <button type="button" onclick="setTruckPreset(317.5, 243.8, 244, 6800)" class="p-2 bg-cyan-950/40 hover:bg-cyan-900/40 border border-cyan-500/30 rounded-xl text-[11px] font-medium text-cyan-200 text-left transition">✈️ PMC ULD (Main Deck)<br><span class="text-[10px] text-cyan-400/80">317.5×243.8×244 cm</span></button>
+                            <button type="button" onclick="setTruckPreset(317.5, 243.8, 160, 4625)" class="p-2 bg-cyan-950/40 hover:bg-cyan-900/40 border border-cyan-500/30 rounded-xl text-[11px] font-medium text-cyan-200 text-left transition">🛫 PMC ULD (Lower Deck)<br><span class="text-[10px] text-cyan-400/80">317.5×243.8×160 cm</span></button>
                         </div>
                     </div>
-
                     <hr class="border-slate-800">
-
                     <div class="space-y-3">
                         <h3 class="text-xs font-semibold uppercase tracking-wider text-sky-400">2. Inner Trailer / ULD Dimensions</h3>
                         <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="text-[11px] text-slate-400">Length (X)</label>
-                                <input type="number" id="tr-l" value="1360" min="100" step="0.5" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Width (Z)</label>
-                                <input type="number" id="tr-w" value="248" min="100" step="0.5" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400">Height (Y)</label>
-                                <input type="number" id="tr-h" value="270" min="100" step="0.5" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                            </div>
+                            <div><label class="text-[11px] text-slate-400">Length (X)</label><input type="number" id="tr-l" value="1360" min="100" step="0.5" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">Width (Z)</label><input type="number" id="tr-w" value="248" min="100" step="0.5" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
+                            <div><label class="text-[11px] text-slate-400">Height (Y)</label><input type="number" id="tr-h" value="270" min="100" step="0.5" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
                         </div>
-
-                        <div>
-                            <label class="text-[11px] text-slate-400 block mb-1">Max Vehicle / ULD Legal Payload (kg)</label>
-                            <input type="number" id="tr-max-kg" value="24000" min="100" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
-                        </div>
-
+                        <div><label class="text-[11px] text-slate-400 block mb-1">Max Vehicle / ULD Legal Payload (kg)</label><input type="number" id="tr-max-kg" value="24000" min="100" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm font-semibold"></div>
                         <div class="pt-2 space-y-2">
-                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800">
-                                <div>
-                                    <label for="tr-double-stack" class="text-xs font-medium text-slate-200 block cursor-pointer">Allow Double-Stacking Pallets</label>
-                                    <span class="text-[10px] text-slate-400">Front-to-back column stacking if height fits</span>
-                                </div>
-                                <input type="checkbox" id="tr-double-stack" checked onchange="calculateTruckLoad()" class="w-4 h-4 accent-krautz-500 cursor-pointer">
-                            </div>
-                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800">
-                                <div>
-                                    <label for="tr-rotate-pallets" class="text-xs font-medium text-slate-200 block cursor-pointer">Auto-Rotate Pallets (80×120 vs 120×80)</label>
-                                    <span class="text-[10px] text-slate-400">Maximizes floor pallet count</span>
-                                </div>
-                                <input type="checkbox" id="tr-rotate-pallets" checked onchange="calculateTruckLoad()" class="w-4 h-4 accent-krautz-500 cursor-pointer">
-                            </div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800"><div><label for="tr-double-stack" class="text-xs font-medium text-slate-200 block cursor-pointer">Allow Double-Stacking Pallets</label><span class="text-[10px] text-slate-400">Front-to-back column stacking if height fits</span></div><input type="checkbox" id="tr-double-stack" checked onchange="calculateTruckLoad()" class="w-4 h-4 accent-krautz-500 cursor-pointer"></div>
+                            <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800"><div><label for="tr-rotate-pallets" class="text-xs font-medium text-slate-200 block cursor-pointer">Auto-Rotate Pallets (80×120 vs 120×80)</label><span class="text-[10px] text-slate-400">Maximizes floor pallet count</span></div><input type="checkbox" id="tr-rotate-pallets" checked onchange="calculateTruckLoad()" class="w-4 h-4 accent-krautz-500 cursor-pointer"></div>
                         </div>
                     </div>
-
                     <button onclick="calculateTruckLoad()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Recalculate Fleet Load</button>
                 </div>
 
-                <!-- Right Panel: Truck KPIs & 3D Trailer Viewport -->
                 <div class="lg:col-span-8 space-y-5">
                     <div id="truck-results" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
-
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-sky-400 text-lg">🚛</span>
-                                <div>
-                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Trailer / ULD Pallet Plan & Center of Gravity (CoG)</h2>
-                                    <p class="text-[11px] text-slate-400">Amber vertical beam marks Center of Gravity (CoG) for safe axle & aircraft balance</p>
-                                </div>
-                            </div>
+                            <div class="flex items-center space-x-2"><span class="text-sky-400 text-lg">🚛</span><div><h2 class="text-sm font-semibold text-white tracking-wide">3D Trailer / ULD Pallet Plan & Center of Gravity (CoG)</h2><p class="text-[11px] text-slate-400">Amber vertical beam marks Center of Gravity (CoG) for safe axle & aircraft balance</p></div></div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <button onclick="resetCamera('truck')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
-                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
-                                    <input type="checkbox" id="truckExplode" onchange="updateTruck3DScene()" class="accent-krautz-500">
-                                    <span>Explode</span>
-                                </label>
+                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer"><input type="checkbox" id="truckExplode" onchange="updateTruck3DScene()" class="accent-krautz-500"><span>Explode</span></label>
                             </div>
                         </div>
-
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
-                            <div>
-                                <div class="flex justify-between text-[11px] mb-1">
-                                    <span class="text-slate-400 font-medium">Tier Cutaway (Height)</span>
-                                    <span id="truckSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span>
-                                </div>
-                                <input type="range" id="truckSliceY" min="1" max="100" value="100" oninput="updateTruck3DScene()" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-[11px] mb-1">
-                                    <span class="text-slate-400 font-medium">Trailer Length Cut (X-Plane)</span>
-                                    <span id="truckSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span>
-                                </div>
-                                <input type="range" id="truckSliceX" min="1" max="100" value="100" oninput="updateTruck3DScene()" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg">
-                            </div>
+                            <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Tier Cutaway (Height)</span><span id="truckSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span></div><input type="range" id="truckSliceY" min="1" max="100" value="100" oninput="updateTruck3DScene()" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
+                            <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Trailer Length Cut (X-Plane)</span><span id="truckSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span></div><input type="range" id="truckSliceX" min="1" max="100" value="100" oninput="updateTruck3DScene()" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                         </div>
-
                         <div id="canvas-truck" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Palletized Cargo</span>
@@ -1301,7 +1021,6 @@
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b] inline-block"></span> Center of Gravity (CoG)</span>
                             </div>
                         </div>
-
                         <div id="truck-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
                     </div>
                 </div>
@@ -1311,7 +1030,6 @@
         <!-- TAB 6: WAREHOUSE ROI, AIRFREIGHT DIM & CO2 SUSTAINABILITY -->
         <section id="tab-pack-thermal" class="tab-content space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
                 <div class="lg:col-span-4 space-y-4">
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex items-center gap-2 border-b border-slate-800 pb-2.5">
@@ -1319,39 +1037,19 @@
                             <h3 class="text-sm font-bold text-white">Warehouse & Airfreight DIM ROI Settings</h3>
                         </div>
                         <div class="space-y-3">
-                            <div>
-                                <label class="text-[11px] text-slate-400 block mb-1">Shipping Mode</label>
-                                <select id="roi-freight-mode" onchange="calculateThermalAndRoi()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs font-semibold text-white">
-                                    <option value="air">✈️ Airfreight (DIM /6000)</option>
-                                    <option value="road">🚛 Road / Sea LTL</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[11px] text-slate-400 block mb-1">Freight Rate (€ / kg)</label>
-                                <input type="number" id="roi-rate-kg" value="2.40" min="0.1" step="0.1" oninput="calculateThermalAndRoi()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs font-semibold text-white">
-                            </div>
+                            <div><label class="text-[11px] text-slate-400 block mb-1">Shipping Mode</label><select id="roi-freight-mode" onchange="calculateThermalAndRoi()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs font-semibold text-white"><option value="air">✈️ Airfreight (DIM /6000)</option><option value="road">🚛 Road / Sea LTL</option></select></div>
+                            <div><label class="text-[11px] text-slate-400 block mb-1">Freight Rate (€ / kg)</label><input type="number" id="roi-rate-kg" value="2.40" min="0.1" step="0.1" oninput="calculateThermalAndRoi()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs font-semibold text-white"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="lg:col-span-8 space-y-5">
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <i data-lucide="bar-chart-3" class="w-4 h-4 text-emerald-400"></i> Flat-Packed Temax vs. Rigid EPS Foam ROI
-                            </h3>
-                            <span class="text-[11px] text-slate-400">Based on Order Quantity</span>
-                        </div>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5"><h3 class="text-sm font-bold text-white flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4 text-emerald-400"></i> Flat-Packed Temax vs. Rigid EPS Foam ROI</h3><span class="text-[11px] text-slate-400">Based on Order Quantity</span></div>
                         <div id="roi-comparison-panel" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
                     </div>
-
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <i data-lucide="scissors" class="w-4 h-4 text-sky-400"></i> Master Roll Yield Summary (1.50m Roll)
-                            </h3>
-                            <span class="text-[11px] text-slate-400">2-Blanket Cross-Wrap System</span>
-                        </div>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5"><h3 class="text-sm font-bold text-white flex items-center gap-2"><i data-lucide="scissors" class="w-4 h-4 text-sky-400"></i> Master Roll Yield Summary (1.50m Roll)</h3><span class="text-[11px] text-slate-400">2-Blanket Cross-Wrap System</span></div>
                         <div id="cutsheet-panel" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
                     </div>
                 </div>
@@ -1375,30 +1073,25 @@
             </div>
 
             <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="text-[11px] text-slate-400 block mb-1">Company Name</label>
-                    <input type="text" id="rfqCompany" placeholder="e.g. Pharma Logistics NV" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-krautz-500">
-                </div>
-                <div>
-                    <label class="text-[11px] text-slate-400 block mb-1">Contact Email</label>
-                    <input type="email" id="rfqEmail" placeholder="name@company.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-krautz-500">
-                </div>
+                <div><label class="text-[11px] text-slate-400 block mb-1">Company Name</label><input type="text" id="rfqCompany" placeholder="e.g. Pharma Logistics NV" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></div>
+                <div><label class="text-[11px] text-slate-400 block mb-1">Contact Email</label><input type="email" id="rfqEmail" placeholder="name@company.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></div>
+            </div>
+
+            <div>
+                <label class="text-[11px] text-slate-400 block mb-1">Optional Direct Webhook Endpoint (Leave blank for Email Client)</label>
+                <input type="url" id="rfqWebhookUrl" placeholder="https://hooks.zapier.com/... or Formspree URL" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-cyan-300">
             </div>
 
             <div>
                 <label class="text-[11px] text-slate-400 block mb-1">Generated CCRM & Packaging Specification</label>
-                <textarea id="rfqSummaryText" rows="11" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-krautz-500"></textarea>
+                <textarea id="rfqSummaryText" rows="9" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200"></textarea>
             </div>
 
             <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
-                <button type="button" onclick="copyRfqText()" id="copyRfqBtn" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 rounded-xl border border-slate-700 transition">
-                    📋 Copy Spec to Clipboard
-                </button>
+                <button type="button" onclick="copyRfqText()" id="copyRfqBtn" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 rounded-xl border border-slate-700 transition">📋 Copy Spec to Clipboard</button>
                 <div class="flex items-center gap-2">
                     <button type="button" onclick="closeRfqModal()" class="px-3 py-2 text-xs text-slate-400 hover:text-white">Cancel</button>
-                    <button type="button" onclick="sendRfqEmail()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white rounded-xl shadow transition">
-                        Send RFQ to Krautz-Temax →
-                    </button>
+                    <button type="button" onclick="sendRfqEmail()" id="sendRfqSubmitBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white rounded-xl shadow transition">Send RFQ to Krautz-Temax →</button>
                 </div>
             </div>
         </div>
@@ -1409,7 +1102,7 @@
         <div>© 2026 Krautz-Temax NV. All rights reserved. CCRM Cold Chain Risk Management & 3D Thermal Packaging Technology.</div>
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
-    <!-- JavaScript Application: Part 2A (Temax Insulation Request + CCRM Physics Engine + 3D Blanket SOP Animation) -->
+<!-- JavaScript Application: Part 2A (4-Language I18N, Saved Profiles, CCRM Engine, Temp Chart & 3D SOP Animation) -->
     <script>
         lucide.createIcons();
 
@@ -1419,7 +1112,7 @@
         const CORNER_THICKNESS = 0.45;
         const CORNER_WING = 5.5;
         const MASTER_ROLL_WIDTH_M = 1.50;
-        const BLANKET_OVERLAP_CM = 15; // 15 cm overlap per side for thermal seal
+        const BLANKET_OVERLAP_CM = 15;
 
         const THERMAL_SPECS = {
             none:      { key: 'none', name: 'None (Uninsulated)', wallCm: 0.0, holdLabel: 'Uninsulated', blanketKg: 0.0, rValue: 0.15, flatFoldRatio: 1.0 },
@@ -1435,6 +1128,8 @@
             frozen:  { name: '-20°C Frozen (Gel / Dry Ice)', coolantRatio: 0.18, coolantDensityKgPerL: 1.15, latentKjPerKg: 335 }
         };
 
+        let currentLang = 'en';
+
         const I18N = {
             en: {
                 headerSubtitle: 'Temax Insulation Request, CCRM Thermal Engine & 3D Palletizer',
@@ -1448,6 +1143,37 @@
                 btnShare: 'Form Link',
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Request Quote',
+                ccrmBannerTitle: 'TEMAX INSULATION REQUEST (Dok.Nr. F05.008) → CCRM CALCULATION SHEET',
+                ccrmBannerDesc: 'Send the online request form hyperlink to your customer, or fill in received customer data to run CCRM & 3D Roll-Cut SOPs.',
+                btnSaveProfile: 'Save Profile',
+                btnCopyFormLink: 'Copy Customer Form Hyperlink',
+                btnExportCsv: 'Export CCRM (.CSV)',
+                lblCustomerInputForm: 'Customer Input Form',
+                lblTemaxRequestTitle: 'Temax Insulation Request Form',
+                btnPage1: 'Page 1: Client Info',
+                btnPage2: 'Page 2: Shipment & Temp',
+                lblCompany: 'Company *',
+                lblContactName: 'Contact Name *',
+                lblAddress: 'Address',
+                lblPlace: 'Place / Postal Code & City',
+                lblEmail: 'Email Address *',
+                lblPhone: 'Tel Number *',
+                lblShipRef: 'Your Shipment Reference *',
+                btnNextPage2: 'Next: Page 2 (Shipment & Temperatures) →',
+                sec1ShipDetails: '1. Shipment Details',
+                lblTotalWeight: 'Total Weight (kg)',
+                sec2TempDetails: '2. Product Temperature & Specific Heat (c)',
+                sec3EnvProfile: '3. Environment Profile',
+                lblTempCurveTitle: 'Transit Temperature Curve (Summer vs. Limits)',
+                lblCcrmSheetTitle: 'CCRM Internal Calculation Sheet (Page 1 & 2 Output)',
+                lblCalcDate: 'Calculation Date',
+                lblCalcRef: 'Calculation Ref #',
+                lblLinkedShipRef: 'Customer Ship Ref',
+                lblHandledBy: 'Handled By (Manager)',
+                lblRecommendedTemax: 'Recommended Krautz-Temax Insulation',
+                btnApplyTo3D: 'Apply to 3D Pallet & Cut-Sheet ✓',
+                lblTwoBlanketsTitle: '2-Blanket Roll Cut Dimensions (From 1.50m Roll)',
+                lblAnimatedSopTitle: '3D Animated SOP: Fixing the 2 Blankets on Product',
                 outerTitle: 'Outer Packaging / Load Size',
                 innerTitle: 'Inner Packages, Weight & Order',
                 puzzleTitle: 'Multi-Box 3D Volume Puzzle',
@@ -1474,7 +1200,21 @@
                 kpiMatrix: '3D GRID MATRIX',
                 viewportTitle: '3D Perspective & Cross-Section',
                 btnResetView: 'Reset View',
-                lblExplode: 'Explode'
+                lblExplode: 'Explode',
+                blanket1Title: 'BLANKET 1 — Lengthwise Wrap',
+                blanket1Desc: 'Covers Front + Top + Back + 15cm floor tuck',
+                blanket2Title: 'BLANKET 2 — Crosswise Wrap',
+                blanket2Desc: 'Covers Left + Top + Right + locks Blanket 1',
+                loggerTitle: 'QA Data Logger Placement:',
+                loggerText: 'Place primary logger at geometric top-center of cargo (warmest air zone). Never place sensors directly against PCM bricks or dry ice.',
+                sopStages: [
+                    'Step 1/5: Lay base thermal pad on EPAL pallet',
+                    'Step 2/5: Stack temperature-sensitive product load',
+                    'Step 3/5: Drape Blanket 1 lengthwise (Front → Top → Back)',
+                    'Step 4/5: Cross-wrap Blanket 2 perpendicular (Left → Top → Right)',
+                    'Step 5/5: Seal 15cm overlap flaps with foil tape & stretch-wrap'
+                ],
+                sopShort: ['1. Base Pad', '2. Load Cargo', '3. Blanket 1', '4. Blanket 2', '5. Seal Tape']
             },
             nl: {
                 headerSubtitle: 'Temax Isolatie Aanvraagformulier, CCRM & 3D Palletengine',
@@ -1488,6 +1228,37 @@
                 btnShare: 'Formulier Link',
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Offerte Aanvragen',
+                ccrmBannerTitle: 'TEMAX ISOLATIE AANVRAAG (Dok.Nr. F05.008) → CCRM BEREKENINGSBLAD',
+                ccrmBannerDesc: 'Stuur de online formulierlink naar uw klant of vul de klantgegevens in voor CCRM & 3D snij-instructies.',
+                btnSaveProfile: 'Profiel Opslaan',
+                btnCopyFormLink: 'Kopieer Klantformulier Link',
+                btnExportCsv: 'Exporteer CCRM (.CSV)',
+                lblCustomerInputForm: 'Klant Invoerformulier',
+                lblTemaxRequestTitle: 'Temax Isolatie Aanvraagformulier',
+                btnPage1: 'Pagina 1: Klantgegevens',
+                btnPage2: 'Pagina 2: Zending & Temp',
+                lblCompany: 'Bedrijfsnaam *',
+                lblContactName: 'Contactpersoon *',
+                lblAddress: 'Adres',
+                lblPlace: 'Postcode & Plaats',
+                lblEmail: 'E-mailadres *',
+                lblPhone: 'Telefoonnummer *',
+                lblShipRef: 'Uw Zendingsreferentie *',
+                btnNextPage2: 'Volgende: Pagina 2 (Zending & Temperaturen) →',
+                sec1ShipDetails: '1. Zendingsdetails',
+                lblTotalWeight: 'Totaalgewicht (kg)',
+                sec2TempDetails: '2. Producttemperatuur & Soortelijke Warmte (c)',
+                sec3EnvProfile: '3. Omgevingsprofiel',
+                lblTempCurveTitle: 'Transport Temperatuurcurve (Zomer vs. Limieten)',
+                lblCcrmSheetTitle: 'CCRM Intern Berekeningsblad (Pagina 1 & 2 Resultaat)',
+                lblCalcDate: 'Berekeningsdatum',
+                lblCalcRef: 'Berekening Ref #',
+                lblLinkedShipRef: 'Klant Zendingsref',
+                lblHandledBy: 'Behandeld Door (Manager)',
+                lblRecommendedTemax: 'Aanbevolen Krautz-Temax Isolatie',
+                btnApplyTo3D: 'Toepassen op 3D Pallet & Snijplan ✓',
+                lblTwoBlanketsTitle: '2-Dekens Rol-Snijmaten (Uit 1,50m Rol)',
+                lblAnimatedSopTitle: '3D Geanimeerde SOP: Bevestiging van de 2 Dekens',
                 outerTitle: 'Buitenverpakking / Palletmaat',
                 innerTitle: 'Binnendozen, Gewicht & Order',
                 puzzleTitle: 'Multi-Doos 3D Volume Puzzel',
@@ -1514,7 +1285,21 @@
                 kpiMatrix: '3D RASTERMATRIX',
                 viewportTitle: '3D Perspectief & Doorsnede',
                 btnResetView: 'Reset Weergave',
-                lblExplode: 'Explodeer'
+                lblExplode: 'Explodeer',
+                blanket1Title: 'DEKEN 1 — Lengte-omslag',
+                blanket1Desc: 'Bedekt Voor + Boven + Achter + 15cm vloeroverlap',
+                blanket2Title: 'DEKEN 2 — Dwars-omslag',
+                blanket2Desc: 'Bedekt Links + Boven + Rechts + sluit Deken 1 af',
+                loggerTitle: 'QA Datalogger Plaatsing:',
+                loggerText: 'Plaats de datalogger midden-boven op de lading (warmste luchtzone). Plaats sensoren nooit direct tegen PCM-koelelementen of droogijs.',
+                sopStages: [
+                    'Stap 1/5: Leg thermische vloerpad op de EPAL-pallet',
+                    'Stap 2/5: Stapel de temperatuurgevoelige lading',
+                    'Stap 3/5: Plaats Deken 1 in de lengte (Voor → Boven → Achter)',
+                    'Stap 4/5: Wikkel Deken 2 haaks erover (Links → Boven → Rechts)',
+                    'Stap 5/5: Tape de 15cm naden dicht met folietape & wikkelfolie'
+                ],
+                sopShort: ['1. Vloerpad', '2. Lading', '3. Deken 1', '4. Deken 2', '5. Folietape']
             },
             de: {
                 headerSubtitle: 'Temax Isolieranfrage, CCRM-Berechnung & 3D-Palettierung',
@@ -1528,6 +1313,37 @@
                 btnShare: 'Formular-Link',
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Angebot Anfordern',
+                ccrmBannerTitle: 'TEMAX ISOLIERANFRAGE (Dok.Nr. F05.008) → CCRM-BERECHNUNGSBLATT',
+                ccrmBannerDesc: 'Senden Sie den Online-Formularlink an Ihren Kunden oder geben Sie Kundendaten für CCRM & 3D-Zuschnitt ein.',
+                btnSaveProfile: 'Profil Speichern',
+                btnCopyFormLink: 'Kundenformular-Link Kopieren',
+                btnExportCsv: 'CCRM Exportieren (.CSV)',
+                lblCustomerInputForm: 'Kunden-Eingabeformular',
+                lblTemaxRequestTitle: 'Temax Isolieranfrage-Formular',
+                btnPage1: 'Seite 1: Kundendaten',
+                btnPage2: 'Seite 2: Sendung & Temp',
+                lblCompany: 'Firma *',
+                lblContactName: 'Ansprechpartner *',
+                lblAddress: 'Adresse',
+                lblPlace: 'PLZ & Ort',
+                lblEmail: 'E-Mail-Adresse *',
+                lblPhone: 'Telefonnummer *',
+                lblShipRef: 'Ihre Sendungsreferenz *',
+                btnNextPage2: 'Weiter: Seite 2 (Sendung & Temperaturen) →',
+                sec1ShipDetails: '1. Sendungsdetails',
+                lblTotalWeight: 'Gesamtgewicht (kg)',
+                sec2TempDetails: '2. Produkttemperatur & Spez. Wärmekapazität (c)',
+                sec3EnvProfile: '3. Umgebungsprofil',
+                lblTempCurveTitle: 'Transport-Temperaturkurve (Sommer vs. Grenzwerte)',
+                lblCcrmSheetTitle: 'CCRM Internes Berechnungsblatt (Seite 1 & 2 Ergebnis)',
+                lblCalcDate: 'Berechnungsdatum',
+                lblCalcRef: 'Berechnung Ref #',
+                lblLinkedShipRef: 'Kunden-Sendungsref',
+                lblHandledBy: 'Bearbeitet Von (Manager)',
+                lblRecommendedTemax: 'Empfohlene Krautz-Temax Isolierung',
+                btnApplyTo3D: 'Auf 3D-Palette & Zuschnitt Anwenden ✓',
+                lblTwoBlanketsTitle: '2-Hauben Rollenzuschnitt (Aus 1,50m Rolle)',
+                lblAnimatedSopTitle: '3D-Animierte SOP: Fixierung der 2 Thermohauben',
                 outerTitle: 'Außenverpackung / Palettenmaß',
                 innerTitle: 'Innenkartons, Gewicht & Auftrag',
                 puzzleTitle: 'Mehrboxen 3D Volumen-Puzzle',
@@ -1554,7 +1370,21 @@
                 kpiMatrix: '3D-RASTERMATRIX',
                 viewportTitle: '3D-Perspektive & Querschnitt',
                 btnResetView: 'Ansicht Zurücksetzen',
-                lblExplode: 'Explodieren'
+                lblExplode: 'Explodieren',
+                blanket1Title: 'DECKE 1 — Längswicklung',
+                blanket1Desc: 'Bedeckt Vorne + Oben + Hinten + 15cm Bodenüberlappung',
+                blanket2Title: 'DECKE 2 — Querwicklung',
+                blanket2Desc: 'Bedeckt Links + Oben + Rechts + fixiert Decke 1',
+                loggerTitle: 'QA-Datenlogger-Platzierung:',
+                loggerText: 'Platzieren Sie den Datenlogger mittig oben auf der Ladung (wärmste Luftzone). Sensoren niemals direkt auf PCM-Akkus oder Trockeneis legen.',
+                sopStages: [
+                    'Schritt 1/5: Thermobodenmatte auf EPAL-Palette legen',
+                    'Schritt 2/5: Temperaturempfindliche Ware stapeln',
+                    'Schritt 3/5: Decke 1 längs überlegen (Vorne → Oben → Hinten)',
+                    'Schritt 4/5: Decke 2 quer darüberwickeln (Links → Oben → Rechts)',
+                    'Schritt 5/5: 15cm Überlappung mit Aluklebeband & Stretchfolie sichern'
+                ],
+                sopShort: ['1. Bodenmatte', '2. Ladung', '3. Decke 1', '4. Decke 2', '5. Klebeband']
             },
             fr: {
                 headerSubtitle: 'Demande Isolation Temax, Calcul CCRM & Palettisation 3D',
@@ -1568,6 +1398,37 @@
                 btnShare: 'Lien Formulaire',
                 btnSpec: 'Fiche PDF',
                 btnQuote: 'Demander Devis',
+                ccrmBannerTitle: 'DEMANDE ISOLATION TEMAX (Dok.Nr. F05.008) → FEUILLE DE CALCUL CCRM',
+                ccrmBannerDesc: 'Envoyez le lien du formulaire en ligne au client ou saisissez ses données pour lancer le calcul CCRM & SOP 3D.',
+                btnSaveProfile: 'Sauver Profil',
+                btnCopyFormLink: 'Copier Lien Formulaire Client',
+                btnExportCsv: 'Exporter CCRM (.CSV)',
+                lblCustomerInputForm: 'Formulaire Client',
+                lblTemaxRequestTitle: 'Formulaire Demande Isolation Temax',
+                btnPage1: 'Page 1 : Infos Client',
+                btnPage2: 'Page 2 : Envoi & Temp',
+                lblCompany: 'Société *',
+                lblContactName: 'Nom du Contact *',
+                lblAddress: 'Adresse',
+                lblPlace: 'Code Postal & Ville',
+                lblEmail: 'Adresse E-mail *',
+                lblPhone: 'Téléphone *',
+                lblShipRef: 'Votre Référence Expédition *',
+                btnNextPage2: 'Suivant : Page 2 (Expédition & Températures) →',
+                sec1ShipDetails: '1. Détails de l’Expédition',
+                lblTotalWeight: 'Poids Total (kg)',
+                sec2TempDetails: '2. Températures Produit & Chaleur Spécifique (c)',
+                sec3EnvProfile: '3. Profil Environnemental',
+                lblTempCurveTitle: 'Courbe de Température Transit (Été vs. Limites)',
+                lblCcrmSheetTitle: 'Feuille de Calcul Interne CCRM (Résultat Pages 1 & 2)',
+                lblCalcDate: 'Date de Calcul',
+                lblCalcRef: 'Réf. Calcul #',
+                lblLinkedShipRef: 'Réf. Expédition Client',
+                lblHandledBy: 'Traité Par (Responsable)',
+                lblRecommendedTemax: 'Isolation Krautz-Temax Recommandée',
+                btnApplyTo3D: 'Appliquer à la Palette 3D & Découpe ✓',
+                lblTwoBlanketsTitle: 'Dimensions de Coupe 2 Housses (Rouleau 1,50m)',
+                lblAnimatedSopTitle: 'SOP Animée 3D : Fixation des 2 Housses sur Produit',
                 outerTitle: 'Emballage Extérieur / Palette',
                 innerTitle: 'Colis Internes, Poids & Commande',
                 puzzleTitle: 'Puzzle Volume 3D Multi-Colis',
@@ -1594,17 +1455,33 @@
                 kpiMatrix: 'MATRICE GRILLE 3D',
                 viewportTitle: 'Perspective 3D & Coupe Transversale',
                 btnResetView: 'Réinitialiser Vue',
-                lblExplode: 'Éclater'
+                lblExplode: 'Éclater',
+                blanket1Title: 'HOUSSE 1 — Enveloppement Longitudinal',
+                blanket1Desc: 'Couvre Avant + Dessus + Arrière + rabat 15cm au sol',
+                blanket2Title: 'HOUSSE 2 — Enveloppement Transversal',
+                blanket2Desc: 'Couvre Gauche + Dessus + Droite + verrouille Housse 1',
+                loggerTitle: 'Position Enregistreur QA :',
+                loggerText: 'Placez l’enregistreur au centre supérieur de la charge (zone la plus chaude). Ne jamais poser de sonde directement sur les plaques PCM ou la glace carbonique.',
+                sopStages: [
+                    'Étape 1/5 : Poser le tapis isolant de base sur la palette EPAL',
+                    'Étape 2/5 : Empiler les colis thermosensibles',
+                    'Étape 3/5 : Draper la Housse 1 en longueur (Avant → Dessus → Arrière)',
+                    'Étape 4/5 : Croiser la Housse 2 perpendiculairement (Gauche → Dessus → Droite)',
+                    'Étape 5/5 : Sceller les rabats de 15cm au ruban alu et filmer'
+                ],
+                sopShort: ['1. Base Isolante', '2. Colis', '3. Housse 1', '4. Housse 2', '5. Ruban Alu']
             }
         };
 
         function applyLanguage(lang) {
-            const dict = I18N[lang] || I18N.en;
-            document.getElementById('headerSubtitle').innerText = dict.headerSubtitle;
+            currentLang = I18N[lang] ? lang : 'en';
+            const dict = I18N[currentLang];
+            document.documentElement.lang = currentLang;
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (dict[key]) el.innerText = dict[key];
             });
+            calculateAll();
         }
 
         const DEFAULT_10_STEPS = [
@@ -1635,9 +1512,68 @@
         let customScanGeometry = null;
         let customScanBounds = null;
 
-        // 3D SOP Animation State
         let sopAnimPlaying = true;
         let sopAnimProgress = 0;
+
+        // Saved Shipment Profiles (localStorage)
+        function refreshSavedProfilesDropdown() {
+            const sel = document.getElementById('savedProfilesSelect');
+            if (!sel) return;
+            const list = JSON.parse(localStorage.getItem('krautz_ccrm_profiles') || '[]');
+            sel.innerHTML = `<option value="">Saved Profiles (${list.length})...</option>` +
+                list.map((p, idx) => `<option value="${idx}">${p.label}</option>`).join('');
+        }
+
+        function saveCurrentProfile() {
+            const company = document.getElementById('req-company')?.value || 'Client';
+            const shipRef = document.getElementById('req-ship-ref')?.value || 'Ref';
+            const label = `${company} — ${shipRef}`;
+            const list = JSON.parse(localStorage.getItem('krautz_ccrm_profiles') || '[]');
+            const snapshot = {
+                label,
+                company,
+                contact: document.getElementById('req-contact').value,
+                address: document.getElementById('req-address').value,
+                place: document.getElementById('req-place').value,
+                email: document.getElementById('req-email').value,
+                phone: document.getElementById('req-phone').value,
+                shipRef,
+                l: document.getElementById('ccrm-l').value,
+                w: document.getElementById('ccrm-w').value,
+                h: document.getElementById('ccrm-h').value,
+                weight: document.getElementById('ccrm-weight').value,
+                startTemp: document.getElementById('ccrm-start-temp').value,
+                minTemp: document.getElementById('ccrm-min-temp').value,
+                maxTemp: document.getElementById('ccrm-max-temp').value,
+                cp: document.getElementById('ccrm-cp').value
+            };
+            list.unshift(snapshot);
+            localStorage.setItem('krautz_ccrm_profiles', JSON.stringify(list.slice(0, 20)));
+            refreshSavedProfilesDropdown();
+        }
+
+        function loadSavedProfile(idxStr) {
+            if (idxStr === '') return;
+            const list = JSON.parse(localStorage.getItem('krautz_ccrm_profiles') || '[]');
+            const p = list[parseInt(idxStr)];
+            if (!p) return;
+            document.getElementById('req-company').value = p.company || '';
+            document.getElementById('req-contact').value = p.contact || '';
+            document.getElementById('req-address').value = p.address || '';
+            document.getElementById('req-place').value = p.place || '';
+            document.getElementById('req-email').value = p.email || '';
+            document.getElementById('req-phone').value = p.phone || '';
+            document.getElementById('req-ship-ref').value = p.shipRef || '';
+            document.getElementById('ccrm-l').value = p.l || 120;
+            document.getElementById('ccrm-w').value = p.w || 80;
+            document.getElementById('ccrm-h').value = p.h || 100;
+            document.getElementById('ccrm-weight').value = p.weight || 650;
+            document.getElementById('ccrm-start-temp').value = p.startTemp ?? 5;
+            document.getElementById('ccrm-min-temp').value = p.minTemp ?? 2;
+            document.getElementById('ccrm-max-temp').value = p.maxTemp ?? 8;
+            document.getElementById('ccrm-cp').value = p.cp || 4186;
+            syncFromCcrmDimensions();
+        }
 
         function renderColdChainSteps() {
             const container = document.getElementById('ccrm-10steps-container');
@@ -1734,8 +1670,73 @@
             calculateAll();
         }
 
-        // Core CCRM Thermodynamic Engine: Q = m * c * dT vs U * A * dT * t + 2-Blanket Roll Cut
+        function drawCcrmTemperatureChart(timeline, minTemp, maxTemp) {
+            const canvas = document.getElementById('ccrmTempChart');
+            if (!canvas || !timeline || timeline.length < 2) return;
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width;
+            const H = canvas.height;
+            ctx.clearRect(0, 0, W, H);
+
+            const padL = 38, padR = 14, padT = 16, padB = 24;
+            const plotW = W - padL - padR;
+            const plotH = H - padT - padB;
+
+            const allTemps = [minTemp - 4, maxTemp + 4];
+            timeline.forEach(pt => { allTemps.push(pt.amb, pt.core); });
+            const tMin = Math.min(...allTemps);
+            const tMax = Math.max(...allTemps);
+            const maxHrs = Math.max(1, timeline[timeline.length - 1].hr);
+
+            const xOf = hr => padL + (hr / maxHrs) * plotW;
+            const yOf = t => padT + plotH - ((t - tMin) / Math.max(1, tMax - tMin)) * plotH;
+
+            // Safe band fill [minTemp, maxTemp]
+            const yMaxSafe = yOf(maxTemp);
+            const yMinSafe = yOf(minTemp);
+            ctx.fillStyle = 'rgba(16, 185, 129, 0.12)';
+            ctx.fillRect(padL, yMaxSafe, plotW, Math.max(2, yMinSafe - yMaxSafe));
+
+            // Dashed threshold lines
+            ctx.setLineDash([4, 4]);
+            ctx.strokeStyle = '#f43f5e';
+            ctx.beginPath(); ctx.moveTo(padL, yMaxSafe); ctx.lineTo(W - padR, yMaxSafe); ctx.stroke();
+            ctx.strokeStyle = '#38bdf8';
+            ctx.beginPath(); ctx.moveTo(padL, yMinSafe); ctx.lineTo(W - padR, yMinSafe); ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Ambient curve (amber)
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            timeline.forEach((pt, idx) => {
+                const x = xOf(pt.hr), y = yOf(pt.amb);
+                if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            // Insulated core temp curve (cyan)
+            ctx.strokeStyle = '#22d3ee';
+            ctx.lineWidth = 2.8;
+            ctx.beginPath();
+            timeline.forEach((pt, idx) => {
+                const x = xOf(pt.hr), y = yOf(pt.core);
+                if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            // Axis labels
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '10px Inter, sans-serif';
+            ctx.fillText(`${Math.round(tMax)}°C`, 4, padT + 8);
+            ctx.fillText(`${Math.round(tMin)}°C`, 4, H - padB);
+            ctx.fillText(`0h`, padL, H - 6);
+            ctx.fillText(`${maxHrs.toFixed(0)}h`, W - padR - 22, H - 6);
+        }
+
+        // Core CCRM Thermodynamic Engine
         function calculateCcrmEngine() {
+            const dict = I18N[currentLang] || I18N.en;
             const company = document.getElementById('req-company')?.value || '';
             const contact = document.getElementById('req-contact')?.value || '';
             const address = document.getElementById('req-address')?.value || '';
@@ -1791,6 +1792,7 @@
                 let maxSummerReached = startTemp;
                 let minWinterReached = startTemp;
                 let totalHrs = 0;
+                const timeline = [{ hr: 0, amb: steps[0]?.sum ?? startTemp, core: startTemp }];
 
                 steps.forEach(st => {
                     totalHrs += st.hrs;
@@ -1802,10 +1804,12 @@
                     const qWin = uVal * surfaceM2 * (st.win - tWinter) * dtSec;
                     tWinter += qWin / thermalMassJK;
                     minWinterReached = Math.min(minWinterReached, tWinter);
+
+                    timeline.push({ hr: totalHrs, amb: st.sum, core: tSummer });
                 });
 
                 const pass = (maxSummerReached <= maxTemp) && (minWinterReached >= minTemp);
-                return { spec, tSummer, tWinter, maxSummerReached, minWinterReached, totalHrs, pass };
+                return { spec, tSummer, tWinter, maxSummerReached, minWinterReached, totalHrs, pass, timeline };
             }
 
             const candidates = [
@@ -1825,13 +1829,17 @@
                 chosenSim = sim;
             }
 
+            if (chosenSim) {
+                drawCcrmTemperatureChart(chosenSim.timeline, minTemp, maxTemp);
+            }
+
             const verdictBanner = document.getElementById('ccrm-verdict-banner');
             const prodTitleEl = document.getElementById('ccrm-recommended-product');
             const mathSumEl = document.getElementById('ccrm-thermal-math-summary');
 
             if (prodTitleEl && chosenSim) {
                 prodTitleEl.innerText = `${chosenSim.spec.name.toUpperCase()} (R-${chosenSim.spec.rValue.toFixed(2)})`;
-                mathSumEl.innerText = `Summer Peak: ${chosenSim.maxSummerReached.toFixed(1)}°C (Max ${maxTemp}°C) • Winter Low: ${chosenSim.minWinterReached.toFixed(1)}°C (Min ${minTemp}°C) • ${chosenSim.totalHrs.toFixed(1)}h Total`;
+                mathSumEl.innerText = `Summer Peak: ${chosenSim.maxSummerReached.toFixed(1)}°C (Max ${maxTemp}°C) • Winter Low: ${chosenSim.minWinterReached.toFixed(1)}°C (Min ${minTemp}°C) • ${chosenSim.totalHrs.toFixed(1)}h`;
                 if (chosenSim.pass) {
                     verdictBanner.className = "p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-3";
                 } else {
@@ -1840,7 +1848,6 @@
                 }
             }
 
-            // 2-Blanket Cross-Wrap Roll Cut Dimensions from 1.50 m Master Roll
             const blanketA_L = Math.round(L + 2 * H + BLANKET_OVERLAP_CM * 2);
             const blanketA_W = Math.round(W + BLANKET_OVERLAP_CM * 2);
             const blanketA_M2 = (blanketA_L * blanketA_W) / 10000;
@@ -1857,21 +1864,26 @@
                 twoBlanketsEl.innerHTML = `
                     <div class="bg-slate-950 p-3.5 rounded-xl border border-cyan-500/30 space-y-1">
                         <div class="flex justify-between items-center">
-                            <span class="text-[11px] font-bold text-cyan-400">BLANKET 1 — Lengthwise Wrap</span>
+                            <span class="text-[11px] font-bold text-cyan-400">${dict.blanket1Title}</span>
                             <span class="text-[10px] text-slate-400">${blanketA_M2.toFixed(2)} m²</span>
                         </div>
                         <div class="text-base font-extrabold text-white">${blanketA_L} × ${blanketA_W} cm</div>
-                        <span class="text-[10px] text-slate-400 block">Covers Front + Top + Back + 15cm floor tuck</span>
+                        <span class="text-[10px] text-slate-400 block">${dict.blanket1Desc}</span>
                     </div>
                     <div class="bg-slate-950 p-3.5 rounded-xl border border-sky-500/30 space-y-1">
                         <div class="flex justify-between items-center">
-                            <span class="text-[11px] font-bold text-sky-400">BLANKET 2 — Crosswise Wrap</span>
+                            <span class="text-[11px] font-bold text-sky-400">${dict.blanket2Title}</span>
                             <span class="text-[10px] text-slate-400">${blanketB_M2.toFixed(2)} m²</span>
                         </div>
                         <div class="text-base font-extrabold text-white">${blanketB_L} × ${blanketB_W} cm</div>
-                        <span class="text-[10px] text-slate-400 block">Covers Left + Top + Right + locks Blanket 1</span>
+                        <span class="text-[10px] text-slate-400 block">${dict.blanket2Desc}</span>
                     </div>
                 `;
+            }
+
+            const loggerEl = document.getElementById('logger-placement-guide');
+            if (loggerEl) {
+                loggerEl.innerHTML = `<strong class="text-cyan-400">📍 ${dict.loggerTitle}</strong> ${dict.loggerText}`;
             }
 
             packedState.ccrm = {
@@ -1915,8 +1927,8 @@
             copyShareableConfigUrl();
             const txt = document.getElementById('copyFormLinkText');
             if (txt) {
-                txt.innerText = '✅ Customer Form Hyperlink Copied!';
-                setTimeout(() => { txt.innerText = 'Copy Customer Form Hyperlink'; }, 2500);
+                txt.innerText = '✅ Link Copied!';
+                setTimeout(() => { applyLanguage(currentLang); }, 2200);
             }
         }
 
@@ -1951,7 +1963,6 @@
             document.body.removeChild(link);
         }
 
-        // 3D Animated SOP Viewer
         function toggleSopAnimation() {
             sopAnimPlaying = !sopAnimPlaying;
             const lbl = document.getElementById('sopPlayPauseLabel');
@@ -1969,6 +1980,7 @@
         function updateSop3DScene() {
             const v = viewers['sop'];
             if (!v) return;
+            const dict = I18N[currentLang] || I18N.en;
 
             while (v.rootGroup.children.length > 0) {
                 v.rootGroup.remove(v.rootGroup.children[0]);
@@ -1985,19 +1997,13 @@
             const stage = Math.min(4, Math.floor(sopAnimProgress));
             const frac = sopAnimProgress - Math.floor(sopAnimProgress);
 
-            const stepLabels = [
-                'Step 1/5: Lay base thermal pad on EPAL pallet',
-                'Step 2/5: Stack temperature-sensitive product load',
-                'Step 3/5: Drape Blanket 1 lengthwise (Front → Top → Back)',
-                'Step 4/5: Cross-wrap Blanket 2 perpendicular (Left → Top → Right)',
-                'Step 5/5: Seal 15cm overlap flaps with foil tape & stretch-wrap'
-            ];
+            const stepLabels = dict.sopStages;
             const capEl = document.getElementById('sop-anim-caption');
             if (capEl) capEl.innerText = stepLabels[stage] || stepLabels[0];
 
             const barEl = document.getElementById('sop-visual-steps-bar');
             if (barEl) {
-                const shortNames = ['1. Base Pad', '2. Load Cargo', '3. Blanket 1', '4. Blanket 2', '5. Seal Tape'];
+                const shortNames = dict.sopShort;
                 barEl.innerHTML = shortNames.map((nm, idx) => `
                     <div class="p-1.5 rounded-lg border text-center font-semibold ${idx <= stage ? 'bg-amber-500/20 border-amber-500/50 text-amber-200' : 'bg-slate-950 border-slate-800 text-slate-500'}">
                         ${nm}
@@ -3740,7 +3746,7 @@
                 sopSteps: [
                     `Inspect EPAL pallet / floor and place base thermal pad (${c.chosenSpecName || 'Temax-4000'}).`,
                     `Load temperature-sensitive goods (${c.L || 120}×${c.W || 80}×${c.H || 100} cm, ${c.massKg || 650} kg, Cp ${c.cp || 4186} J/kg·K).`,
-                    `Drap Blanket 1 lengthwise (${cs.blanketA.l}×${cs.blanketA.w} cm) over front, top, and back with 15 cm seal flap.`,
+                    `Drape Blanket 1 lengthwise (${cs.blanketA.l}×${cs.blanketA.w} cm) over front, top, and back with 15 cm seal flap.`,
                     `Cross-wrap Blanket 2 (${cs.blanketB.l}×${cs.blanketB.w} cm) perpendicular over Blanket 1 for full thermal envelope.`,
                     `Seal all 15 cm overlap seams with reflective foil tape and stretch-wrap.`
                 ]
@@ -3809,7 +3815,6 @@
             sopWin.document.close();
         }
 
-        // Full-State Shareable Configuration URL Encoder / Decoder
         function copyShareableConfigUrl() {
             const cfg = {
                 cl: document.getElementById('containerL').value,
@@ -3851,7 +3856,7 @@
             const lbl = document.getElementById('shareUrlLabel');
             if (lbl) {
                 lbl.innerText = 'Copied!';
-                setTimeout(() => { applyLanguage(document.getElementById('langSelect').value); }, 2000);
+                setTimeout(() => { applyLanguage(currentLang); }, 2000);
             }
         }
 
@@ -3897,7 +3902,6 @@
             }
         }
 
-        // Commercial RFQ Modal Handlers
         function openRfqModal() {
             calculateCcrmEngine();
             calculateThermalAndRoi();
@@ -3940,14 +3944,33 @@
         function sendRfqEmail() {
             const company = document.getElementById('rfqCompany').value || 'Prospective Client';
             const email = document.getElementById('rfqEmail').value || '';
+            const webhookUrl = (document.getElementById('rfqWebhookUrl')?.value || '').trim();
+            const specText = document.getElementById('rfqSummaryText').value;
+
+            if (webhookUrl) {
+                const btn = document.getElementById('sendRfqSubmitBtn');
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ company, email, specification: specText })
+                })
+                .then(() => {
+                    if (btn) btn.innerText = '✅ Sent via Webhook!';
+                    setTimeout(() => { if (btn) btn.innerText = 'Send RFQ to Krautz-Temax →'; }, 2500);
+                })
+                .catch(() => {
+                    window.location.href = `mailto:info@krautz.org?subject=${encodeURIComponent(`Krautz-Temax CCRM Quote — ${company}`)}&body=${encodeURIComponent(`Company: ${company}\nContact: ${email}\n\n${specText}`)}`;
+                });
+                return;
+            }
+
             const body = encodeURIComponent(
-                `Company: ${company}\nContact: ${email}\n\n` + document.getElementById('rfqSummaryText').value
+                `Company: ${company}\nContact: ${email}\n\n` + specText
             );
             const subject = encodeURIComponent(`Krautz-Temax CCRM Packaging Quote — ${company}`);
             window.location.href = `mailto:info@krautz.org?subject=${subject}&body=${body}`;
         }
 
-        // Export Branded Packing Spec Sheet + Live 3D Snapshot
         function exportSpecSheet() {
             calculateCcrmEngine();
             calculateThermalAndRoi();
@@ -4048,6 +4071,7 @@
         window.onload = function () {
             document.getElementById('ccrm-calc-date').value = new Date().toISOString().split('T')[0];
             renderColdChainSteps();
+            refreshSavedProfilesDropdown();
             init3DViewer('sop', 'canvas-sop');
             init3DViewer('dual', 'canvas-dual');
             init3DViewer('puzzle', 'canvas-puzzle');
