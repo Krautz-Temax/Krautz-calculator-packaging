@@ -48,7 +48,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-krautz-500 selection:text-white">
 
-    <!-- Top Navigation Bar (Sleek Single-Row Desktop Layout) -->
+    <!-- Top Navigation Bar -->
     <header class="border-b border-slate-800 bg-slate-900/85 backdrop-blur sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap xl:flex-nowrap justify-between items-center gap-2.5">
             <div class="flex items-center space-x-2.5 shrink-0">
@@ -78,7 +78,7 @@
                     <i data-lucide="scan" class="w-3.5 h-3.5"></i> <span data-i18n="tabIrregular">Irregular Scan</span>
                 </button>
                 <button onclick="switchTab('pack-truck')" id="btn-pack-truck" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
-                    <i data-lucide="truck" class="w-3.5 h-3.5"></i> <span data-i18n="tabTruck">Truck / Reefer</span>
+                    <i data-lucide="truck" class="w-3.5 h-3.5"></i> <span data-i18n="tabTruck">Truck / ULD</span>
                 </button>
                 <button onclick="switchTab('pack-thermal')" id="btn-pack-thermal" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
                     <i data-lucide="thermometer-snowflake" class="w-3.5 h-3.5 text-cyan-400"></i> <span data-i18n="tabThermal">Cold-Chain & ROI</span>
@@ -94,7 +94,7 @@
                     <option value="fr">FR</option>
                 </select>
                 <button onclick="copyShareableConfigUrl()" id="shareUrlBtn" title="Copy shareable configuration link" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1">
-                    <i data-lucide="share-2" class="w-3.5 h-3.5 text-sky-400"></i> <span id="shareUrlLabel">Share</span>
+                    <i data-lucide="share-2" class="w-3.5 h-3.5 text-sky-400"></i> <span id="shareUrlLabel" data-i18n="btnShare">Share</span>
                 </button>
                 <button onclick="exportSpecSheet()" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1">
                     <i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-400"></i> <span data-i18n="btnSpec">Spec PDF</span>
@@ -146,11 +146,11 @@
                             <label data-i18n="lblBaseMode" class="block text-xs font-semibold text-slate-200">Base Placement Mode (Floor / Pallet):</label>
                             <div class="grid grid-cols-2 gap-2">
                                 <button type="button" id="dualModePalletBtn" onclick="setPlacementMode('dual', 'pallet')" class="px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-amber-600/20 border-amber-500 text-amber-300">
-                                    <span>🪵 Palletized</span>
+                                    <span data-i18n="modePallet">🪵 Palletized</span>
                                     <span class="text-[10px] opacity-80">+15 cm Brown Pallet</span>
                                 </button>
                                 <button type="button" id="dualModeFloorBtn" onclick="setPlacementMode('dual', 'floor')" class="px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
-                                    <span>🏭 Direct on Floor</span>
+                                    <span data-i18n="modeFloor">🏭 Direct on Floor</span>
                                     <span class="text-[10px] opacity-80">On Grey Concrete</span>
                                 </button>
                             </div>
@@ -161,13 +161,13 @@
                         <div class="pt-3 border-t border-slate-800 space-y-2.5">
                             <div class="flex items-center justify-between">
                                 <label class="block text-xs font-semibold text-cyan-300 flex items-center gap-1.5">
-                                    <i data-lucide="thermometer-snowflake" class="w-3.5 h-3.5"></i> Temax Thermal Blanket & Coolant:
+                                    <i data-lucide="thermometer-snowflake" class="w-3.5 h-3.5"></i> <span data-i18n="lblThermalBlanket">Temax Thermal Blanket & Coolant:</span>
                                 </label>
                                 <span id="thermalHoldBadge" class="text-[10px] px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">Standard</span>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-[10px] text-slate-400 mb-1">Insulation Grade</label>
+                                    <label data-i18n="lblInsulationGrade" class="block text-[10px] text-slate-400 mb-1">Insulation Grade</label>
                                     <select id="temaxThermalGrade" onchange="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-200 focus:outline-none focus:border-cyan-500">
                                         <option value="none">None (0 cm Wall)</option>
                                         <option value="temax1000">Temax-1000 (1.5 cm)</option>
@@ -176,7 +176,7 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] text-slate-400 mb-1">Temp Zone / PCM</label>
+                                    <label data-i18n="lblTempZone" class="block text-[10px] text-slate-400 mb-1">Temp Zone / PCM</label>
                                     <select id="temaxTempZone" onchange="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-200 focus:outline-none focus:border-cyan-500">
                                         <option value="ambient">Ambient (0% Coolant)</option>
                                         <option value="chilled">+2°C to +8°C (12% PCM)</option>
@@ -188,7 +188,7 @@
 
                         <!-- Stacking Pattern (Column vs Interlocking Brick) -->
                         <div class="pt-3 border-t border-slate-800 space-y-2">
-                            <label class="block text-xs font-semibold text-sky-300">Stacking Pattern (Stapelpatroon):</label>
+                            <label data-i18n="lblStackPattern" class="block text-xs font-semibold text-sky-300">Stacking Pattern:</label>
                             <div class="grid grid-cols-2 gap-2">
                                 <button type="button" id="stackPatternColBtn" onclick="setStackPattern('column')" class="px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-krautz-500/20 border-krautz-500 text-krautz-300">
                                     <span>🧱 Column Stack</span>
@@ -196,15 +196,15 @@
                                 </button>
                                 <button type="button" id="stackPatternBrickBtn" onclick="setStackPattern('interlock')" class="px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
                                     <span>🔀 Interlocking</span>
-                                    <span class="text-[10px] opacity-80">Verband (Alt Layers)</span>
+                                    <span class="text-[10px] opacity-80">Alt Layers</span>
                                 </button>
                             </div>
                             <input type="hidden" id="dualStackPattern" value="column">
                         </div>
 
-                        <!-- Carton Protection & Stabilization (Sheet Carton & Hoeklatten) -->
+                        <!-- Carton Protection & Stabilization -->
                         <div class="pt-3 border-t border-slate-800 space-y-2">
-                            <label class="block text-xs font-semibold text-amber-300">Carton Stabilization & Protection:</label>
+                            <label data-i18n="lblCartonProtection" class="block text-xs font-semibold text-amber-300">Carton Stabilization & Protection:</label>
                             <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800">
                                 <div>
                                     <label for="dualSheetCarton" class="text-xs font-medium text-slate-200 block cursor-pointer">Sheet Carton (Tussenlegvellen)</label>
@@ -234,15 +234,15 @@
                         
                         <div class="grid grid-cols-3 gap-3">
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Length (cm)</label>
+                                <label data-i18n="lblLength" class="block text-xs font-medium text-slate-400 mb-1">Length (cm)</label>
                                 <input type="number" id="itemL" value="30" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Width (cm)</label>
+                                <label data-i18n="lblWidth" class="block text-xs font-medium text-slate-400 mb-1">Width (cm)</label>
                                 <input type="number" id="itemW" value="20" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Height (cm)</label>
+                                <label data-i18n="lblHeight" class="block text-xs font-medium text-slate-400 mb-1">Height (cm)</label>
                                 <input type="number" id="itemH" value="25" min="1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                         </div>
@@ -250,11 +250,11 @@
                         <!-- Weight & Payload Limits -->
                         <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Unit Weight (kg)</label>
+                                <label data-i18n="lblUnitWeight" class="block text-xs font-medium text-slate-400 mb-1">Unit Weight (kg)</label>
                                 <input type="number" id="itemWeight" value="12.5" min="0" step="0.1" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Max Payload (kg)</label>
+                                <label data-i18n="lblMaxPayload" class="block text-xs font-medium text-slate-400 mb-1">Max Payload (kg)</label>
                                 <input type="number" id="maxPayload" value="1000" min="1" step="10" oninput="calculateAll()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-semibold text-sm focus:outline-none focus:border-krautz-500 transition">
                             </div>
                         </div>
@@ -262,7 +262,7 @@
                         <!-- Total Order Quantity & Partial Pallet Preview -->
                         <div class="pt-2 border-t border-slate-800 space-y-2">
                             <div class="flex items-center justify-between">
-                                <label class="text-xs font-semibold text-emerald-300">Total Order Quantity (Boxes):</label>
+                                <label data-i18n="lblOrderQty" class="text-xs font-semibold text-emerald-300">Total Order Quantity (Boxes):</label>
                                 <span id="orderPalletSummary" class="text-[11px] font-bold text-emerald-400">8 Pallets (7 Full + 1 Partial)</span>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
@@ -313,22 +313,22 @@
                     <!-- KPI Summary Cards -->
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
-                            <span class="text-[11px] font-medium text-slate-400 mb-1">UNITS ON PALLET</span>
+                            <span data-i18n="kpiUnits" class="text-[11px] font-medium text-slate-400 mb-1">UNITS ON PALLET</span>
                             <div id="maxUnits" class="text-2xl font-extrabold text-white">64</div>
                             <span id="chosenOrientation" class="text-[10px] text-krautz-400 mt-1">30×20×25 cm</span>
                         </div>
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
-                            <span class="text-[11px] font-medium text-slate-400 mb-1">VOLUME FILL</span>
+                            <span data-i18n="kpiFill" class="text-[11px] font-medium text-slate-400 mb-1">VOLUME FILL</span>
                             <div id="volumeUtil" class="text-2xl font-extrabold text-emerald-400">100.0%</div>
                             <span id="totalStackHeight" class="text-[10px] text-amber-300 mt-1">Total Height: 115.0 cm</span>
                         </div>
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
-                            <span class="text-[11px] font-medium text-slate-400 mb-1">GROSS WEIGHT</span>
+                            <span data-i18n="kpiWeight" class="text-[11px] font-medium text-slate-400 mb-1">GROSS WEIGHT</span>
                             <div id="grossWeightDisplay" class="text-2xl font-extrabold text-sky-400">825 kg</div>
                             <span id="weightLimitBadge" class="text-[10px] text-emerald-400 mt-1">Volume-Limited</span>
                         </div>
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl text-center flex flex-col justify-center">
-                            <span class="text-[11px] font-medium text-slate-400 mb-1">3D GRID MATRIX</span>
+                            <span data-i18n="kpiMatrix" class="text-[11px] font-medium text-slate-400 mb-1">3D GRID MATRIX</span>
                             <div id="packingLayout" class="text-lg font-bold text-white tracking-tight">4 × 4 × 4</div>
                             <span id="dunnageSummary" class="text-[10px] text-slate-400 mt-1">Cols × Rows × Layers</span>
                         </div>
@@ -340,7 +340,7 @@
                             <div class="flex items-center space-x-2">
                                 <span class="text-krautz-400 text-lg">🧊</span>
                                 <div>
-                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Perspective & Cross-Section (Doorsnede)</h2>
+                                    <h2 data-i18n="viewportTitle" class="text-sm font-semibold text-white tracking-wide">3D Perspective & Cross-Section</h2>
                                     <p class="text-[11px] text-slate-400">Drag to rotate • Scroll to zoom • Right-drag to pan</p>
                                 </div>
                             </div>
@@ -349,12 +349,16 @@
                                     <i data-lucide="thermometer-snowflake" class="w-3.5 h-3.5"></i> Tarmac & ROI →
                                 </button>
                                 <button onclick="switchTab('pack-truck')" class="px-2.5 py-1.5 bg-krautz-500/20 hover:bg-krautz-500/30 text-xs text-krautz-300 font-medium rounded-lg border border-krautz-500/40 transition flex items-center gap-1">
-                                    <i data-lucide="truck" class="w-3.5 h-3.5"></i> Truck 3D →
+                                    <i data-lucide="truck" class="w-3.5 h-3.5"></i> Truck / ULD →
                                 </button>
-                                <button onclick="resetCamera('dual')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
+                                <button onclick="resetCamera('dual')" data-i18n="btnResetView" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
+                                <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
+                                    <input type="checkbox" id="dualShowDims" checked onchange="update3DScene('dual')" class="accent-sky-400">
+                                    <span>3D Dims</span>
+                                </label>
                                 <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
                                     <input type="checkbox" id="dualExplode" onchange="update3DScene('dual')" class="accent-krautz-500">
-                                    <span>Explode</span>
+                                    <span data-i18n="lblExplode">Explode</span>
                                 </label>
                             </div>
                         </div>
@@ -394,7 +398,7 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & Fleet Engine v5.0</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & Fleet Engine v5.5</span>
                         </div>
                     </div>
 
@@ -411,7 +415,7 @@
                     <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
                         <i data-lucide="boxes" class="w-5 h-5 text-krautz-400"></i>
                         <div>
-                            <h2 class="text-sm font-bold text-white">Multi-Box 3D Volume Puzzle</h2>
+                            <h2 data-i18n="puzzleTitle" class="text-sm font-bold text-white">Multi-Box 3D Volume Puzzle</h2>
                             <p class="text-[11px] text-slate-400">Packs Batch 1, then fits Batch 2 into remaining 3D space.</p>
                         </div>
                     </div>
@@ -572,7 +576,7 @@
                             <i data-lucide="circle-dot" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <h2 class="text-sm font-bold text-white">Spherical Density 3D Engine</h2>
+                            <h2 data-i18n="sphereTitle" class="text-sm font-bold text-white">Spherical Density 3D Engine</h2>
                             <p class="text-[11px] text-slate-400">Grid vs. Hexagonal Close-Packing (FCC) in 3D space.</p>
                         </div>
                     </div>
@@ -658,7 +662,7 @@
                             <div class="flex items-center space-x-2">
                                 <span class="text-sky-400 text-lg">⚪</span>
                                 <div>
-                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Spherical Lattice & Cross-Section (Doorsnede)</h2>
+                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Spherical Lattice & Cross-Section</h2>
                                     <p class="text-[11px] text-slate-400">Use sliders to slice open inner staggered sphere layers</p>
                                 </div>
                             </div>
@@ -713,7 +717,7 @@
                             <i data-lucide="scan" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <h2 class="text-sm font-bold text-white">Irregular Object Scan 3D</h2>
+                            <h2 data-i18n="irrTitle" class="text-sm font-bold text-white">Irregular Object Scan 3D</h2>
                             <p class="text-[11px] text-slate-400">Upload .STL / .OBJ 3D scan or input displacement volume.</p>
                         </div>
                     </div>
@@ -845,25 +849,25 @@
             </div>
         </section>
 
-        <!-- TAB 5: TRUCK / REEFER CONTAINER 3D LOAD PLAN -->
+        <!-- TAB 5: TRUCK / REEFER / AIRFREIGHT ULD CONTAINER 3D LOAD PLAN -->
         <section id="tab-pack-truck" class="tab-content space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <!-- Left Panel: Vehicle / Reefer Specs -->
+                <!-- Left Panel: Vehicle / Reefer / ULD Specs -->
                 <div class="lg:col-span-4 space-y-4 bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl">
                     <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
                         <div class="p-2 bg-krautz-500/10 rounded-lg border border-krautz-500/30 text-krautz-400">
                             <i data-lucide="truck" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <h2 class="text-sm font-bold text-white">Truck / Reefer 3D Fleet Load</h2>
-                            <p class="text-[11px] text-slate-400">Front-to-back column stacking of your Tab 1 pallets.</p>
+                            <h2 data-i18n="truckTitle" class="text-sm font-bold text-white">Truck, Reefer & Air ULD 3D Load</h2>
+                            <p class="text-[11px] text-slate-400">Column stacking & Center of Gravity (CoG) check.</p>
                         </div>
                     </div>
 
-                    <!-- Fleet Presets -->
+                    <!-- Road, Sea Reefer & Airfreight ULD Presets -->
                     <div class="space-y-2">
-                        <label class="text-xs font-semibold uppercase tracking-wider text-krautz-400">1. Vehicle / Container Presets</label>
+                        <label class="text-xs font-semibold uppercase tracking-wider text-krautz-400">1. Road, Reefer & Air ULD Presets</label>
                         <div class="grid grid-cols-2 gap-2">
                             <button type="button" onclick="setTruckPreset(1360, 248, 270, 24000)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
                                 🚛 13.6m Euro-Trailer<br><span class="text-[10px] text-slate-400">1360×248×270 cm</span>
@@ -877,30 +881,36 @@
                             <button type="button" onclick="setTruckPreset(610, 245, 240, 3500)" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
                                 🚚 7.5T Box Truck<br><span class="text-[10px] text-slate-400">610×245×240 cm</span>
                             </button>
+                            <button type="button" onclick="setTruckPreset(317.5, 243.8, 244, 6800)" class="p-2 bg-cyan-950/40 hover:bg-cyan-900/40 border border-cyan-500/30 rounded-xl text-[11px] font-medium text-cyan-200 text-left transition">
+                                ✈️ PMC ULD (Main Deck)<br><span class="text-[10px] text-cyan-400/80">317.5×243.8×244 cm</span>
+                            </button>
+                            <button type="button" onclick="setTruckPreset(317.5, 243.8, 160, 4625)" class="p-2 bg-cyan-950/40 hover:bg-cyan-900/40 border border-cyan-500/30 rounded-xl text-[11px] font-medium text-cyan-200 text-left transition">
+                                🛫 PMC ULD (Lower Deck)<br><span class="text-[10px] text-cyan-400/80">317.5×243.8×160 cm</span>
+                            </button>
                         </div>
                     </div>
 
                     <hr class="border-slate-800">
 
                     <div class="space-y-3">
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-sky-400">2. Inner Trailer / Container Dimensions</h3>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-sky-400">2. Inner Trailer / ULD Dimensions</h3>
                         <div class="grid grid-cols-3 gap-2">
                             <div>
                                 <label class="text-[11px] text-slate-400">Length (X)</label>
-                                <input type="number" id="tr-l" value="1360" min="100" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                                <input type="number" id="tr-l" value="1360" min="100" step="0.5" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
                             </div>
                             <div>
                                 <label class="text-[11px] text-slate-400">Width (Z)</label>
-                                <input type="number" id="tr-w" value="248" min="100" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                                <input type="number" id="tr-w" value="248" min="100" step="0.5" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
                             </div>
                             <div>
                                 <label class="text-[11px] text-slate-400">Height (Y)</label>
-                                <input type="number" id="tr-h" value="270" min="100" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
+                                <input type="number" id="tr-h" value="270" min="100" step="0.5" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
                             </div>
                         </div>
 
                         <div>
-                            <label class="text-[11px] text-slate-400 block mb-1">Max Vehicle Legal Payload (kg)</label>
+                            <label class="text-[11px] text-slate-400 block mb-1">Max Vehicle / ULD Legal Payload (kg)</label>
                             <input type="number" id="tr-max-kg" value="24000" min="100" oninput="calculateTruckLoad()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm font-semibold focus:outline-none focus:border-krautz-500">
                         </div>
 
@@ -934,8 +944,8 @@
                             <div class="flex items-center space-x-2">
                                 <span class="text-sky-400 text-lg">🚛</span>
                                 <div>
-                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Trailer / Reefer Pallet Plan & Cross-Section</h2>
-                                    <p class="text-[11px] text-slate-400">Balanced front-to-back column stacking for safe axle weight distribution</p>
+                                    <h2 class="text-sm font-semibold text-white tracking-wide">3D Trailer / ULD Pallet Plan & Center of Gravity (CoG)</h2>
+                                    <p class="text-[11px] text-slate-400">Amber vertical beam marks Center of Gravity (CoG) for safe axle & aircraft balance</p>
                                 </div>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
@@ -967,8 +977,8 @@
                         <div id="canvas-truck" class="w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
                                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Palletized Cargo</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet Base</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm border border-sky-400 inline-block"></span> Trailer / Reefer Envelope</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b] inline-block"></span> Center of Gravity (CoG)</span>
                             </div>
                         </div>
 
@@ -978,7 +988,7 @@
             </div>
         </section>
 
-        <!-- TAB 6: COLD-CHAIN LANE SIMULATOR, PCM BALANCER, ROI & PACKOUT SOP -->
+        <!-- TAB 6: COLD-CHAIN LANE SIMULATOR, PCM BALANCER, CUT-SHEET, ROI & PACKOUT SOP -->
         <section id="tab-pack-thermal" class="tab-content space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -991,7 +1001,7 @@
                                     <i data-lucide="plane-takeoff" class="w-4 h-4"></i>
                                 </span>
                                 <div>
-                                    <h2 class="text-sm font-bold text-white">Tarmac & Transit Lane Simulator</h2>
+                                    <h2 data-i18n="laneTitle" class="text-sm font-bold text-white">Tarmac & Transit Lane Simulator</h2>
                                     <p class="text-[11px] text-slate-400">Cumulative Degree-Hours & excursion risk across transit legs</p>
                                 </div>
                             </div>
@@ -1002,10 +1012,10 @@
                             <label class="text-[11px] font-semibold uppercase tracking-wider text-cyan-400">Quick Cold-Chain Lane Presets</label>
                             <div class="grid grid-cols-2 gap-2">
                                 <button type="button" onclick="applyLanePreset('summerAir')" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
-                                    ☀️ EU → US Summer Air<br><span class="text-[10px] text-slate-400">18h • +45°C Tarmac Spike</span>
+                                    ☀️ EU → US Summer Air<br><span class="text-[10px] text-slate-400">18.5h • +44°C Tarmac Spike</span>
                                 </button>
                                 <button type="button" onclick="applyLanePreset('pharmaRoad')" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
-                                    ❄️ EU Pharma Road (GDP)<br><span class="text-[10px] text-slate-400">48h • +28°C Ambient Cross-Dock</span>
+                                    ❄️ EU Pharma Road (GDP)<br><span class="text-[10px] text-slate-400">48h • +26°C Ambient Cross-Dock</span>
                                 </button>
                                 <button type="button" onclick="applyLanePreset('winterCold')" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
                                     🥶 Winter Freeze Protection<br><span class="text-[10px] text-slate-400">36h • -12°C Sub-Zero Ramp</span>
@@ -1092,7 +1102,7 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Thermal Telemetry, PCM Auto-Balancer, ROI & Warehouse SOP -->
+                <!-- Right Column: Thermal Telemetry, PCM Auto-Balancer, Cut-Sheet, ROI & Warehouse SOP -->
                 <div class="lg:col-span-7 space-y-5">
 
                     <!-- 4 Thermal KPI Cards -->
@@ -1107,6 +1117,17 @@
                             <span id="thermal-grade-pill" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">Temax-4000</span>
                         </div>
                         <div id="pcm-balancer-panel" class="space-y-2.5 text-xs"></div>
+                    </div>
+
+                    <!-- Custom Blanket Cut-Sheet & Roll Yield Estimator (Production Engineering) -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i data-lucide="scissors" class="w-4 h-4 text-sky-400"></i> Temax Blanket Cut-Sheet & 1.50m Roll Yield
+                            </h3>
+                            <span class="text-[11px] text-slate-400">Incl. 10 cm Overlap Flaps</span>
+                        </div>
+                        <div id="cutsheet-panel" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
                     </div>
 
                     <!-- Warehouse Storage, DIM Weight & Scope 3 CO2 Savings -->
@@ -1150,7 +1171,7 @@
                     <span class="bg-emerald-500/20 text-emerald-400 p-2 rounded-lg"><i data-lucide="send" class="w-4 h-4"></i></span>
                     <div>
                         <h3 class="text-base font-bold text-white">Request Krautz-Temax Packaging Quote</h3>
-                        <p class="text-[11px] text-slate-400">Auto-populated with your current 3D thermal & pallet configuration</p>
+                        <p class="text-[11px] text-slate-400">Auto-populated with your current 3D thermal, cut-sheet & pallet configuration</p>
                     </div>
                 </div>
                 <button onclick="closeRfqModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -1169,7 +1190,7 @@
 
             <div>
                 <label class="text-[11px] text-slate-400 block mb-1">Generated Engineering & Packaging Specification</label>
-                <textarea id="rfqSummaryText" rows="9" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-krautz-500"></textarea>
+                <textarea id="rfqSummaryText" rows="10" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-krautz-500"></textarea>
             </div>
 
             <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
@@ -1192,7 +1213,7 @@
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
 
-    <!-- JavaScript Application & 3D Thermal / Pallet / Fleet / ROI / RFQ Engine -->
+    <!-- JavaScript Application & 3D Thermal / Pallet / Fleet / Cut-Sheet / ROI / RFQ Engine -->
     <script>
         lucide.createIcons();
 
@@ -1201,6 +1222,7 @@
         const SHEET_THICKNESS = 0.4;     // 0.4 cm corrugated sheet carton
         const CORNER_THICKNESS = 0.45;   // 0.45 cm carton hoeklat wall thickness
         const CORNER_WING = 5.5;         // 5.5 cm L-profile wing width
+        const MASTER_ROLL_WIDTH_M = 1.50; // 1.50 m standard Temax production roll width
 
         const THERMAL_SPECS = {
             none:      { name: 'None', wallCm: 0.0, holdLabel: 'Ambient / Uninsulated', blanketKg: 0.0, rValue: 0.15, flatFoldRatio: 1.0 },
@@ -1222,16 +1244,39 @@
                 tabPuzzle: 'Volume Puzzle',
                 tabSphere: 'Spherical 3D',
                 tabIrregular: 'Irregular Scan',
-                tabTruck: 'Truck / Reefer',
+                tabTruck: 'Truck / ULD',
                 tabThermal: 'Cold-Chain & ROI',
+                btnShare: 'Share',
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Request Quote',
                 outerTitle: 'Outer Packaging / Load Size',
                 innerTitle: 'Inner Packages, Weight & Order',
+                puzzleTitle: 'Multi-Box 3D Volume Puzzle',
+                sphereTitle: 'Spherical Density 3D Engine',
+                irrTitle: 'Irregular Object Scan 3D',
+                truckTitle: 'Truck, Reefer & Air ULD 3D Load',
+                laneTitle: 'Tarmac & Transit Lane Simulator',
                 lblLength: 'Length (X)',
                 lblWidth: 'Width (Z)',
                 lblHeight: 'Height (Y)',
-                lblBaseMode: 'Base Placement Mode (Floor / Pallet):'
+                lblBaseMode: 'Base Placement Mode (Floor / Pallet):',
+                modePallet: '🪵 Palletized',
+                modeFloor: '🏭 Direct on Floor',
+                lblThermalBlanket: 'Temax Thermal Blanket & Coolant:',
+                lblInsulationGrade: 'Insulation Grade',
+                lblTempZone: 'Temp Zone / PCM',
+                lblStackPattern: 'Stacking Pattern:',
+                lblCartonProtection: 'Carton Stabilization & Protection:',
+                lblUnitWeight: 'Unit Weight (kg)',
+                lblMaxPayload: 'Max Payload (kg)',
+                lblOrderQty: 'Total Order Quantity (Boxes):',
+                kpiUnits: 'UNITS ON PALLET',
+                kpiFill: 'VOLUME FILL',
+                kpiWeight: 'GROSS WEIGHT',
+                kpiMatrix: '3D GRID MATRIX',
+                viewportTitle: '3D Perspective & Cross-Section',
+                btnResetView: 'Reset View',
+                lblExplode: 'Explode'
             },
             nl: {
                 headerSubtitle: 'Thermische Verpakkingen, Palletbelading & Vloot 3D Engine',
@@ -1239,16 +1284,39 @@
                 tabPuzzle: 'Volume Puzzel',
                 tabSphere: 'Bollen 3D',
                 tabIrregular: 'Onregelmatige Scan',
-                tabTruck: 'Vrachtwagen / Koel',
+                tabTruck: 'Vrachtwagen / ULD',
                 tabThermal: 'Koelketen & ROI',
+                btnShare: 'Delen',
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Offerte Aanvragen',
                 outerTitle: 'Buitenverpakking / Palletmaat',
                 innerTitle: 'Binnendozen, Gewicht & Order',
+                puzzleTitle: 'Multi-Doos 3D Volume Puzzel',
+                sphereTitle: 'Bollen Stapeldichtheid 3D',
+                irrTitle: 'Onregelmatige 3D Objectscan',
+                truckTitle: 'Vrachtwagen, Koeltrailer & ULD 3D',
+                laneTitle: 'Tarmac & Transportroute Simulator',
                 lblLength: 'Lengte (X)',
                 lblWidth: 'Breedte (Z)',
                 lblHeight: 'Hoogte (Y)',
-                lblBaseMode: 'Plaatsing (Pallet of Betonvloer):'
+                lblBaseMode: 'Plaatsing (Pallet of Betonvloer):',
+                modePallet: '🪵 Op Pallet',
+                modeFloor: '🏭 Direct op Vloer',
+                lblThermalBlanket: 'Temax Thermische Hoes & Koeling:',
+                lblInsulationGrade: 'Isolatiegraad',
+                lblTempZone: 'Temp Zone / PCM',
+                lblStackPattern: 'Stapelpatroon:',
+                lblCartonProtection: 'Karton Stabilisatie & Bescherming:',
+                lblUnitWeight: 'Stukgewicht (kg)',
+                lblMaxPayload: 'Max Draaggewicht (kg)',
+                lblOrderQty: 'Totale Orderhoeveelheid (Dozen):',
+                kpiUnits: 'DOZEN OP PALLET',
+                kpiFill: 'VOLUMEVULLING',
+                kpiWeight: 'BRUTO GEWICHT',
+                kpiMatrix: '3D RASTERMATRIX',
+                viewportTitle: '3D Perspectief & Doorsnede',
+                btnResetView: 'Reset Weergave',
+                lblExplode: 'Explodeer'
             },
             de: {
                 headerSubtitle: 'Thermoverpackung, Palettenbeladung & Flotten-3D-Engine',
@@ -1256,16 +1324,39 @@
                 tabPuzzle: 'Volumen-Puzzle',
                 tabSphere: 'Kugeldichte 3D',
                 tabIrregular: 'Unregelmäßiger Scan',
-                tabTruck: 'LKW / Kühlauflieger',
+                tabTruck: 'LKW / Luftfracht ULD',
                 tabThermal: 'Kühlkette & ROI',
+                btnShare: 'Teilen',
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Angebot Anfordern',
                 outerTitle: 'Außenverpackung / Palettenmaß',
                 innerTitle: 'Innenkartons, Gewicht & Auftrag',
+                puzzleTitle: 'Mehrboxen 3D Volumen-Puzzle',
+                sphereTitle: 'Kugeldichte 3D-Engine',
+                irrTitle: 'Unregelmäßiger 3D-Objektscan',
+                truckTitle: 'LKW, Kühlauflieger & ULD 3D-Plan',
+                laneTitle: 'Rollfeld- & Transportrouten-Simulator',
                 lblLength: 'Länge (X)',
                 lblWidth: 'Breite (Z)',
                 lblHeight: 'Höhe (Y)',
-                lblBaseMode: 'Platzierung (Palette / Boden):'
+                lblBaseMode: 'Platzierung (Palette / Boden):',
+                modePallet: '🪵 Palettiert',
+                modeFloor: '🏭 Direkt auf Boden',
+                lblThermalBlanket: 'Temax Thermohaube & Kühlmittel:',
+                lblInsulationGrade: 'Isolierstufe',
+                lblTempZone: 'Temp-Zone / PCM',
+                lblStackPattern: 'Stapelmuster:',
+                lblCartonProtection: 'Kartonstabilisierung & Kantenschutz:',
+                lblUnitWeight: 'Stückgewicht (kg)',
+                lblMaxPayload: 'Max. Nutzlast (kg)',
+                lblOrderQty: 'Gesamtauftragsmenge (Kartons):',
+                kpiUnits: 'EINHEITEN / PALETTE',
+                kpiFill: 'VOLUMENAUSLASTUNG',
+                kpiWeight: 'BRUTTOGEWICHT',
+                kpiMatrix: '3D-RASTERMATRIX',
+                viewportTitle: '3D-Perspektive & Querschnitt',
+                btnResetView: 'Ansicht Zurücksetzen',
+                lblExplode: 'Explodieren'
             },
             fr: {
                 headerSubtitle: 'Emballage Thermique, Palettisation & Chargement Flotte 3D',
@@ -1273,16 +1364,39 @@
                 tabPuzzle: 'Puzzle Volume',
                 tabSphere: 'Densité Sphérique',
                 tabIrregular: 'Scan Irrégulier',
-                tabTruck: 'Camion / Frigo 3D',
+                tabTruck: 'Camion / ULD Avion',
                 tabThermal: 'Chaîne du Froid & ROI',
+                btnShare: 'Partager',
                 btnSpec: 'Fiche PDF',
                 btnQuote: 'Demander Devis',
                 outerTitle: 'Emballage Extérieur / Palette',
                 innerTitle: 'Colis Internes, Poids & Commande',
+                puzzleTitle: 'Puzzle Volume 3D Multi-Colis',
+                sphereTitle: 'Moteur 3D Densité Sphérique',
+                irrTitle: 'Scan 3D Objet Irrégulier',
+                truckTitle: 'Chargement 3D Camion, Frigo & ULD',
+                laneTitle: 'Simulateur Tarmac & Trajet Froid',
                 lblLength: 'Longueur (X)',
                 lblWidth: 'Largeur (Z)',
                 lblHeight: 'Hauteur (Y)',
-                lblBaseMode: 'Mode de Pose (Palette / Sol):'
+                lblBaseMode: 'Mode de Pose (Palette / Sol):',
+                modePallet: '🪵 Palettisé',
+                modeFloor: '🏭 Direct au Sol',
+                lblThermalBlanket: 'Housse Thermique Temax & Réfrigérant:',
+                lblInsulationGrade: 'Grade Isolation',
+                lblTempZone: 'Zone Temp / PCM',
+                lblStackPattern: 'Schéma de Palettisation:',
+                lblCartonProtection: 'Stabilisation & Cornières Carton:',
+                lblUnitWeight: 'Poids Unitaire (kg)',
+                lblMaxPayload: 'Charge Max (kg)',
+                lblOrderQty: 'Quantité Totale Commande (Colis):',
+                kpiUnits: 'COLIS PAR PALETTE',
+                kpiFill: 'REMPLISSAGE VOL.',
+                kpiWeight: 'POIDS BRUT',
+                kpiMatrix: 'MATRICE GRILLE 3D',
+                viewportTitle: 'Perspective 3D & Coupe Transversale',
+                btnResetView: 'Réinitialiser Vue',
+                lblExplode: 'Éclater'
             }
         };
 
@@ -1301,8 +1415,8 @@
             puzzle:  { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
             sphere:  { container: { l: 100, w: 100, h: 100 }, items: [], sheetYs: [] },
             irr:     { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
-            truck:   { container: { l: 1360, w: 248, h: 270 }, pallets: [], summary: {} },
-            thermal: { totalHours: 19, degreeHours: 0, riskStatus: 'PASS', packCount: 0, coolantKg: 0, dimSavingsKg: 0, co2SavedKg: 0, sopSteps: [] }
+            truck:   { container: { l: 1360, w: 248, h: 270 }, pallets: [], cog: { x: 0, frontPct: 50, rearPct: 50, balanced: true }, summary: {} },
+            thermal: { totalHours: 19, degreeHours: 0, riskStatus: 'PASS', packCount: 0, coolantKg: 0, dimSavingsKg: 0, co2SavedKg: 0, cutSheet: {}, sopSteps: [] }
         };
 
         let activeTabKey = 'dual';
@@ -1530,6 +1644,66 @@
                     </div>
                 </div>
             `;
+        }
+
+        // Build 3D Floating Dimension Callouts (L, W, Total H)
+        function build3DDimensionCallouts(L, W, totalH) {
+            const group = new THREE.Group();
+            const offset = 8;
+
+            function createTextSprite(text, colorHex) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 256;
+                canvas.height = 64;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = 'rgba(6, 11, 22, 0.85)';
+                ctx.beginPath();
+                ctx.roundRect(16, 10, 224, 44, 10);
+                ctx.fill();
+                ctx.strokeStyle = colorHex;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.font = 'bold 24px Inter, Arial, sans-serif';
+                ctx.fillStyle = '#f8fafc';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(text, 128, 33);
+
+                const tex = new THREE.CanvasTexture(canvas);
+                const mat = new THREE.SpriteMaterial({ map: tex, depthTest: false });
+                const sprite = new THREE.Sprite(mat);
+                const scale = Math.max(L, W, totalH) * 0.28;
+                sprite.scale.set(scale, scale * 0.25, 1);
+                return sprite;
+            }
+
+            function addAxisLine(p1, p2, color) {
+                const geo = new THREE.BufferGeometry().setFromPoints([p1, p2]);
+                const mat = new THREE.LineBasicMaterial({ color });
+                group.add(new THREE.Line(geo, mat));
+            }
+
+            // Length X
+            const zFront = W / 2 + offset;
+            addAxisLine(new THREE.Vector3(-L / 2, 0.5, zFront), new THREE.Vector3(L / 2, 0.5, zFront), 0x38bdf8);
+            const lblL = createTextSprite(`L: ${L.toFixed(0)} cm`, '#38bdf8');
+            lblL.position.set(0, 2, zFront + 5);
+            group.add(lblL);
+
+            // Width Z
+            const xRight = L / 2 + offset;
+            addAxisLine(new THREE.Vector3(xRight, 0.5, -W / 2), new THREE.Vector3(xRight, 0.5, W / 2), 0x10b981);
+            const lblW = createTextSprite(`W: ${W.toFixed(0)} cm`, '#10b981');
+            lblW.position.set(xRight + 6, 2, 0);
+            group.add(lblW);
+
+            // Total Height Y
+            addAxisLine(new THREE.Vector3(xRight, 0, zFront), new THREE.Vector3(xRight, totalH, zFront), 0xf59e0b);
+            const lblH = createTextSprite(`H: ${totalH.toFixed(0)} cm`, '#f59e0b');
+            lblH.position.set(xRight + 7, totalH / 2, zFront + 4);
+            group.add(lblH);
+
+            return group;
         }
 
         function buildConcreteFloorMesh(L, W) {
@@ -1776,6 +1950,10 @@
 
             if (isPalletized) {
                 v.rootGroup.add(buildBrownPalletMesh(CL, CW, maxXCut));
+            }
+
+            if (key === 'dual' && document.getElementById('dualShowDims')?.checked) {
+                v.rootGroup.add(build3DDimensionCallouts(CL, CW, CH + baseOffsetY));
             }
 
             const outerGeo = new THREE.BoxGeometry(CL, CH, CW);
@@ -2604,7 +2782,7 @@
             update3DScene('irr');
         }
 
-        // 5. Truck / Reefer Container 3D Load Plan
+        // 5. Truck / Reefer / Air ULD 3D Load Plan + Center of Gravity (CoG)
         function setTruckPreset(l, w, h, maxKg) {
             document.getElementById('tr-l').value = l;
             document.getElementById('tr-w').value = w;
@@ -2651,11 +2829,14 @@
 
             const pallets = [];
             let count = 0;
+            let weightedXSum = 0;
+
             for (let x = 0; x < bestLayout.cols && count < fittedPallets; x++) {
                 for (let z = 0; z < bestLayout.rows && count < fittedPallets; z++) {
                     for (let y = 0; y < bestLayout.tiers && count < fittedPallets; y++) {
+                        const px = x * bestLayout.dim.l;
                         pallets.push({
-                            x: x * bestLayout.dim.l,
+                            x: px,
                             y: y * pH,
                             z: z * bestLayout.dim.w,
                             l: bestLayout.dim.l,
@@ -2663,10 +2844,18 @@
                             h: pH,
                             isPalletized
                         });
+                        weightedXSum += (px + bestLayout.dim.l / 2);
                         count++;
                     }
                 }
             }
+
+            // Center of Gravity (CoG) calculation along X-axis
+            const cogX = pallets.length > 0 ? (weightedXSum / pallets.length) : (TL / 2);
+            const cogPct = Math.min(100, Math.max(0, (cogX / TL) * 100));
+            const frontSharePct = Math.round(100 - cogPct);
+            const rearSharePct = 100 - frontSharePct;
+            const isBalanced = cogPct >= 38 && cogPct <= 62;
 
             const floorSpotsUsed = Math.ceil(fittedPallets / Math.max(1, bestLayout.tiers));
             const floorFillPct = ((floorSpotsUsed * bestLayout.dim.l * bestLayout.dim.w) / (TL * TW) * 100).toFixed(1);
@@ -2675,7 +2864,7 @@
             if (resultsEl) {
                 resultsEl.innerHTML = `
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-                        <span class="text-[11px] text-slate-400 block">Pallets in Vehicle</span>
+                        <span class="text-[11px] text-slate-400 block">Pallets in Vehicle / ULD</span>
                         <span class="text-xl font-bold text-krautz-400">${fittedPallets} pallets</span>
                     </div>
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
@@ -2687,8 +2876,9 @@
                         <span class="text-xl font-bold text-amber-400">${totalFleetKg.toLocaleString()} kg</span>
                     </div>
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-                        <span class="text-[11px] text-slate-400 block">Floor / Tier Matrix</span>
-                        <span class="text-lg font-bold text-white">${bestLayout.cols}×${bestLayout.rows} (${bestLayout.tiers} tier${bestLayout.tiers > 1 ? 's' : ''})</span>
+                        <span class="text-[11px] text-slate-400 block">Axle / CoG Balance</span>
+                        <span class="text-sm font-bold ${isBalanced ? 'text-emerald-400' : 'text-amber-400'}">${frontSharePct}% Front / ${rearSharePct}% Rear</span>
+                        <span class="text-[10px] text-slate-400 block">${isBalanced ? 'Balanced CoG' : '⚠️ Shift Load Center'}</span>
                     </div>
                 `;
             }
@@ -2697,19 +2887,23 @@
             if (statusEl) {
                 statusEl.innerHTML = `
                     <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 space-y-1">
-                        <span class="text-[11px] font-semibold uppercase tracking-wider text-sky-400 block">🚛 Vehicle Inner Envelope</span>
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-sky-400 block">🚛 Vehicle / ULD Inner Envelope</span>
                         <div class="text-sm font-bold text-white">${TL} × ${TW} × ${TH} cm <span class="text-[11px] font-normal text-slate-400">(${((TL * TW * TH) / 1000000).toFixed(2)} m³)</span></div>
-                        <div class="text-[11px] text-slate-300">Floor Space Utilization: <span class="text-emerald-400 font-semibold">${floorFillPct}%</span> • Payload Cap: ${maxTruckKg.toLocaleString()} kg</div>
+                        <div class="text-[11px] text-slate-300">Floor Utilization: <span class="text-emerald-400 font-semibold">${floorFillPct}%</span> • Matrix: ${bestLayout.cols}×${bestLayout.rows} (${bestLayout.tiers} tier${bestLayout.tiers > 1 ? 's' : ''})</div>
                     </div>
                     <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 space-y-1">
-                        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-400 block">🪵 Unit Pallet Footprint Used</span>
-                        <div class="text-sm font-bold text-white">${bestLayout.dim.l} × ${bestLayout.dim.w} × ${pH.toFixed(1)} cm <span class="text-[11px] font-normal text-slate-400">(${singlePalletGrossKg.toFixed(1)} kg / pallet)</span></div>
-                        <div class="text-[11px] text-slate-300">Trucks Needed for ${dualSum.orderTotalQty || 500}-Box Order: <span class="text-krautz-400 font-bold">${Math.max(1, Math.ceil((dualSum.totalPalletsNeeded || 1) / Math.max(1, fittedPallets)))} vehicle(s)</span></div>
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-400 block">⚖️ Center of Gravity & Order Fleet</span>
+                        <div class="text-sm font-bold text-white">CoG at ${cogX.toFixed(0)} cm <span class="text-[11px] font-normal text-slate-400">(${cogPct.toFixed(0)}% from nose)</span></div>
+                        <div class="text-[11px] text-slate-300">Vehicles Needed for ${dualSum.orderTotalQty || 500}-Box Order: <span class="text-krautz-400 font-bold">${Math.max(1, Math.ceil((dualSum.totalPalletsNeeded || 1) / Math.max(1, fittedPallets)))} unit(s)</span></div>
                     </div>
                 `;
             }
 
-            packedState.truck = { container: { l: TL, w: TW, h: TH }, pallets };
+            packedState.truck = {
+                container: { l: TL, w: TW, h: TH },
+                pallets,
+                cog: { x: cogX, frontPct: frontSharePct, rearPct: rearSharePct, balanced: isBalanced }
+            };
             updateTruck3DScene();
         }
 
@@ -2753,6 +2947,21 @@
             wireframe.position.set(0, TH / 2, 0);
             v.rootGroup.add(wireframe);
 
+            // Render 3D Center of Gravity (CoG) vertical indicator beam
+            if (data.pallets.length > 0 && data.cog) {
+                const cogWorldX = data.cog.x - TL / 2;
+                const beamGeo = new THREE.CylinderGeometry(3.2, 3.2, TH + 18, 16);
+                const beamMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.85 });
+                const beamMesh = new THREE.Mesh(beamGeo, beamMat);
+                beamMesh.position.set(cogWorldX, (TH + 18) / 2, 0);
+                v.rootGroup.add(beamMesh);
+
+                const orbGeo = new THREE.SphereGeometry(10, 16, 16);
+                const orbMesh = new THREE.Mesh(orbGeo, beamMat);
+                orbMesh.position.set(cogWorldX, TH + 18, 0);
+                v.rootGroup.add(orbMesh);
+            }
+
             const palletBaseMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
             const cargoMat = new THREE.MeshLambertMaterial({ color: 0x0077ee });
             const cargoEdgeMat = new THREE.LineBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.65 });
@@ -2783,7 +2992,7 @@
             });
         }
 
-        // 6. Cold-Chain Tarmac Simulator, PCM Auto-Balancer, ROI & Packout SOP
+        // 6. Cold-Chain Tarmac Simulator, PCM Auto-Balancer, Cut-Sheet, ROI & Packout SOP
         function applyLanePreset(preset) {
             const presets = {
                 summerAir: {
@@ -2871,9 +3080,8 @@
                 degreeHours += hrs * Math.abs(amb - midTarget);
             }
 
-            // Thermal Hold Capacity Estimation based on R-value, surface area, and PCM latent heat
             const surfaceM2 = 2 * ((CL * CW + CL * CH + CW * CH) / 10000);
-            const uValue = 1 / Math.max(0.15, thermalSpec.rValue); // W/m2K approximation
+            const uValue = 1 / Math.max(0.15, thermalSpec.rValue);
             const coolantKg = s.coolantKg || 0;
             const payloadThermalMassKj = (s.netCargoKg || 400) * 1.8 * Math.max(2, (maxSafe - minSafe));
             const pcmBufferKj = coolantKg * (tempSpec.latentKjPerKg || 0);
@@ -2894,7 +3102,6 @@
                 riskColor = 'text-amber-400';
             }
 
-            // KPI Cards
             const kpiEl = document.getElementById('thermal-kpis');
             if (kpiEl) {
                 kpiEl.innerHTML = `
@@ -2919,7 +3126,6 @@
 
             document.getElementById('thermal-grade-pill').innerText = `${thermalSpec.name} • R-${thermalSpec.rValue.toFixed(2)}`;
 
-            // PCM / Coolant Auto-Balancer & Regulatory Alerts
             const packUnitKg = tempZoneKey === 'frozen' ? 2.0 : 1.5;
             const recommendedPacks = coolantKg > 0 ? Math.max(2, Math.ceil(coolantKg / packUnitKg)) : 0;
             const alerts = [];
@@ -2961,12 +3167,40 @@
                 `;
             }
 
-            // Warehouse Space, DIM Weight & Scope 3 CO2 ROI Comparator
+            // Custom Blanket Cut-Sheet & 1.50m Master Roll Yield Estimator
+            const overlapCm = 10;
+            const flatBlankL = Math.round(CL + 2 * CH + overlapCm * 2);
+            const flatBlankW = Math.round(CW + 2 * CH + overlapCm * 2);
+            const grossBlankM2 = (flatBlankL * flatBlankW) / 10000;
+            const linearMetersPerCover = grossBlankM2 / MASTER_ROLL_WIDTH_M;
             const orderPallets = s.totalPalletsNeeded || 8;
+            const totalOrderRollMeters = linearMetersPerCover * orderPallets;
+
+            const cutEl = document.getElementById('cutsheet-panel');
+            if (cutEl) {
+                cutEl.innerHTML = `
+                    <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-[11px] text-slate-400 block">Flat Die-Cut Blank (L × W)</span>
+                        <span class="text-lg font-extrabold text-sky-400">${flatBlankL} × ${flatBlankW} cm</span>
+                        <span class="text-[10px] text-slate-500 block">Cruciform hood + ${overlapCm}cm seal flaps</span>
+                    </div>
+                    <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-[11px] text-slate-400 block">Material Area / Cover</span>
+                        <span class="text-lg font-extrabold text-white">${grossBlankM2.toFixed(2)} m²</span>
+                        <span class="text-[10px] text-slate-500 block">Net box surface: ${surfaceM2.toFixed(2)} m²</span>
+                    </div>
+                    <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-[11px] text-slate-400 block">1.50m Roll Yield (${orderPallets} units)</span>
+                        <span class="text-lg font-extrabold text-cyan-400">${totalOrderRollMeters.toFixed(1)} lin. m</span>
+                        <span class="text-[10px] text-slate-500 block">${linearMetersPerCover.toFixed(2)} m / cover on 1.50m roll</span>
+                    </div>
+                `;
+            }
+
+            // Warehouse Space, DIM Weight & Scope 3 CO2 ROI Comparator
             const freightMode = document.getElementById('roi-freight-mode')?.value || 'air';
             const ratePerKg = Math.max(0.1, parseFloat(document.getElementById('roi-rate-kg')?.value) || 2.40);
 
-            // Rigid EPS/PU requires ~5cm walls (larger outer footprint) & ships bulky (1:1 inbound warehouse ratio vs 6.2x–8.5x flat-packed Temax)
             const foldRatio = thermalSpec.flatFoldRatio > 1 ? thermalSpec.flatFoldRatio : 6.2;
             const inboundWarehouseSpaceSavedPct = ((1 - 1 / foldRatio) * 100).toFixed(0);
 
@@ -2977,7 +3211,6 @@
                 ? dimSavingsTotalKg * ratePerKg
                 : (orderPallets * 6.3) * (ratePerKg * 0.35);
 
-            // Scope 3 CO2 savings (airfreight ~0.60 kg CO2/ton-km over 4,500 km avg lane; road ~0.08 kg CO2/ton-km over 900 km)
             const co2SavedKg = freightMode === 'air'
                 ? (dimSavingsTotalKg / 1000) * 4500 * 0.60
                 : ((orderPallets * 6.3) / 1000) * 900 * 0.08;
@@ -3003,15 +3236,14 @@
                 `;
             }
 
-            // Warehouse Packout SOP Steps
             const sopSteps = [
                 `Inspect ${s.isPalletized ? '120×80 cm EPAL brown pallet' : 'clean dry staging floor'} and lay base thermal floor pad (${thermalSpec.name}).`,
-                `Erect ${thermalSpec.name} (${thermalSpec.wallCm} cm wall) inside the ${CL}×${CW}×${CH} cm master envelope with reflective foil facing outward.`,
-                `Load ${s.unitsOnPallet || 64} cargo units (${s.IL || 30}×${s.IW || 20}×${s.IH || 25} cm) using <strong>${s.stackPattern === 'interlock' ? 'Interlocking Brick (Verband)' : 'Column'}</strong> pattern${s.sheetCount ? `, inserting ${s.sheetCount} kraft sheet carton(s) between layers` : ''}.`,
+                `Erect ${thermalSpec.name} (${thermalSpec.wallCm} cm wall, flat cut-sheet ${flatBlankL}×${flatBlankW} cm) inside the ${CL}×${CW}×${CH} cm master envelope with reflective foil facing outward.`,
+                `Load ${s.unitsOnPallet || 64} cargo units (${s.IL || 30}×${s.IW || 20}×${s.IH || 25} cm) using <strong>${s.stackPattern === 'interlock' ? 'Interlocking Brick' : 'Column'}</strong> pattern${s.sheetCount ? `, inserting ${s.sheetCount} kraft sheet carton(s) between layers` : ''}.`,
                 recommendedPacks > 0
                     ? `Place <strong>${recommendedPacks} × ${packUnitKg} kg</strong> pre-conditioned ${tempSpec.name} packs on the <strong>top cargo deck</strong> (cold air sinks naturally)${minSafe >= 2 ? ' over a corrugated buffer pad' : ''}.`
                     : `Verify ambient temperature logger is active and positioned in the geometric center of the top layer.`,
-                `Fold top thermal flaps with minimum <strong>10 cm overlap</strong> and seal all seams with heavy-duty acrylic/foil tape to eliminate thermal bridges${s.useCorners ? ', then apply 4× carton hoeklatten and stretch-wrap' : ''}.`
+                `Fold top thermal flaps with minimum <strong>${overlapCm} cm overlap</strong> and seal all seams with heavy-duty acrylic/foil tape to eliminate thermal bridges${s.useCorners ? ', then apply 4× carton hoeklatten and stretch-wrap' : ''}.`
             ];
 
             const sopListEl = document.getElementById('packout-sop-list');
@@ -3029,6 +3261,12 @@
                 coolantKg,
                 dimSavingsKg: Math.round(dimSavingsTotalKg),
                 co2SavedKg: Math.round(co2SavedKg),
+                cutSheet: {
+                    flatBlankL,
+                    flatBlankW,
+                    grossBlankM2: grossBlankM2.toFixed(2),
+                    totalOrderRollMeters: totalOrderRollMeters.toFixed(1)
+                },
                 sopSteps
             };
         }
@@ -3079,7 +3317,7 @@
                         <div><strong>Thermal System:</strong> ${s.thermalName}</div>
                         <div><strong>Coolant Load:</strong> ${t.packCount} × ${t.packUnitKg} kg (${t.coolantKg?.toFixed(1)} kg)</div>
                         <div><strong>Cargo Fit:</strong> ${s.unitsOnPallet} units (${s.grossPalletKg?.toFixed(1)} kg gross)</div>
-                        <div><strong>Transit Exposure:</strong> ${t.totalHours}h (${t.degreeHours} °C·h)</div>
+                        <div><strong>Cut-Sheet Blank:</strong> ${t.cutSheet?.flatBlankL}×${t.cutSheet?.flatBlankW} cm (${t.cutSheet?.grossBlankM2} m²)</div>
                         <div><strong>SOP Date:</strong> ${now}</div>
                     </div>
                     <h3 style="font-size:14px;text-transform:uppercase;color:#004c99;">Mandatory Assembly Sequence</h3>
@@ -3094,7 +3332,7 @@
             sopWin.document.close();
         }
 
-        // Shareable Configuration URL Encoder / Decoder
+        // Full-State Shareable Configuration URL Encoder / Decoder (Tab 1 + Tab 6)
         function copyShareableConfigUrl() {
             const cfg = {
                 cl: document.getElementById('containerL').value,
@@ -3111,9 +3349,17 @@
                 tg: document.getElementById('temaxThermalGrade').value,
                 tz: document.getElementById('temaxTempZone').value,
                 sc: document.getElementById('dualSheetCarton').checked ? 1 : 0,
-                cg: document.getElementById('dualCornerGuards').checked ? 1 : 0
+                cg: document.getElementById('dualCornerGuards').checked ? 1 : 0,
+                lmin: document.getElementById('lane-min-temp').value,
+                lmax: document.getElementById('lane-max-temp').value,
+                lsol: document.getElementById('lane-solar-load').checked ? 1 : 0,
+                legs: [1, 2, 3, 4].map(i => [
+                    document.getElementById(`leg${i}-name`).value,
+                    document.getElementById(`leg${i}-hrs`).value,
+                    document.getElementById(`leg${i}-temp`).value
+                ])
             };
-            const encoded = btoa(JSON.stringify(cfg));
+            const encoded = btoa(encodeURIComponent(JSON.stringify(cfg)));
             const shareUrl = `${window.location.origin}${window.location.pathname}?cfg=${encodeURIComponent(encoded)}`;
             window.history.replaceState({}, '', `?cfg=${encodeURIComponent(encoded)}`);
             navigator.clipboard?.writeText(shareUrl);
@@ -3121,7 +3367,7 @@
             const lbl = document.getElementById('shareUrlLabel');
             if (lbl) {
                 lbl.innerText = 'Copied!';
-                setTimeout(() => { lbl.innerText = 'Share'; }, 2000);
+                setTimeout(() => { applyLanguage(document.getElementById('langSelect').value); }, 2000);
             }
         }
 
@@ -3130,7 +3376,8 @@
             const raw = params.get('cfg');
             if (!raw) return;
             try {
-                const cfg = JSON.parse(atob(decodeURIComponent(raw)));
+                const decodedStr = decodeURIComponent(atob(decodeURIComponent(raw)));
+                const cfg = JSON.parse(decodedStr);
                 if (cfg.cl) document.getElementById('containerL').value = cfg.cl;
                 if (cfg.cw) document.getElementById('containerW').value = cfg.cw;
                 if (cfg.ch) document.getElementById('containerH').value = cfg.ch;
@@ -3144,6 +3391,19 @@
                 if (cfg.tz) document.getElementById('temaxTempZone').value = cfg.tz;
                 if (cfg.sc !== undefined) document.getElementById('dualSheetCarton').checked = !!cfg.sc;
                 if (cfg.cg !== undefined) document.getElementById('dualCornerGuards').checked = !!cfg.cg;
+                if (cfg.lmin !== undefined) document.getElementById('lane-min-temp').value = cfg.lmin;
+                if (cfg.lmax !== undefined) document.getElementById('lane-max-temp').value = cfg.lmax;
+                if (cfg.lsol !== undefined) document.getElementById('lane-solar-load').checked = !!cfg.lsol;
+                if (Array.isArray(cfg.legs)) {
+                    cfg.legs.forEach((leg, idx) => {
+                        const i = idx + 1;
+                        if (document.getElementById(`leg${i}-name`)) {
+                            document.getElementById(`leg${i}-name`).value = leg[0];
+                            document.getElementById(`leg${i}-hrs`).value = leg[1];
+                            document.getElementById(`leg${i}-temp`).value = leg[2];
+                        }
+                    });
+                }
                 if (cfg.pm) setPlacementMode('dual', cfg.pm);
                 if (cfg.sp) setStackPattern(cfg.sp);
             } catch (e) {
@@ -3156,6 +3416,7 @@
             calculateThermalAndRoi();
             const s = packedState.dual.summary || {};
             const t = packedState.thermal || {};
+            const cs = t.cutSheet || {};
             const text = [
                 `KRAUTZ-TEMAX PACKAGING & COLD-CHAIN RFQ`,
                 `----------------------------------------`,
@@ -3164,6 +3425,7 @@
                 `Inner Package Unit: ${s.IL} x ${s.IW} x ${s.IH} cm (${s.unitWeightKg} kg/unit)`,
                 `Units per Pallet: ${s.unitsOnPallet} units (${s.efficiency}% fill, ${s.grossPalletKg?.toFixed(1)} kg gross)`,
                 `Temax Thermal Liner: ${s.thermalName} | Zone: ${s.tempZoneName}`,
+                `Blanket Cut-Sheet: ${cs.flatBlankL} x ${cs.flatBlankW} cm (${cs.grossBlankM2} m²/cover • ${cs.totalOrderRollMeters} m on 1.50m roll)`,
                 `Coolant / PCM Requirement: ${t.packCount || 0} packs (${(t.coolantKg || 0).toFixed(1)} kg/pallet)`,
                 `Validated Transit Lane: ${t.totalHours || 0}h (${t.degreeHours || 0} °C·h) — Status: ${t.riskStatus || 'PASS'}`,
                 `Carton Dunnage: ${s.sheetCount || 0} Sheet Cartons, ${s.useCorners ? '4x Carton Hoeklatten' : 'No Hoeklatten'}`,
@@ -3211,6 +3473,7 @@
 
             const s = packedState.dual.summary || {};
             const t = packedState.thermal || {};
+            const cs = t.cutSheet || {};
             const now = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
             const printWin = window.open('', '_blank', 'width=900,height=780');
@@ -3261,6 +3524,7 @@
                             <div class="row"><span>Base Mode:</span><span class="val">${s.isPalletized ? 'Palletized (+15 cm Brown Pallet)' : 'Direct on Concrete Floor'}</span></div>
                             <div class="row"><span>Total Load (L × W × H):</span><span class="val">${s.CL} × ${s.CW} × ${s.totalHeight?.toFixed(1)} cm</span></div>
                             <div class="row"><span>Temax Thermal Liner:</span><span class="val">${s.thermalName} (${s.tempZoneName})</span></div>
+                            <div class="row"><span>Flat Cut-Sheet Blank:</span><span class="val">${cs.flatBlankL} × ${cs.flatBlankW} cm (${cs.grossBlankM2} m²)</span></div>
                             <div class="row"><span>PCM / Coolant Load:</span><span class="val">${t.packCount || 0} packs (${(t.coolantKg || 0).toFixed(1)} kg)</span></div>
                             <div class="row"><span>Lane Validation:</span><span class="val">${t.totalHours || 0}h (${t.degreeHours || 0} °C·h) • ${t.riskStatus}</span></div>
                         </div>
@@ -3271,6 +3535,7 @@
                             <div class="row"><span>Units per Pallet:</span><span class="val">${s.unitsOnPallet} units (${s.efficiency}% fill)</span></div>
                             <div class="row"><span>Net / Gross Pallet Weight:</span><span class="val">${s.netCargoKg?.toFixed(1)} kg / ${s.grossPalletKg?.toFixed(1)} kg</span></div>
                             <div class="row"><span>Order (${s.orderTotalQty} units):</span><span class="val">${s.totalPalletsNeeded} Pallets (${s.fullPallets} Full + ${s.remainderUnits} rem.)</span></div>
+                            <div class="row"><span>1.50m Roll Material:</span><span class="val">${cs.totalOrderRollMeters} linear meters</span></div>
                             <div class="row"><span>DIM / CO₂ Savings vs EPS:</span><span class="val">${t.dimSavingsKg || 0} kg DIM • -${t.co2SavedKg || 0} kg CO₂</span></div>
                         </div>
                     </div>
