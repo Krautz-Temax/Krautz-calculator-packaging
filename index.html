@@ -80,9 +80,12 @@
                 <button onclick="switchTab('pack-truck')" id="btn-pack-truck" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
                     <i data-lucide="truck" class="w-3.5 h-3.5"></i> <span data-i18n="tabTruck">Truck / Reefer</span>
                 </button>
+                <button onclick="switchTab('pack-thermal')" id="btn-pack-thermal" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
+                    <i data-lucide="thermometer-snowflake" class="w-3.5 h-3.5 text-cyan-400"></i> <span data-i18n="tabThermal">Cold-Chain & ROI</span>
+                </button>
             </nav>
 
-            <!-- Language Switcher + Spec Export + Commercial RFQ -->
+            <!-- Language Switcher + Share URL + Spec Export + Commercial RFQ -->
             <div class="flex items-center gap-1.5 shrink-0">
                 <select id="langSelect" onchange="applyLanguage(this.value)" aria-label="Language" class="bg-slate-950 border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-2 py-2 focus:outline-none focus:border-krautz-500 cursor-pointer">
                     <option value="en">EN</option>
@@ -90,6 +93,9 @@
                     <option value="de">DE</option>
                     <option value="fr">FR</option>
                 </select>
+                <button onclick="copyShareableConfigUrl()" id="shareUrlBtn" title="Copy shareable configuration link" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1">
+                    <i data-lucide="share-2" class="w-3.5 h-3.5 text-sky-400"></i> <span id="shareUrlLabel">Share</span>
+                </button>
                 <button onclick="exportSpecSheet()" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1">
                     <i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-400"></i> <span data-i18n="btnSpec">Spec PDF</span>
                 </button>
@@ -339,8 +345,11 @@
                                 </div>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="switchTab('pack-thermal')" class="px-2.5 py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-xs text-cyan-300 font-medium rounded-lg border border-cyan-500/40 transition flex items-center gap-1">
+                                    <i data-lucide="thermometer-snowflake" class="w-3.5 h-3.5"></i> Tarmac & ROI →
+                                </button>
                                 <button onclick="switchTab('pack-truck')" class="px-2.5 py-1.5 bg-krautz-500/20 hover:bg-krautz-500/30 text-xs text-krautz-300 font-medium rounded-lg border border-krautz-500/40 transition flex items-center gap-1">
-                                    <i data-lucide="truck" class="w-3.5 h-3.5"></i> Load into Truck 3D →
+                                    <i data-lucide="truck" class="w-3.5 h-3.5"></i> Truck 3D →
                                 </button>
                                 <button onclick="resetCamera('dual')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
                                 <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
@@ -385,7 +394,7 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & Fleet Engine v4.5</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & Fleet Engine v5.0</span>
                         </div>
                     </div>
 
@@ -969,6 +978,168 @@
             </div>
         </section>
 
+        <!-- TAB 6: COLD-CHAIN LANE SIMULATOR, PCM BALANCER, ROI & PACKOUT SOP -->
+        <section id="tab-pack-thermal" class="tab-content space-y-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Left Column: Multi-Leg Tarmac & Transit Route Builder -->
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="p-2 bg-cyan-500/10 rounded-lg border border-cyan-500/30 text-cyan-400">
+                                    <i data-lucide="plane-takeoff" class="w-4 h-4"></i>
+                                </span>
+                                <div>
+                                    <h2 class="text-sm font-bold text-white">Tarmac & Transit Lane Simulator</h2>
+                                    <p class="text-[11px] text-slate-400">Cumulative Degree-Hours & excursion risk across transit legs</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lane Presets -->
+                        <div class="space-y-1.5">
+                            <label class="text-[11px] font-semibold uppercase tracking-wider text-cyan-400">Quick Cold-Chain Lane Presets</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" onclick="applyLanePreset('summerAir')" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
+                                    ☀️ EU → US Summer Air<br><span class="text-[10px] text-slate-400">18h • +45°C Tarmac Spike</span>
+                                </button>
+                                <button type="button" onclick="applyLanePreset('pharmaRoad')" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
+                                    ❄️ EU Pharma Road (GDP)<br><span class="text-[10px] text-slate-400">48h • +28°C Ambient Cross-Dock</span>
+                                </button>
+                                <button type="button" onclick="applyLanePreset('winterCold')" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
+                                    🥶 Winter Freeze Protection<br><span class="text-[10px] text-slate-400">36h • -12°C Sub-Zero Ramp</span>
+                                </button>
+                                <button type="button" onclick="applyLanePreset('oceanReefer')" class="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[11px] font-medium text-slate-200 text-left transition">
+                                    🚢 Port Dwell + Reefer<br><span class="text-[10px] text-slate-400">96h • +34°C Port Customs</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Target Payload Temp Range -->
+                        <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+                            <div>
+                                <label class="text-[11px] text-slate-400 block mb-1">Min Safe Payload (°C)</label>
+                                <input type="number" id="lane-min-temp" value="2" step="1" oninput="calculateThermalAndRoi()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-white focus:outline-none focus:border-cyan-500">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400 block mb-1">Max Safe Payload (°C)</label>
+                                <input type="number" id="lane-max-temp" value="8" step="1" oninput="calculateThermalAndRoi()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-white focus:outline-none focus:border-cyan-500">
+                            </div>
+                        </div>
+
+                        <!-- 4 Editable Transit Legs -->
+                        <div class="space-y-2 pt-2 border-t border-slate-800">
+                            <div class="flex justify-between items-center text-[11px] text-slate-400 font-semibold">
+                                <span>Transit Leg</span>
+                                <span>Hours &nbsp;|&nbsp; Ambient °C</span>
+                            </div>
+
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <input type="text" id="leg1-name" value="1. Reefer Truck" oninput="calculateThermalAndRoi()" class="col-span-6 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200">
+                                <input type="number" id="leg1-hrs" value="3" min="0" step="0.5" oninput="calculateThermalAndRoi()" class="col-span-3 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-bold text-white text-center">
+                                <input type="number" id="leg1-temp" value="6" step="1" oninput="calculateThermalAndRoi()" class="col-span-3 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-bold text-cyan-300 text-center">
+                            </div>
+
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <input type="text" id="leg2-name" value="2. Airport Tarmac" oninput="calculateThermalAndRoi()" class="col-span-6 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200">
+                                <input type="number" id="leg2-hrs" value="4" min="0" step="0.5" oninput="calculateThermalAndRoi()" class="col-span-3 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-bold text-white text-center">
+                                <input type="number" id="leg2-temp" value="42" step="1" oninput="calculateThermalAndRoi()" class="col-span-3 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-bold text-amber-400 text-center">
+                            </div>
+
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <input type="text" id="leg3-name" value="3. Airfreight Hold" oninput="calculateThermalAndRoi()" class="col-span-6 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200">
+                                <input type="number" id="leg3-hrs" value="9" min="0" step="0.5" oninput="calculateThermalAndRoi()" class="col-span-3 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-bold text-white text-center">
+                                <input type="number" id="leg3-temp" value="16" step="1" oninput="calculateThermalAndRoi()" class="col-span-3 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-bold text-cyan-300 text-center">
+                            </div>
+
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <input type="text" id="leg4-name" value="4. Last-Mile Van" oninput="calculateThermalAndRoi()" class="col-span-6 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200">
+                                <input type="number" id="leg4-hrs" value="3" min="0" step="0.5" oninput="calculateThermalAndRoi()" class="col-span-3 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-bold text-white text-center">
+                                <input type="number" id="leg4-temp" value="28" step="1" oninput="calculateThermalAndRoi()" class="col-span-3 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-bold text-amber-300 text-center">
+                            </div>
+                        </div>
+
+                        <!-- Solar Load Toggle -->
+                        <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800">
+                            <div>
+                                <label for="lane-solar-load" class="text-xs font-medium text-slate-200 block cursor-pointer">☀️ Direct Tarmac Solar Radiation</label>
+                                <span class="text-[10px] text-slate-400">Adds +12°C surface load on legs above 25°C</span>
+                            </div>
+                            <input type="checkbox" id="lane-solar-load" checked onchange="calculateThermalAndRoi()" class="w-4 h-4 accent-amber-500 cursor-pointer">
+                        </div>
+                    </div>
+
+                    <!-- Warehouse & Freight ROI Comparator Controls -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                        <div class="flex items-center gap-2 border-b border-slate-800 pb-2.5">
+                            <i data-lucide="trending-down" class="w-4 h-4 text-emerald-400"></i>
+                            <h3 class="text-sm font-bold text-white">Warehouse & Airfreight DIM ROI Settings</h3>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[11px] text-slate-400 block mb-1">Shipping Mode</label>
+                                <select id="roi-freight-mode" onchange="calculateThermalAndRoi()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-white">
+                                    <option value="air">✈️ Airfreight (DIM /6000)</option>
+                                    <option value="road">🚛 Road / Sea LTL</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400 block mb-1">Freight Rate (€ / kg)</label>
+                                <input type="number" id="roi-rate-kg" value="2.40" min="0.1" step="0.1" oninput="calculateThermalAndRoi()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-white">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Thermal Telemetry, PCM Auto-Balancer, ROI & Warehouse SOP -->
+                <div class="lg:col-span-7 space-y-5">
+
+                    <!-- 4 Thermal KPI Cards -->
+                    <div id="thermal-kpis" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+
+                    <!-- PCM / Coolant Auto-Balancer & Regulatory Alerts -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i data-lucide="snowflake" class="w-4 h-4 text-cyan-400"></i> PCM / Coolant Auto-Balancer & Compliance
+                            </h3>
+                            <span id="thermal-grade-pill" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">Temax-4000</span>
+                        </div>
+                        <div id="pcm-balancer-panel" class="space-y-2.5 text-xs"></div>
+                    </div>
+
+                    <!-- Warehouse Storage, DIM Weight & Scope 3 CO2 Savings -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i data-lucide="bar-chart-3" class="w-4 h-4 text-emerald-400"></i> Flat-Packed Temax vs. Rigid EPS Foam ROI
+                            </h3>
+                            <span class="text-[11px] text-slate-400">Based on Tab 1 Order Qty</span>
+                        </div>
+                        <div id="roi-comparison-panel" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+                    </div>
+
+                    <!-- Printable One-Page Warehouse Packout SOP -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
+                            <div>
+                                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                    <i data-lucide="clipboard-check" class="w-4 h-4 text-amber-400"></i> Warehouse Packout SOP (Operator Guide)
+                                </h3>
+                                <p class="text-[11px] text-slate-400">Step-by-step assembly protocol to prevent thermal bridges</p>
+                            </div>
+                            <button type="button" onclick="printPackoutSop()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg shadow transition flex items-center gap-1.5">
+                                <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print Packout SOP
+                            </button>
+                        </div>
+                        <ol id="packout-sop-list" class="space-y-2 text-xs text-slate-300 list-decimal list-inside bg-slate-950/80 p-3.5 rounded-xl border border-slate-800"></ol>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- Commercial RFQ / Request Quote Modal -->
@@ -998,7 +1169,7 @@
 
             <div>
                 <label class="text-[11px] text-slate-400 block mb-1">Generated Engineering & Packaging Specification</label>
-                <textarea id="rfqSummaryText" rows="8" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-krautz-500"></textarea>
+                <textarea id="rfqSummaryText" rows="9" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-krautz-500"></textarea>
             </div>
 
             <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
@@ -1021,7 +1192,7 @@
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
 
-    <!-- JavaScript Application & 3D Thermal / Pallet / Fleet / RFQ Engine -->
+    <!-- JavaScript Application & 3D Thermal / Pallet / Fleet / ROI / RFQ Engine -->
     <script>
         lucide.createIcons();
 
@@ -1032,16 +1203,16 @@
         const CORNER_WING = 5.5;         // 5.5 cm L-profile wing width
 
         const THERMAL_SPECS = {
-            none:      { name: 'None', wallCm: 0.0, holdLabel: 'Ambient / Uninsulated', blanketKg: 0.0 },
-            temax1000: { name: 'Temax-1000 Blanket', wallCm: 1.5, holdLabel: '~24–48h Thermal Buffer', blanketKg: 2.8 },
-            temax4000: { name: 'Temax-4000 Multi-Layer', wallCm: 3.0, holdLabel: '~72–120h Cold-Chain', blanketKg: 5.2 },
-            vip:       { name: 'VIP / EPS Insulated Box', wallCm: 5.0, holdLabel: '~120h+ Pharma GDP', blanketKg: 11.5 }
+            none:      { name: 'None', wallCm: 0.0, holdLabel: 'Ambient / Uninsulated', blanketKg: 0.0, rValue: 0.15, flatFoldRatio: 1.0 },
+            temax1000: { name: 'Temax-1000 Blanket', wallCm: 1.5, holdLabel: '~24–48h Thermal Buffer', blanketKg: 2.8, rValue: 1.45, flatFoldRatio: 8.5 },
+            temax4000: { name: 'Temax-4000 Multi-Layer', wallCm: 3.0, holdLabel: '~72–120h Cold-Chain', blanketKg: 5.2, rValue: 3.10, flatFoldRatio: 6.2 },
+            vip:       { name: 'VIP / EPS Insulated Box', wallCm: 5.0, holdLabel: '~120h+ Pharma GDP', blanketKg: 11.5, rValue: 4.80, flatFoldRatio: 1.0 }
         };
 
         const TEMP_ZONES = {
-            ambient: { name: 'Ambient (No PCM)', coolantRatio: 0.0, coolantDensityKgPerL: 0.0 },
-            chilled: { name: '+2°C to +8°C (PCM Packs)', coolantRatio: 0.12, coolantDensityKgPerL: 0.95 },
-            frozen:  { name: '-20°C Frozen (Gel / Dry Ice)', coolantRatio: 0.18, coolantDensityKgPerL: 1.15 }
+            ambient: { name: 'Ambient (No PCM)', coolantRatio: 0.0, coolantDensityKgPerL: 0.0, latentKjPerKg: 0 },
+            chilled: { name: '+2°C to +8°C (PCM Packs)', coolantRatio: 0.12, coolantDensityKgPerL: 0.95, latentKjPerKg: 210 },
+            frozen:  { name: '-20°C Frozen (Gel / Dry Ice)', coolantRatio: 0.18, coolantDensityKgPerL: 1.15, latentKjPerKg: 335 }
         };
 
         const I18N = {
@@ -1052,6 +1223,7 @@
                 tabSphere: 'Spherical 3D',
                 tabIrregular: 'Irregular Scan',
                 tabTruck: 'Truck / Reefer',
+                tabThermal: 'Cold-Chain & ROI',
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Request Quote',
                 outerTitle: 'Outer Packaging / Load Size',
@@ -1068,6 +1240,7 @@
                 tabSphere: 'Bollen 3D',
                 tabIrregular: 'Onregelmatige Scan',
                 tabTruck: 'Vrachtwagen / Koel',
+                tabThermal: 'Koelketen & ROI',
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Offerte Aanvragen',
                 outerTitle: 'Buitenverpakking / Palletmaat',
@@ -1084,6 +1257,7 @@
                 tabSphere: 'Kugeldichte 3D',
                 tabIrregular: 'Unregelmäßiger Scan',
                 tabTruck: 'LKW / Kühlauflieger',
+                tabThermal: 'Kühlkette & ROI',
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Angebot Anfordern',
                 outerTitle: 'Außenverpackung / Palettenmaß',
@@ -1100,6 +1274,7 @@
                 tabSphere: 'Densité Sphérique',
                 tabIrregular: 'Scan Irrégulier',
                 tabTruck: 'Camion / Frigo 3D',
+                tabThermal: 'Chaîne du Froid & ROI',
                 btnSpec: 'Fiche PDF',
                 btnQuote: 'Demander Devis',
                 outerTitle: 'Emballage Extérieur / Palette',
@@ -1122,11 +1297,12 @@
 
         const viewers = {};
         const packedState = {
-            dual:   { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [], thermal: null, summary: {} },
-            puzzle: { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
-            sphere: { container: { l: 100, w: 100, h: 100 }, items: [], sheetYs: [] },
-            irr:    { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
-            truck:  { container: { l: 1360, w: 248, h: 270 }, pallets: [], summary: {} }
+            dual:    { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [], thermal: null, summary: {} },
+            puzzle:  { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
+            sphere:  { container: { l: 100, w: 100, h: 100 }, items: [], sheetYs: [] },
+            irr:     { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
+            truck:   { container: { l: 1360, w: 248, h: 270 }, pallets: [], summary: {} },
+            thermal: { totalHours: 19, degreeHours: 0, riskStatus: 'PASS', packCount: 0, coolantKg: 0, dimSavingsKg: 0, co2SavedKg: 0, sopSteps: [] }
         };
 
         let activeTabKey = 'dual';
@@ -1147,7 +1323,7 @@
                 palletBtn.className = "px-2.5 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200";
             }
 
-            if (key === 'dual') { calculateDualBoxAndVisualizer(); calculateTruckLoad(); }
+            if (key === 'dual') { calculateDualBoxAndVisualizer(); calculateTruckLoad(); calculateThermalAndRoi(); }
             if (key === 'puzzle') calculatePuzzle();
             if (key === 'sphere') calculateSpheres();
             if (key === 'irr') calculateIrregular();
@@ -1245,7 +1421,7 @@
 
         function resetCamera(key) {
             const v = viewers[key];
-            const c = packedState[key].container;
+            const c = packedState[key]?.container;
             if (!v || !c) return;
             if (key === 'truck') {
                 const maxDim = Math.max(c.l, c.w, c.h);
@@ -1431,7 +1607,6 @@
             return palletGroup;
         }
 
-        // Build semi-transparent Temax Thermal Liner & Top PCM Coolant Zone
         function buildThermalLinerMesh(L, W, H, thermal, baseOffsetY, maxYCut, maxXCut) {
             const group = new THREE.Group();
             if (!thermal) return group;
@@ -1442,7 +1617,6 @@
 
             const centerX = visibleL / 2 - L / 2;
 
-            // Reflective cyan-silver translucent Temax thermal blanket shell
             if (thermal.wallCm > 0) {
                 const linerGeo = new THREE.BoxGeometry(visibleL, visibleH, W);
                 const linerMat = new THREE.MeshPhongMaterial({
@@ -1459,7 +1633,6 @@
                 group.add(linerMesh);
             }
 
-            // Top PCM / Dry-Ice Coolant Zone
             if (thermal.coolantHeightCm > 0.2) {
                 const coolStartY = H - thermal.wallCm - thermal.coolantHeightCm;
                 if (coolStartY < maxYCut) {
@@ -1623,7 +1796,6 @@
             wireframe.position.set(0, baseOffsetY + CH / 2, 0);
             v.rootGroup.add(wireframe);
 
-            // Render Temax Thermal Liner & PCM Coolant Zone if active
             if (data.thermal) {
                 v.rootGroup.add(buildThermalLinerMesh(CL, CW, CH, data.thermal, baseOffsetY, maxYCut, maxXCut));
             }
@@ -1765,6 +1937,7 @@
                 if (tabId === 'pack-sphere') resetCamera('sphere');
                 if (tabId === 'pack-irregular') resetCamera('irr');
                 if (tabId === 'pack-truck') { calculateTruckLoad(); resetCamera('truck'); }
+                if (tabId === 'pack-thermal') calculateThermalAndRoi();
             }, 30);
         }
 
@@ -1786,7 +1959,7 @@
             return unique;
         }
 
-        // 1. Dual Box & 3D Visualizer Logic (with Temax Thermal Liner, Weight Cap, Interlocking & Order Qty)
+        // 1. Dual Box & 3D Visualizer Logic
         function calculateDualBoxAndVisualizer() {
             const CL = parseFloat(document.getElementById('containerL').value) || 1;
             const CW = parseFloat(document.getElementById('containerW').value) || 1;
@@ -1808,7 +1981,6 @@
             const useSheets = document.getElementById('dualSheetCarton').checked;
             const useCorners = document.getElementById('dualCornerGuards').checked;
 
-            // Temax Thermal Liner & Coolant Deduction
             const thermalKey = document.getElementById('temaxThermalGrade').value;
             const tempZoneKey = document.getElementById('temaxTempZone').value;
             const thermalSpec = THERMAL_SPECS[thermalKey] || THERMAL_SPECS.none;
@@ -1845,14 +2017,12 @@
                 }
             });
 
-            // Enforce Max Payload Weight Cap (including pallet tare, thermal blanket, and coolant)
             const tareKg = (isPalletized ? PALLET_TARE_KG : 0) + thermalSpec.blanketKg + coolantKg;
             const maxNetCargoKg = Math.max(0, maxPayloadKg - tareKg);
             const weightCappedUnits = unitWeightKg > 0 ? Math.floor(maxNetCargoKg / unitWeightKg) : best.total;
             const isWeightLimited = unitWeightKg > 0 && weightCappedUnits < best.total;
             const maxUnitsPerPallet = Math.max(0, Math.min(best.total, weightCappedUnits));
 
-            // Order Quantity & Partial Pallet Calculation
             const safeCap = Math.max(1, maxUnitsPerPallet);
             const fullPallets = Math.floor(orderTotalQty / safeCap);
             const remainderUnits = orderTotalQty % safeCap;
@@ -1983,9 +2153,12 @@
                     netCargoKg,
                     isWeightLimited,
                     stackPattern,
+                    thermalKey,
+                    tempZoneKey,
                     thermalName: thermalSpec.name,
                     tempZoneName: tempSpec.name,
                     coolantKg,
+                    coolantVolL,
                     sheetCount: sheetYs.length,
                     useCorners,
                     orderTotalQty,
@@ -2431,7 +2604,7 @@
             update3DScene('irr');
         }
 
-        // 5. Truck / Reefer Container 3D Load Plan (Front-to-Back Column Loading for Proper Axle Balance)
+        // 5. Truck / Reefer Container 3D Load Plan
         function setTruckPreset(l, w, h, maxKg) {
             document.getElementById('tr-l').value = l;
             document.getElementById('tr-w').value = w;
@@ -2476,7 +2649,6 @@
             const totalUnitsInTruck = fittedPallets * unitsPerPallet;
             const totalFleetKg = fittedPallets * singlePalletGrossKg;
 
-            // Front-to-back vertical column stacking (X -> Z -> Y) so double-stacked pallets fill cleanly from nose to rear
             const pallets = [];
             let count = 0;
             for (let x = 0; x < bestLayout.cols && count < fittedPallets; x++) {
@@ -2611,9 +2783,379 @@
             });
         }
 
+        // 6. Cold-Chain Tarmac Simulator, PCM Auto-Balancer, ROI & Packout SOP
+        function applyLanePreset(preset) {
+            const presets = {
+                summerAir: {
+                    minT: 2, maxT: 8, solar: true,
+                    legs: [
+                        ['1. Reefer Feeder', 2, 5],
+                        ['2. Summer Tarmac', 4.5, 44],
+                        ['3. Airfreight Hold', 9, 16],
+                        ['4. Last-Mile Van', 3, 30]
+                    ]
+                },
+                pharmaRoad: {
+                    minT: 2, maxT: 8, solar: false,
+                    legs: [
+                        ['1. Regional Linehaul', 14, 18],
+                        ['2. Cross-Dock Hub', 6, 26],
+                        ['3. Overnight Trunk', 18, 15],
+                        ['4. Local Delivery', 10, 24]
+                    ]
+                },
+                winterCold: {
+                    minT: 2, maxT: 8, solar: false,
+                    legs: [
+                        ['1. Cold Ramp Staging', 4, -12],
+                        ['2. Unheated Curtain-Sider', 16, -6],
+                        ['3. Terminal Transfer', 4, -9],
+                        ['4. Morning Delivery', 12, -4]
+                    ]
+                },
+                oceanReefer: {
+                    minT: -25, maxT: -15, solar: true,
+                    legs: [
+                        ['1. Port Customs Dwell', 12, 34],
+                        ['2. Reefer Vessel', 60, -18],
+                        ['3. Dest. Port Inspection', 8, 31],
+                        ['4. Inland Drayage', 16, 22]
+                    ]
+                }
+            };
+
+            const p = presets[preset];
+            if (!p) return;
+
+            document.getElementById('lane-min-temp').value = p.minT;
+            document.getElementById('lane-max-temp').value = p.maxT;
+            document.getElementById('lane-solar-load').checked = p.solar;
+
+            p.legs.forEach((leg, idx) => {
+                const i = idx + 1;
+                document.getElementById(`leg${i}-name`).value = leg[0];
+                document.getElementById(`leg${i}-hrs`).value = leg[1];
+                document.getElementById(`leg${i}-temp`).value = leg[2];
+            });
+
+            calculateThermalAndRoi();
+        }
+
+        function calculateThermalAndRoi() {
+            const s = packedState.dual.summary || {};
+            const CL = s.CL || 120;
+            const CW = s.CW || 80;
+            const CH = s.CH || 100;
+            const thermalKey = s.thermalKey || 'none';
+            const tempZoneKey = s.tempZoneKey || 'ambient';
+            const thermalSpec = THERMAL_SPECS[thermalKey] || THERMAL_SPECS.none;
+            const tempSpec = TEMP_ZONES[tempZoneKey] || TEMP_ZONES.ambient;
+
+            const minSafe = parseFloat(document.getElementById('lane-min-temp')?.value) ?? 2;
+            const maxSafe = parseFloat(document.getElementById('lane-max-temp')?.value) ?? 8;
+            const solarLoad = document.getElementById('lane-solar-load')?.checked || false;
+            const midTarget = (minSafe + maxSafe) / 2;
+
+            let totalHours = 0;
+            let degreeHours = 0;
+            let peakAmbient = -999;
+            let minAmbient = 999;
+
+            for (let i = 1; i <= 4; i++) {
+                const hrs = Math.max(0, parseFloat(document.getElementById(`leg${i}-hrs`)?.value) || 0);
+                let amb = parseFloat(document.getElementById(`leg${i}-temp`)?.value) || 0;
+                if (solarLoad && amb > 25) amb += 12;
+                totalHours += hrs;
+                peakAmbient = Math.max(peakAmbient, amb);
+                minAmbient = Math.min(minAmbient, amb);
+                degreeHours += hrs * Math.abs(amb - midTarget);
+            }
+
+            // Thermal Hold Capacity Estimation based on R-value, surface area, and PCM latent heat
+            const surfaceM2 = 2 * ((CL * CW + CL * CH + CW * CH) / 10000);
+            const uValue = 1 / Math.max(0.15, thermalSpec.rValue); // W/m2K approximation
+            const coolantKg = s.coolantKg || 0;
+            const payloadThermalMassKj = (s.netCargoKg || 400) * 1.8 * Math.max(2, (maxSafe - minSafe));
+            const pcmBufferKj = coolantKg * (tempSpec.latentKjPerKg || 0);
+            const totalBufferKj = payloadThermalMassKj + pcmBufferKj;
+
+            const avgDeltaT = totalHours > 0 ? (degreeHours / totalHours) : 0;
+            const heatLeakWatts = Math.max(1.5, uValue * surfaceM2 * Math.max(1, avgDeltaT));
+            const estHoldHours = totalBufferKj / (heatLeakWatts * 3.6);
+            const reservePct = Math.min(100, Math.max(0, ((estHoldHours - totalHours) / Math.max(1, estHoldHours)) * 100));
+
+            let riskStatus = 'PASS';
+            let riskColor = 'text-emerald-400';
+            if (estHoldHours < totalHours) {
+                riskStatus = 'HIGH RISK';
+                riskColor = 'text-rose-400';
+            } else if (estHoldHours < totalHours * 1.25) {
+                riskStatus = 'MARGINAL';
+                riskColor = 'text-amber-400';
+            }
+
+            // KPI Cards
+            const kpiEl = document.getElementById('thermal-kpis');
+            if (kpiEl) {
+                kpiEl.innerHTML = `
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Total Transit / Degree-Hrs</span>
+                        <span class="text-lg font-bold text-white">${totalHours.toFixed(1)}h <span class="text-xs font-normal text-cyan-400">(${Math.round(degreeHours)} °C·h)</span></span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Est. Hold Duration</span>
+                        <span class="text-lg font-bold text-cyan-400">${estHoldHours.toFixed(1)} hrs</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Thermal Buffer Reserve</span>
+                        <span class="text-lg font-bold text-white">${reservePct.toFixed(0)}%</span>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] text-slate-400 block">Excursion Risk Rating</span>
+                        <span class="text-lg font-extrabold ${riskColor}">${riskStatus}</span>
+                    </div>
+                `;
+            }
+
+            document.getElementById('thermal-grade-pill').innerText = `${thermalSpec.name} • R-${thermalSpec.rValue.toFixed(2)}`;
+
+            // PCM / Coolant Auto-Balancer & Regulatory Alerts
+            const packUnitKg = tempZoneKey === 'frozen' ? 2.0 : 1.5;
+            const recommendedPacks = coolantKg > 0 ? Math.max(2, Math.ceil(coolantKg / packUnitKg)) : 0;
+            const alerts = [];
+
+            if (thermalKey === 'none' && totalHours > 0) {
+                alerts.push(`<div class="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300">⚠️ <strong>No Insulation Selected:</strong> Switch Tab 1 Insulation Grade to <strong>Temax-4000</strong> to shield against ${peakAmbient}°C tarmac peaks.</div>`);
+            }
+            if (minSafe >= 2 && tempZoneKey === 'frozen') {
+                alerts.push(`<div class="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">❄️ <strong>Freeze-Shock Warning:</strong> Sub-zero coolant paired with a +${minSafe}°C min payload requires a corrugated buffer pad to prevent product freezing.</div>`);
+            }
+            if (tempZoneKey === 'frozen' && coolantKg > 2.5) {
+                alerts.push(`<div class="p-2.5 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-300">✈️ <strong>IATA UN 1845 Notice:</strong> ${coolantKg.toFixed(1)} kg frozen refrigerant exceeds 2.5 kg—if using Dry Ice, declare UN 1845 Class 9 and ensure vented outer packaging.</div>`);
+            }
+            if (minAmbient < 0 && minSafe > 0) {
+                alerts.push(`<div class="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">🥶 <strong>Sub-Zero Ambient Detected (${minAmbient}°C):</strong> Use water-based +5°C PCM bricks as thermal ballast to prevent cold-weather freeze excursions.</div>`);
+            }
+            if (alerts.length === 0) {
+                alerts.push(`<div class="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">✅ <strong>Validated Configuration:</strong> ${thermalSpec.name} + ${recommendedPacks} pre-conditioned packs maintain ${minSafe}°C to ${maxSafe}°C across all ${totalHours.toFixed(1)}h legs.</div>`);
+            }
+
+            const pcmEl = document.getElementById('pcm-balancer-panel');
+            if (pcmEl) {
+                pcmEl.innerHTML = `
+                    <div class="grid grid-cols-3 gap-2.5">
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <span class="text-[10px] text-slate-400 block">Allocated Coolant Mass</span>
+                            <span class="text-sm font-bold text-cyan-300">${coolantKg.toFixed(1)} kg <span class="text-[10px] font-normal text-slate-500">(${(s.coolantVolL || 0).toFixed(1)} L)</span></span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <span class="text-[10px] text-slate-400 block">Recommended Pack Count</span>
+                            <span class="text-sm font-bold text-white">${recommendedPacks} × ${packUnitKg} kg bricks</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <span class="text-[10px] text-slate-400 block">Envelope Surface Area</span>
+                            <span class="text-sm font-bold text-slate-200">${surfaceM2.toFixed(2)} m²</span>
+                        </div>
+                    </div>
+                    ${alerts.join('')}
+                `;
+            }
+
+            // Warehouse Space, DIM Weight & Scope 3 CO2 ROI Comparator
+            const orderPallets = s.totalPalletsNeeded || 8;
+            const freightMode = document.getElementById('roi-freight-mode')?.value || 'air';
+            const ratePerKg = Math.max(0.1, parseFloat(document.getElementById('roi-rate-kg')?.value) || 2.40);
+
+            // Rigid EPS/PU requires ~5cm walls (larger outer footprint) & ships bulky (1:1 inbound warehouse ratio vs 6.2x–8.5x flat-packed Temax)
+            const foldRatio = thermalSpec.flatFoldRatio > 1 ? thermalSpec.flatFoldRatio : 6.2;
+            const inboundWarehouseSpaceSavedPct = ((1 - 1 / foldRatio) * 100).toFixed(0);
+
+            const temaxDimKgPerPallet = (CL * CW * (s.totalHeight || 115)) / 6000;
+            const rigidEpsDimKgPerPallet = ((CL + 10) * (CW + 10) * ((s.totalHeight || 115) + 10)) / 6000;
+            const dimSavingsTotalKg = Math.max(0, (rigidEpsDimKgPerPallet - temaxDimKgPerPallet) * orderPallets);
+            const freightCostSavedEur = freightMode === 'air'
+                ? dimSavingsTotalKg * ratePerKg
+                : (orderPallets * 6.3) * (ratePerKg * 0.35);
+
+            // Scope 3 CO2 savings (airfreight ~0.60 kg CO2/ton-km over 4,500 km avg lane; road ~0.08 kg CO2/ton-km over 900 km)
+            const co2SavedKg = freightMode === 'air'
+                ? (dimSavingsTotalKg / 1000) * 4500 * 0.60
+                : ((orderPallets * 6.3) / 1000) * 900 * 0.08;
+
+            const roiEl = document.getElementById('roi-comparison-panel');
+            if (roiEl) {
+                roiEl.innerHTML = `
+                    <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-[11px] text-slate-400 block">Inbound Warehouse Saved</span>
+                        <span class="text-xl font-extrabold text-emerald-400">-${inboundWarehouseSpaceSavedPct}%</span>
+                        <span class="text-[10px] text-slate-500 block">Flat-packed Temax vs. rigid EPS</span>
+                    </div>
+                    <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-[11px] text-slate-400 block">${freightMode === 'air' ? 'Chargeable DIM Saved' : 'Tare Weight Saved'}</span>
+                        <span class="text-xl font-extrabold text-sky-400">${Math.round(freightMode === 'air' ? dimSavingsTotalKg : orderPallets * 6.3).toLocaleString()} kg</span>
+                        <span class="text-[10px] text-emerald-400 font-semibold block">Est. €${Math.round(freightCostSavedEur).toLocaleString()} saved / order</span>
+                    </div>
+                    <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-[11px] text-slate-400 block">Scope 3 CO₂ Reduction</span>
+                        <span class="text-xl font-extrabold text-cyan-400">-${Math.round(co2SavedKg).toLocaleString()} kg</span>
+                        <span class="text-[10px] text-slate-500 block">100% recyclable multilayer PE/Alu</span>
+                    </div>
+                `;
+            }
+
+            // Warehouse Packout SOP Steps
+            const sopSteps = [
+                `Inspect ${s.isPalletized ? '120×80 cm EPAL brown pallet' : 'clean dry staging floor'} and lay base thermal floor pad (${thermalSpec.name}).`,
+                `Erect ${thermalSpec.name} (${thermalSpec.wallCm} cm wall) inside the ${CL}×${CW}×${CH} cm master envelope with reflective foil facing outward.`,
+                `Load ${s.unitsOnPallet || 64} cargo units (${s.IL || 30}×${s.IW || 20}×${s.IH || 25} cm) using <strong>${s.stackPattern === 'interlock' ? 'Interlocking Brick (Verband)' : 'Column'}</strong> pattern${s.sheetCount ? `, inserting ${s.sheetCount} kraft sheet carton(s) between layers` : ''}.`,
+                recommendedPacks > 0
+                    ? `Place <strong>${recommendedPacks} × ${packUnitKg} kg</strong> pre-conditioned ${tempSpec.name} packs on the <strong>top cargo deck</strong> (cold air sinks naturally)${minSafe >= 2 ? ' over a corrugated buffer pad' : ''}.`
+                    : `Verify ambient temperature logger is active and positioned in the geometric center of the top layer.`,
+                `Fold top thermal flaps with minimum <strong>10 cm overlap</strong> and seal all seams with heavy-duty acrylic/foil tape to eliminate thermal bridges${s.useCorners ? ', then apply 4× carton hoeklatten and stretch-wrap' : ''}.`
+            ];
+
+            const sopListEl = document.getElementById('packout-sop-list');
+            if (sopListEl) {
+                sopListEl.innerHTML = sopSteps.map(step => `<li>${step}</li>`).join('');
+            }
+
+            packedState.thermal = {
+                totalHours,
+                degreeHours: Math.round(degreeHours),
+                estHoldHours: estHoldHours.toFixed(1),
+                riskStatus,
+                packCount: recommendedPacks,
+                packUnitKg,
+                coolantKg,
+                dimSavingsKg: Math.round(dimSavingsTotalKg),
+                co2SavedKg: Math.round(co2SavedKg),
+                sopSteps
+            };
+        }
+
+        function printPackoutSop() {
+            calculateThermalAndRoi();
+            const s = packedState.dual.summary || {};
+            const t = packedState.thermal || {};
+            const now = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+            const sopWin = window.open('', '_blank', 'width=850,height=720');
+            if (!sopWin) {
+                alert('Please allow pop-ups in your browser to print the Warehouse Packout SOP.');
+                return;
+            }
+
+            sopWin.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Krautz-Temax Warehouse Packout SOP</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Arial, sans-serif; color: #0f172a; margin: 32px; line-height: 1.5; }
+                        .hdr { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #0066cc; padding-bottom: 12px; margin-bottom: 20px; }
+                        .title { font-size: 20px; font-weight: 800; color: #004c99; }
+                        .badge { background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px; }
+                        .meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; }
+                        ol { padding-left: 20px; font-size: 14px; }
+                        li { margin-bottom: 12px; padding: 10px; background: #f1f5f9; border-left: 4px solid #0066cc; border-radius: 4px; }
+                        .signoff { margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; font-size: 12px; color: #475569; }
+                        .line { border-bottom: 1px solid #94a3b8; height: 28px; margin-bottom: 4px; }
+                        @media print { .no-print { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="hdr">
+                        <div>
+                            <div class="title">KRAUTZ-TEMAX — Warehouse Packout SOP</div>
+                            <div style="font-size:12px;color:#475569;">Standard Operating Procedure for Cold-Chain Pallet Assembly</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span class="badge">${t.riskStatus} • ${t.totalHours}h Lane</span><br>
+                            <button class="no-print" onclick="window.print()" style="margin-top:8px;padding:6px 14px;background:#0066cc;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Print SOP</button>
+                        </div>
+                    </div>
+                    <div class="meta">
+                        <div><strong>Envelope:</strong> ${s.CL}×${s.CW}×${s.CH} cm (${s.isPalletized ? 'Palletized' : 'Floor'})</div>
+                        <div><strong>Thermal System:</strong> ${s.thermalName}</div>
+                        <div><strong>Coolant Load:</strong> ${t.packCount} × ${t.packUnitKg} kg (${t.coolantKg?.toFixed(1)} kg)</div>
+                        <div><strong>Cargo Fit:</strong> ${s.unitsOnPallet} units (${s.grossPalletKg?.toFixed(1)} kg gross)</div>
+                        <div><strong>Transit Exposure:</strong> ${t.totalHours}h (${t.degreeHours} °C·h)</div>
+                        <div><strong>SOP Date:</strong> ${now}</div>
+                    </div>
+                    <h3 style="font-size:14px;text-transform:uppercase;color:#004c99;">Mandatory Assembly Sequence</h3>
+                    <ol>${(t.sopSteps || []).map(st => `<li>${st}</li>`).join('')}</ol>
+                    <div class="signoff">
+                        <div><div class="line"></div>Operator Name & Signature</div>
+                        <div><div class="line"></div>QA / Cold-Chain Release Verification</div>
+                    </div>
+                </body>
+                </html>
+            `);
+            sopWin.document.close();
+        }
+
+        // Shareable Configuration URL Encoder / Decoder
+        function copyShareableConfigUrl() {
+            const cfg = {
+                cl: document.getElementById('containerL').value,
+                cw: document.getElementById('containerW').value,
+                ch: document.getElementById('containerH').value,
+                il: document.getElementById('itemL').value,
+                iw: document.getElementById('itemW').value,
+                ih: document.getElementById('itemH').value,
+                wt: document.getElementById('itemWeight').value,
+                mp: document.getElementById('maxPayload').value,
+                qty: document.getElementById('orderTotalQty').value,
+                pm: document.getElementById('dualPlacementMode').value,
+                sp: document.getElementById('dualStackPattern').value,
+                tg: document.getElementById('temaxThermalGrade').value,
+                tz: document.getElementById('temaxTempZone').value,
+                sc: document.getElementById('dualSheetCarton').checked ? 1 : 0,
+                cg: document.getElementById('dualCornerGuards').checked ? 1 : 0
+            };
+            const encoded = btoa(JSON.stringify(cfg));
+            const shareUrl = `${window.location.origin}${window.location.pathname}?cfg=${encodeURIComponent(encoded)}`;
+            window.history.replaceState({}, '', `?cfg=${encodeURIComponent(encoded)}`);
+            navigator.clipboard?.writeText(shareUrl);
+
+            const lbl = document.getElementById('shareUrlLabel');
+            if (lbl) {
+                lbl.innerText = 'Copied!';
+                setTimeout(() => { lbl.innerText = 'Share'; }, 2000);
+            }
+        }
+
+        function loadConfigFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const raw = params.get('cfg');
+            if (!raw) return;
+            try {
+                const cfg = JSON.parse(atob(decodeURIComponent(raw)));
+                if (cfg.cl) document.getElementById('containerL').value = cfg.cl;
+                if (cfg.cw) document.getElementById('containerW').value = cfg.cw;
+                if (cfg.ch) document.getElementById('containerH').value = cfg.ch;
+                if (cfg.il) document.getElementById('itemL').value = cfg.il;
+                if (cfg.iw) document.getElementById('itemW').value = cfg.iw;
+                if (cfg.ih) document.getElementById('itemH').value = cfg.ih;
+                if (cfg.wt) document.getElementById('itemWeight').value = cfg.wt;
+                if (cfg.mp) document.getElementById('maxPayload').value = cfg.mp;
+                if (cfg.qty) document.getElementById('orderTotalQty').value = cfg.qty;
+                if (cfg.tg) document.getElementById('temaxThermalGrade').value = cfg.tg;
+                if (cfg.tz) document.getElementById('temaxTempZone').value = cfg.tz;
+                if (cfg.sc !== undefined) document.getElementById('dualSheetCarton').checked = !!cfg.sc;
+                if (cfg.cg !== undefined) document.getElementById('dualCornerGuards').checked = !!cfg.cg;
+                if (cfg.pm) setPlacementMode('dual', cfg.pm);
+                if (cfg.sp) setStackPattern(cfg.sp);
+            } catch (e) {
+                console.warn('Invalid shared configuration URL parameter.');
+            }
+        }
+
         // Commercial RFQ Modal Handlers
         function openRfqModal() {
+            calculateThermalAndRoi();
             const s = packedState.dual.summary || {};
+            const t = packedState.thermal || {};
             const text = [
                 `KRAUTZ-TEMAX PACKAGING & COLD-CHAIN RFQ`,
                 `----------------------------------------`,
@@ -2622,6 +3164,8 @@
                 `Inner Package Unit: ${s.IL} x ${s.IW} x ${s.IH} cm (${s.unitWeightKg} kg/unit)`,
                 `Units per Pallet: ${s.unitsOnPallet} units (${s.efficiency}% fill, ${s.grossPalletKg?.toFixed(1)} kg gross)`,
                 `Temax Thermal Liner: ${s.thermalName} | Zone: ${s.tempZoneName}`,
+                `Coolant / PCM Requirement: ${t.packCount || 0} packs (${(t.coolantKg || 0).toFixed(1)} kg/pallet)`,
+                `Validated Transit Lane: ${t.totalHours || 0}h (${t.degreeHours || 0} °C·h) — Status: ${t.riskStatus || 'PASS'}`,
                 `Carton Dunnage: ${s.sheetCount || 0} Sheet Cartons, ${s.useCorners ? '4x Carton Hoeklatten' : 'No Hoeklatten'}`,
                 `Order Requirement: ${s.orderTotalQty} units (${s.totalPalletsNeeded} pallets total)`
             ].join('\n');
@@ -2656,6 +3200,7 @@
 
         // Export Branded Packing Spec Sheet + Live 3D Snapshot
         function exportSpecSheet() {
+            calculateThermalAndRoi();
             const viewerKey = viewers[activeTabKey] ? activeTabKey : 'dual';
             const v = viewers[viewerKey];
             let snapshotUrl = '';
@@ -2665,6 +3210,7 @@
             }
 
             const s = packedState.dual.summary || {};
+            const t = packedState.thermal || {};
             const now = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
             const printWin = window.open('', '_blank', 'width=900,height=780');
@@ -2690,7 +3236,7 @@
                         .row:last-child { border-bottom: none; }
                         .val { font-weight: 700; }
                         .preview { text-align: center; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px; background: #060b16; margin-bottom: 20px; }
-                        .preview img { max-width: 100%; max-height: 320px; border-radius: 8px; }
+                        .preview img { max-width: 100%; max-height: 300px; border-radius: 8px; }
                         .footer { font-size: 11px; color: #64748b; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; }
                         @media print { .no-print { display: none; } }
                     </style>
@@ -2714,18 +3260,18 @@
                             <h3>1. Load Dimensions & Thermal Protection</h3>
                             <div class="row"><span>Base Mode:</span><span class="val">${s.isPalletized ? 'Palletized (+15 cm Brown Pallet)' : 'Direct on Concrete Floor'}</span></div>
                             <div class="row"><span>Total Load (L × W × H):</span><span class="val">${s.CL} × ${s.CW} × ${s.totalHeight?.toFixed(1)} cm</span></div>
-                            <div class="row"><span>Goods Envelope (L × W × H):</span><span class="val">${s.CL} × ${s.CW} × ${s.CH} cm</span></div>
                             <div class="row"><span>Temax Thermal Liner:</span><span class="val">${s.thermalName} (${s.tempZoneName})</span></div>
-                            <div class="row"><span>Carton Protection:</span><span class="val">${s.sheetCount || 0} Sheets • ${s.useCorners ? '4 Hoeklatten' : 'No Hoeklatten'}</span></div>
+                            <div class="row"><span>PCM / Coolant Load:</span><span class="val">${t.packCount || 0} packs (${(t.coolantKg || 0).toFixed(1)} kg)</span></div>
+                            <div class="row"><span>Lane Validation:</span><span class="val">${t.totalHours || 0}h (${t.degreeHours || 0} °C·h) • ${t.riskStatus}</span></div>
                         </div>
 
                         <div class="card">
-                            <h3>2. Unit Capacity, Weight & Order Totals</h3>
+                            <h3>2. Unit Capacity, Weight & Sustainability ROI</h3>
                             <div class="row"><span>Inner Unit Dimensions:</span><span class="val">${s.IL} × ${s.IW} × ${s.IH} cm</span></div>
                             <div class="row"><span>Units per Pallet:</span><span class="val">${s.unitsOnPallet} units (${s.efficiency}% fill)</span></div>
                             <div class="row"><span>Net / Gross Pallet Weight:</span><span class="val">${s.netCargoKg?.toFixed(1)} kg / ${s.grossPalletKg?.toFixed(1)} kg</span></div>
-                            <div class="row"><span>Limiting Factor:</span><span class="val">${s.isWeightLimited ? 'Weight-Limited' : 'Volume-Limited'}</span></div>
                             <div class="row"><span>Order (${s.orderTotalQty} units):</span><span class="val">${s.totalPalletsNeeded} Pallets (${s.fullPallets} Full + ${s.remainderUnits} rem.)</span></div>
+                            <div class="row"><span>DIM / CO₂ Savings vs EPS:</span><span class="val">${t.dimSavingsKg || 0} kg DIM • -${t.co2SavedKg || 0} kg CO₂</span></div>
                         </div>
                     </div>
 
@@ -2744,6 +3290,7 @@
             calculateSpheres();
             calculateIrregular();
             calculateTruckLoad();
+            calculateThermalAndRoi();
         }
 
         window.onload = function () {
@@ -2752,6 +3299,7 @@
             init3DViewer('sphere', 'canvas-sphere');
             init3DViewer('irr', 'canvas-irr');
             init3DViewer('truck', 'canvas-truck');
+            loadConfigFromUrl();
             calculateAll();
             resetCamera('dual');
             resetCamera('puzzle');
