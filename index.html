@@ -268,7 +268,7 @@
                                     </div>
                                     <div>
                                         <label class="text-[10px] text-emerald-400 block mb-1">c (J/kg·K)</label>
-                                        <input type="number" id="ccrm-cp" value="4186" min="100" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs font-bold text-emerald-300">
+                                        <input type="number" id="ccrm-cp" value="4186" min="100" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-bold text-emerald-300">
                                     </div>
                                 </div>
                                 <div class="flex items-center justify-between text-[10px] text-slate-400">
@@ -338,14 +338,14 @@
                         </div>
                     </div>
 
-                    <!-- External vs Internal Pallet Temperature Curve + Legend (Canvas) -->
+                    <!-- External vs Internal Pallet Temperature Curve + Legend (X: every 2h, Y: every 2°C) -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
                             <div>
                                 <h3 data-i18n="lblTempCurveTitle" class="text-sm font-bold text-white flex items-center gap-2">
                                     <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i> External vs. Internal Pallet Temperature Graph
                                 </h3>
-                                <p data-i18n="lblTempCurveDesc" class="text-[10px] text-slate-400">Compares external ambient/tarmac temperature against internal pallet/goods temperature</p>
+                                <p data-i18n="lblTempCurveDesc" class="text-[10px] text-slate-400">X-axis: every 2 hours • Y-axis: every 2°C (External vs. Internal Pallet/Goods Temp)</p>
                             </div>
                         </div>
                         <!-- Graph Legend -->
@@ -356,7 +356,7 @@
                             <span class="flex items-center gap-1.5 text-sky-400 font-medium"><span class="w-3 h-0.5 border-t border-dashed border-[#38bdf8] inline-block"></span> <span data-i18n="legMin">Min Limit (Tmi)</span></span>
                             <span class="flex items-center gap-1.5 text-emerald-400 font-medium"><span class="w-2.5 h-2.5 rounded-sm bg-emerald-500/25 border border-emerald-500/40 inline-block"></span> <span data-i18n="legSafeBand">Safe Zone</span></span>
                         </div>
-                        <canvas id="ccrmTempChart" width="540" height="175" class="w-full h-[175px] bg-slate-950 rounded-xl border border-slate-800"></canvas>
+                        <canvas id="ccrmTempChart" width="560" height="190" class="w-full h-[190px] bg-slate-950 rounded-xl border border-slate-800"></canvas>
                     </div>
                 </div>
 
@@ -751,7 +751,7 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.6</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.7</span>
                         </div>
                     </div>
 
@@ -1120,7 +1120,7 @@
         <div>© 2026 Krautz-Temax NV. All rights reserved. CCRM Cold Chain Risk Management & 3D Thermal Packaging Technology.</div>
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
-    <!-- JavaScript Application: Part 2 (4-Language I18N, CCRM Engine, Temp Graph + Legend & Manual/Animated Pallet Packing SOP) -->
+    <!-- JavaScript Application: Part 2 (4-Language I18N, CCRM Engine, 2h/2°C Temp Graph + Legend & Manual/Animated Pallet Packing SOP) -->
     <script>
         lucide.createIcons();
 
@@ -1183,7 +1183,7 @@
                 sec2TempDetails: '2. Product Temperature & Specific Heat (c)',
                 sec3EnvProfile: '3. Environment Profile',
                 lblTempCurveTitle: 'External vs. Internal Pallet Temperature Graph',
-                lblTempCurveDesc: 'Compares external ambient/tarmac temperature against internal pallet/goods temperature',
+                lblTempCurveDesc: 'X-axis: every 2 hours • Y-axis: every 2°C (External vs. Internal Pallet/Goods Temp)',
                 legExternal: 'External Temp (°C)',
                 legInternal: 'Internal Pallet / Goods Temp (°C)',
                 legMax: 'Max Limit (Tma)',
@@ -1274,7 +1274,7 @@
                 sec2TempDetails: '2. Producttemperatuur & Soortelijke Warmte (c)',
                 sec3EnvProfile: '3. Omgevingsprofiel',
                 lblTempCurveTitle: 'Externe vs. Interne Pallettemperatuur Grafiek',
-                lblTempCurveDesc: 'Vergelijkt externe omgevingstemperatuur met interne pallet/producttemperatuur',
+                lblTempCurveDesc: 'X-as: elke 2 uur • Y-as: elke 2°C (Externe vs. Interne Pallet/Producttemp)',
                 legExternal: 'Externe Temp (°C)',
                 legInternal: 'Interne Pallet / Product Temp (°C)',
                 legMax: 'Max Limiet (Tma)',
@@ -1365,7 +1365,7 @@
                 sec2TempDetails: '2. Produkttemperatur & Spez. Wärmekapazität (c)',
                 sec3EnvProfile: '3. Umgebungsprofil',
                 lblTempCurveTitle: 'Außen- vs. Paletten-Innentemperatur-Grafik',
-                lblTempCurveDesc: 'Vergleicht Außentemperatur mit innerer Paletten-/Produkttemperatur',
+                lblTempCurveDesc: 'X-Achse: alle 2 Stunden • Y-Achse: alle 2°C (Außen- vs. Paletten-Innentemp)',
                 legExternal: 'Außentemperatur (°C)',
                 legInternal: 'Innere Paletten- / Produkttemp (°C)',
                 legMax: 'Max. Grenzwert (Tma)',
@@ -1456,7 +1456,7 @@
                 sec2TempDetails: '2. Températures Produit & Chaleur Spécifique (c)',
                 sec3EnvProfile: '3. Profil Environnemental',
                 lblTempCurveTitle: 'Graphique Température Externe vs. Interne Palette',
-                lblTempCurveDesc: 'Compare la température extérieure à la température interne de la palette/marchandise',
+                lblTempCurveDesc: 'Axe X : toutes les 2 heures • Axe Y : tous les 2°C (Temp. Externe vs. Interne)',
                 legExternal: 'Temp. Externe (°C)',
                 legInternal: 'Temp. Interne Palette / Colis (°C)',
                 legMax: 'Limite Max (Tma)',
@@ -1554,7 +1554,6 @@
         let customScanGeometry = null;
         let customScanBounds = null;
 
-        // Manual & Animated Pallet Packing SOP State (0.0 to 5.0)
         let sopAnimPlaying = false;
         let sopAnimProgress = 1.7;
 
@@ -1712,44 +1711,98 @@
             calculateAll();
         }
 
+        // Temperature Graph with X-axis every 2 hours and Y-axis every 2°C + Legend
         function drawCcrmTemperatureChart(timeline, minTemp, maxTemp) {
             const canvas = document.getElementById('ccrmTempChart');
             if (!canvas) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const cssW = Math.max(320, Math.floor(rect.width || 560));
+            const cssH = Math.max(160, Math.floor(rect.height || 190));
+            if (canvas.width !== cssW * dpr || canvas.height !== cssH * dpr) {
+                canvas.width = cssW * dpr;
+                canvas.height = cssH * dpr;
+            }
+
             const ctx = canvas.getContext('2d');
-            const W = canvas.width;
-            const H = canvas.height;
-            ctx.clearRect(0, 0, W, H);
+            ctx.save();
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, cssW, cssH);
+            ctx.fillStyle = '#060b16';
+            ctx.fillRect(0, 0, cssW, cssH);
 
             const pts = (timeline && timeline.length >= 2)
                 ? timeline
                 : [{ hr: 0, amb: 20, core: 5 }, { hr: 6, amb: 35, core: 6.2 }, { hr: 14, amb: 16, core: 6.8 }, { hr: 22, amb: 28, core: 7.2 }];
 
-            const padL = 40, padR = 16, padT = 16, padB = 24;
-            const plotW = W - padL - padR;
-            const plotH = H - padT - padB;
+            const padL = 44, padR = 16, padT = 14, padB = 26;
+            const plotW = Math.max(40, cssW - padL - padR);
+            const plotH = Math.max(40, cssH - padT - padB);
 
-            const allTemps = [minTemp - 4, maxTemp + 4];
-            pts.forEach(pt => { allTemps.push(pt.amb, pt.core); });
-            const tMin = Math.min(...allTemps);
-            const tMax = Math.max(...allTemps);
-            const maxHrs = Math.max(1, pts[pts.length - 1].hr);
+            const rawVals = [minTemp - 2, maxTemp + 2];
+            pts.forEach(pt => { rawVals.push(pt.amb, pt.core); });
 
-            const xOf = hr => padL + (hr / maxHrs) * plotW;
-            const yOf = t => padT + plotH - ((t - tMin) / Math.max(1, tMax - tMin)) * plotH;
+            // Snap Y-axis bounds to multiples of 2°C
+            const yMinTick = Math.floor(Math.min(...rawVals) / 2) * 2;
+            const yMaxTick = Math.ceil(Math.max(...rawVals) / 2) * 2;
 
+            // Snap X-axis max to a multiple of 2 hours
+            const rawMaxHrs = Math.max(2, pts[pts.length - 1].hr);
+            const xMaxTick = Math.max(2, Math.ceil(rawMaxHrs / 2) * 2);
+
+            const xOf = hr => padL + (hr / xMaxTick) * plotW;
+            const yOf = t => padT + plotH - ((t - yMinTick) / Math.max(2, yMaxTick - yMinTick)) * plotH;
+
+            // Safe zone band [minTemp, maxTemp]
             const yMaxSafe = yOf(maxTemp);
             const yMinSafe = yOf(minTemp);
             ctx.fillStyle = 'rgba(16, 185, 129, 0.14)';
-            ctx.fillRect(padL, yMaxSafe, plotW, Math.max(2, yMinSafe - yMaxSafe));
+            ctx.fillRect(padL, Math.min(yMaxSafe, yMinSafe), plotW, Math.abs(yMinSafe - yMaxSafe));
 
+            // Y-axis gridlines & labels EVERY 2°C
+            ctx.font = '10px Inter, Arial, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            for (let deg = yMinTick; deg <= yMaxTick; deg += 2) {
+                const gy = yOf(deg);
+                ctx.strokeStyle = 'rgba(148, 163, 184, 0.10)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(padL, gy);
+                ctx.lineTo(cssW - padR, gy);
+                ctx.stroke();
+
+                ctx.fillStyle = '#94a3b8';
+                ctx.fillText(`${deg}°C`, padL - 6, gy);
+            }
+
+            // X-axis gridlines & labels EVERY 2 HOURS
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            for (let h = 0; h <= xMaxTick; h += 2) {
+                const gx = xOf(h);
+                ctx.strokeStyle = 'rgba(148, 163, 184, 0.10)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(gx, padT);
+                ctx.lineTo(gx, padT + plotH);
+                ctx.stroke();
+
+                ctx.fillStyle = '#94a3b8';
+                ctx.fillText(`${h}h`, gx, padT + plotH + 6);
+            }
+
+            // Dashed safety limit lines (Tma and Tmi)
             ctx.setLineDash([4, 4]);
             ctx.strokeStyle = '#f43f5e';
             ctx.lineWidth = 1.4;
-            ctx.beginPath(); ctx.moveTo(padL, yMaxSafe); ctx.lineTo(W - padR, yMaxSafe); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(padL, yMaxSafe); ctx.lineTo(cssW - padR, yMaxSafe); ctx.stroke();
             ctx.strokeStyle = '#38bdf8';
-            ctx.beginPath(); ctx.moveTo(padL, yMinSafe); ctx.lineTo(W - padR, yMinSafe); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(padL, yMinSafe); ctx.lineTo(cssW - padR, yMinSafe); ctx.stroke();
             ctx.setLineDash([]);
 
+            // External temperature line (amber)
             ctx.strokeStyle = '#f59e0b';
             ctx.lineWidth = 2.2;
             ctx.beginPath();
@@ -1759,6 +1812,7 @@
             });
             ctx.stroke();
 
+            // Internal pallet / goods temperature line (cyan)
             ctx.strokeStyle = '#22d3ee';
             ctx.lineWidth = 2.8;
             ctx.beginPath();
@@ -1768,12 +1822,7 @@
             });
             ctx.stroke();
 
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '10px Inter, sans-serif';
-            ctx.fillText(`${Math.round(tMax)}°C`, 4, padT + 8);
-            ctx.fillText(`${Math.round(tMin)}°C`, 4, H - padB);
-            ctx.fillText(`0h`, padL, H - 6);
-            ctx.fillText(`${maxHrs.toFixed(0)}h`, W - padR - 24, H - 6);
+            ctx.restore();
         }
 
         function calculateCcrmEngine() {
@@ -1928,7 +1977,7 @@
             }
 
             packedState.ccrm = {
-                calcDate: document.getElementById('ccrm-calc-date')?.value || '2026-11-23',
+                calcDate: document.getElementById('ccrm-calc-date')?.value || '2026-11-24',
                 calcRef: document.getElementById('ccrm-calc-ref')?.value || 'CCRM-2026-4091',
                 managerName: document.getElementById('ccrm-manager-name')?.value || 'Manager',
                 company, contact, address, place, email, phone, shipRef,
@@ -2003,7 +2052,6 @@
             document.body.removeChild(link);
         }
 
-        // Manual & Animated Pallet Packing + 2-Blanket Sealing Drawing
         function toggleSopAnimation() {
             sopAnimPlaying = !sopAnimPlaying;
             const lbl = document.getElementById('sopPlayPauseLabel');
@@ -2062,7 +2110,7 @@
             }
             if (label) {
                 ctx.fillStyle = '#fef3c7';
-                ctx.font = 'bold 10px Inter, Arial, sans-serif';
+                ctx.font = 'bold 10px Inter, sans-serif';
                 ctx.fillText(label, hx + 14, hy + 4);
             }
             ctx.restore();
@@ -2320,6 +2368,9 @@
 
         function handleResize() {
             drawSopPackingAnimation();
+            if (packedState.ccrm) {
+                drawCcrmTemperatureChart(packedState.ccrm.timeline, packedState.ccrm.minTemp ?? 2, packedState.ccrm.maxTemp ?? 8);
+            }
             Object.values(viewers).forEach(v => {
                 if (!v.container || v.container.offsetParent === null) return;
                 const w = v.container.clientWidth;
