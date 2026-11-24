@@ -85,7 +85,7 @@
                     <i data-lucide="truck" class="w-3.5 h-3.5"></i> <span data-i18n="tabTruck">Truck / ULD</span>
                 </button>
                 <button onclick="switchTab('pack-thermal')" id="btn-pack-thermal" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
-                    <i data-lucide="thermometer-snowflake" class="w-3.5 h-3.5 text-cyan-400"></i> <span data-i18n="tabThermal">ROI & DIM</span>
+                    <i data-lucide="thermometer-snowflake" class="w-3.5 h-3.5 text-cyan-400"></i> <span data-i18n="tabThermal">ROI & Compare</span>
                 </button>
             </nav>
 
@@ -348,7 +348,6 @@
                                 <p data-i18n="lblTempCurveDesc" class="text-[10px] text-slate-400">X-axis: every 2 hours • Y-axis: every 2°C (External vs. Internal Pallet/Goods Temp)</p>
                             </div>
                         </div>
-                        <!-- Graph Legend -->
                         <div class="flex flex-wrap items-center gap-3 bg-slate-950/90 px-3 py-2 rounded-xl border border-slate-800 text-[11px]">
                             <span class="flex items-center gap-1.5 text-amber-300 font-medium"><span class="w-3 h-1 rounded bg-[#f59e0b] inline-block"></span> <span data-i18n="legExternal">External Temp (°C)</span></span>
                             <span class="flex items-center gap-1.5 text-cyan-300 font-medium"><span class="w-3 h-1 rounded bg-[#22d3ee] inline-block"></span> <span data-i18n="legInternal">Internal Pallet / Goods Temp (°C)</span></span>
@@ -357,10 +356,11 @@
                             <span class="flex items-center gap-1.5 text-emerald-400 font-medium"><span class="w-2.5 h-2.5 rounded-sm bg-emerald-500/25 border border-emerald-500/40 inline-block"></span> <span data-i18n="legSafeBand">Safe Zone</span></span>
                         </div>
                         <canvas id="ccrmTempChart" width="560" height="190" class="w-full h-[190px] bg-slate-950 rounded-xl border border-slate-800"></canvas>
+                        <div id="ccrm-risk-pinpointer" class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 text-[11px] text-slate-300"></div>
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET HEADER, INSULATION RESULT, 2-BLANKET ROLL CUT, LOGGER GUIDE & MANUAL/ANIMATED SOP -->
+                <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET, 2-BLANKET ROLL CUT + ROLL LAYOUT CANVAS & MANUAL/ANIMATED SOP -->
                 <div class="lg:col-span-6 space-y-5">
 
                     <!-- Internal CCRM Sheet Page 1 Metadata -->
@@ -410,7 +410,7 @@
                         </div>
                     </div>
 
-                    <!-- 2-Blanket Roll Cut Dimensions (Cutting from 1.50m Master Roll) -->
+                    <!-- 2-Blanket Roll Cut Dimensions + Visual 1.50m Roll Cutting Layout -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
                             <h3 data-i18n="lblTwoBlanketsTitle" class="text-sm font-bold text-white flex items-center gap-2">
@@ -419,6 +419,7 @@
                             <span class="text-[10px] px-2 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/30">Incl. 15 cm Overlap Seals</span>
                         </div>
                         <div id="ccrm-two-blankets-panel" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                        <canvas id="rollCutCanvas" width="560" height="84" class="w-full h-[84px] bg-slate-950 rounded-xl border border-slate-800"></canvas>
                     </div>
 
                     <!-- Manual & Animated SOP: Pallet Packing & Fixing the 2 Blankets -->
@@ -440,7 +441,6 @@
                             </div>
                         </div>
 
-                        <!-- Always-Visible 3D-Styled Animated Handling Drawing Viewport -->
                         <div class="w-full h-[275px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <canvas id="sopAnimCanvas" width="560" height="275" class="w-full h-full"></canvas>
                             <div class="absolute bottom-2 left-2.5 z-10 flex flex-wrap items-center gap-2 bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800 text-[10px]">
@@ -452,7 +452,6 @@
                             </div>
                         </div>
 
-                        <!-- Manual Step 1..5 Selector Bar -->
                         <div class="grid grid-cols-5 gap-1.5 text-[10px]" id="sop-visual-steps-bar">
                             <button type="button" onclick="selectSopStep(0)" class="p-1.5 rounded-lg border text-center font-semibold bg-amber-500/20 border-amber-500/50 text-amber-200">1. Base Pad</button>
                             <button type="button" onclick="selectSopStep(1)" class="p-1.5 rounded-lg border text-center font-semibold bg-amber-500/20 border-amber-500/50 text-amber-200">2. Load Cargo</button>
@@ -461,7 +460,6 @@
                             <button type="button" onclick="selectSopStep(4)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">5. Manual Seal</button>
                         </div>
 
-                        <!-- Data Logger & QA Sensor Placement Note -->
                         <div id="logger-placement-guide" class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 text-[11px] text-slate-300"></div>
                     </div>
 
@@ -501,7 +499,6 @@
                             </div>
                         </div>
 
-                        <!-- Placement Mode Prompt: Palletize vs Direct on Concrete Floor -->
                         <div class="pt-3 border-t border-slate-800 space-y-2">
                             <label data-i18n="lblBaseMode" class="block text-xs font-semibold text-slate-200">Base Placement Mode (Floor / Pallet):</label>
                             <div class="grid grid-cols-2 gap-2">
@@ -517,7 +514,6 @@
                             <input type="hidden" id="dualPlacementMode" value="pallet">
                         </div>
 
-                        <!-- Temax Thermal Insulation Liner & Coolant / PCM Allocation -->
                         <div class="pt-3 border-t border-slate-800 space-y-2.5">
                             <div class="flex items-center justify-between">
                                 <label class="block text-xs font-semibold text-cyan-300 flex items-center gap-1.5">
@@ -547,7 +543,6 @@
                             </div>
                         </div>
 
-                        <!-- Stacking Pattern -->
                         <div class="pt-3 border-t border-slate-800 space-y-2">
                             <label data-i18n="lblStackPattern" class="block text-xs font-semibold text-sky-300">Stacking Pattern:</label>
                             <div class="grid grid-cols-2 gap-2">
@@ -563,7 +558,6 @@
                             <input type="hidden" id="dualStackPattern" value="column">
                         </div>
 
-                        <!-- Carton Protection & Stabilization -->
                         <div class="pt-3 border-t border-slate-800 space-y-2">
                             <label data-i18n="lblCartonProtection" class="block text-xs font-semibold text-amber-300">Carton Stabilization & Protection:</label>
                             <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800">
@@ -751,7 +745,7 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.7</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.8</span>
                         </div>
                     </div>
 
@@ -1045,7 +1039,7 @@
             </div>
         </section>
 
-        <!-- TAB 6: WAREHOUSE ROI, AIRFREIGHT DIM & CO2 SUSTAINABILITY -->
+        <!-- TAB 6: WAREHOUSE ROI, AIRFREIGHT DIM, ROLL YIELD & SIDE-BY-SIDE GRADE COMPARISON -->
         <section id="tab-pack-thermal" class="tab-content space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-4 space-y-4">
@@ -1069,6 +1063,28 @@
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2.5"><h3 class="text-sm font-bold text-white flex items-center gap-2"><i data-lucide="scissors" class="w-4 h-4 text-sky-400"></i> Master Roll Yield Summary (1.50m Roll)</h3><span class="text-[11px] text-slate-400">2-Blanket Cross-Wrap System</span></div>
                         <div id="cutsheet-panel" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+                    </div>
+                    <!-- Side-by-Side Temax Insulation Comparison Table -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2"><i data-lucide="table" class="w-4 h-4 text-amber-400"></i> Side-by-Side Temax Grade Performance</h3>
+                            <span class="text-[10px] text-slate-400">Simulated on Current Route</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse" id="grade-comparison-table">
+                                <thead>
+                                    <tr class="border-b border-slate-800 text-slate-400">
+                                        <th class="py-2 pr-3">Grade</th>
+                                        <th class="py-2 px-2">Wall</th>
+                                        <th class="py-2 px-2">R-Value</th>
+                                        <th class="py-2 px-2">Summer Peak</th>
+                                        <th class="py-2 px-2">Winter Low</th>
+                                        <th class="py-2 pl-2">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="grade-comparison-tbody" class="divide-y divide-slate-800/70"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1120,7 +1136,7 @@
         <div>© 2026 Krautz-Temax NV. All rights reserved. CCRM Cold Chain Risk Management & 3D Thermal Packaging Technology.</div>
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
-    <!-- JavaScript Application: Part 2 (4-Language I18N, CCRM Engine, 2h/2°C Temp Graph + Legend & Manual/Animated Pallet Packing SOP) -->
+    <!-- JavaScript Application: Part 2 (Full I18N, CCRM Engine, 2h/2°C Graph + Legend, Roll Cut Diagram, Grade Comparison & Manual/Animated SOP) -->
     <script>
         lucide.createIcons();
 
@@ -1157,7 +1173,7 @@
                 tabSphere: 'Spherical 3D',
                 tabIrregular: 'Irregular Scan',
                 tabTruck: 'Truck / ULD',
-                tabThermal: 'ROI & DIM',
+                tabThermal: 'ROI & Compare',
                 btnShare: 'Form Link',
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Request Quote',
@@ -1248,7 +1264,7 @@
                 tabSphere: 'Bollen 3D',
                 tabIrregular: 'Onregelmatige Scan',
                 tabTruck: 'Vrachtwagen / ULD',
-                tabThermal: 'ROI & DIM',
+                tabThermal: 'ROI & Vergelijk',
                 btnShare: 'Formulier Link',
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Offerte Aanvragen',
@@ -1339,7 +1355,7 @@
                 tabSphere: 'Kugeldichte 3D',
                 tabIrregular: 'Unregelmäßiger Scan',
                 tabTruck: 'LKW / Luftfracht ULD',
-                tabThermal: 'ROI & DIM',
+                tabThermal: 'ROI & Vergleich',
                 btnShare: 'Formular-Link',
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Angebot Anfordern',
@@ -1430,7 +1446,7 @@
                 tabSphere: 'Densité Sphérique',
                 tabIrregular: 'Scan Irrégulier',
                 tabTruck: 'Camion / ULD Avion',
-                tabThermal: 'ROI & DIM',
+                tabThermal: 'ROI & Comparer',
                 btnShare: 'Lien Formulaire',
                 btnSpec: 'Fiche PDF',
                 btnQuote: 'Demander Devis',
@@ -1541,7 +1557,7 @@
 
         const viewers = {};
         const packedState = {
-            ccrm:    { L: 120, W: 80, H: 100, startTemp: 5, minTemp: 2, maxTemp: 8, timeline: [{ hr: 0, amb: 20, core: 5 }, { hr: 4, amb: 35, core: 6.2 }, { hr: 12, amb: 16, core: 6.8 }, { hr: 19, amb: 26, core: 7.1 }] },
+            ccrm:    { L: 120, W: 80, H: 100, startTemp: 5, minTemp: 2, maxTemp: 8, timeline: [{ hr: 0, amb: 20, core: 5 }, { hr: 4, amb: 35, core: 6.2 }, { hr: 12, amb: 16, core: 6.8 }, { hr: 19, amb: 26, core: 7.1 }], allSims: [] },
             dual:    { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [], thermal: null, summary: {} },
             puzzle:  { container: { l: 120, w: 80, h: 100 }, items: [], sheetYs: [] },
             sphere:  { container: { l: 100, w: 100, h: 100 }, items: [], sheetYs: [] },
@@ -1711,7 +1727,7 @@
             calculateAll();
         }
 
-        // Temperature Graph with X-axis every 2 hours and Y-axis every 2°C + Legend
+        // Temperature Graph: X-axis every 2 hours, Y-axis every 2°C + Legend
         function drawCcrmTemperatureChart(timeline, minTemp, maxTemp) {
             const canvas = document.getElementById('ccrmTempChart');
             if (!canvas) return;
@@ -1743,24 +1759,20 @@
             const rawVals = [minTemp - 2, maxTemp + 2];
             pts.forEach(pt => { rawVals.push(pt.amb, pt.core); });
 
-            // Snap Y-axis bounds to multiples of 2°C
             const yMinTick = Math.floor(Math.min(...rawVals) / 2) * 2;
             const yMaxTick = Math.ceil(Math.max(...rawVals) / 2) * 2;
 
-            // Snap X-axis max to a multiple of 2 hours
             const rawMaxHrs = Math.max(2, pts[pts.length - 1].hr);
             const xMaxTick = Math.max(2, Math.ceil(rawMaxHrs / 2) * 2);
 
             const xOf = hr => padL + (hr / xMaxTick) * plotW;
             const yOf = t => padT + plotH - ((t - yMinTick) / Math.max(2, yMaxTick - yMinTick)) * plotH;
 
-            // Safe zone band [minTemp, maxTemp]
             const yMaxSafe = yOf(maxTemp);
             const yMinSafe = yOf(minTemp);
             ctx.fillStyle = 'rgba(16, 185, 129, 0.14)';
             ctx.fillRect(padL, Math.min(yMaxSafe, yMinSafe), plotW, Math.abs(yMinSafe - yMaxSafe));
 
-            // Y-axis gridlines & labels EVERY 2°C
             ctx.font = '10px Inter, Arial, sans-serif';
             ctx.textAlign = 'right';
             ctx.textBaseline = 'middle';
@@ -1777,7 +1789,6 @@
                 ctx.fillText(`${deg}°C`, padL - 6, gy);
             }
 
-            // X-axis gridlines & labels EVERY 2 HOURS
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
             for (let h = 0; h <= xMaxTick; h += 2) {
@@ -1793,7 +1804,6 @@
                 ctx.fillText(`${h}h`, gx, padT + plotH + 6);
             }
 
-            // Dashed safety limit lines (Tma and Tmi)
             ctx.setLineDash([4, 4]);
             ctx.strokeStyle = '#f43f5e';
             ctx.lineWidth = 1.4;
@@ -1802,7 +1812,6 @@
             ctx.beginPath(); ctx.moveTo(padL, yMinSafe); ctx.lineTo(cssW - padR, yMinSafe); ctx.stroke();
             ctx.setLineDash([]);
 
-            // External temperature line (amber)
             ctx.strokeStyle = '#f59e0b';
             ctx.lineWidth = 2.2;
             ctx.beginPath();
@@ -1812,7 +1821,6 @@
             });
             ctx.stroke();
 
-            // Internal pallet / goods temperature line (cyan)
             ctx.strokeStyle = '#22d3ee';
             ctx.lineWidth = 2.8;
             ctx.beginPath();
@@ -1821,6 +1829,64 @@
                 if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
             });
             ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // Visual 1.50m Master Roll Cutting Diagram
+        function drawRollCutDiagram(b1L, b1W, b2L, b2W) {
+            const canvas = document.getElementById('rollCutCanvas');
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const cssW = Math.max(320, Math.floor(rect.width || 560));
+            const cssH = 84;
+            if (canvas.width !== cssW * dpr || canvas.height !== cssH * dpr) {
+                canvas.width = cssW * dpr;
+                canvas.height = cssH * dpr;
+            }
+            const ctx = canvas.getContext('2d');
+            ctx.save();
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, cssW, cssH);
+            ctx.fillStyle = '#060b16';
+            ctx.fillRect(0, 0, cssW, cssH);
+
+            const padX = 14, padY = 20;
+            const rollDrawW = cssW - padX * 2;
+            const rollDrawH = 44;
+
+            // 1.50m Master Roll outline
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(padX, padY, rollDrawW, rollDrawH);
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = 'bold 10px Inter, Arial, sans-serif';
+            ctx.fillText('1.50m (150 cm) Master Roll Cutting Layout', padX, 13);
+
+            const totalLen = Math.max(1, b1L + b2L);
+            const b1PixW = Math.max(40, (b1L / totalLen) * (rollDrawW - 8));
+            const b1PixH = Math.min(rollDrawH - 4, (Math.min(150, b1W) / 150) * (rollDrawH - 4));
+
+            // Blanket 1 block
+            ctx.fillStyle = 'rgba(34, 211, 238, 0.25)';
+            ctx.fillRect(padX + 2, padY + 2, b1PixW, b1PixH);
+            ctx.strokeStyle = '#22d3ee';
+            ctx.strokeRect(padX + 2, padY + 2, b1PixW, b1PixH);
+            ctx.fillStyle = '#cffafe';
+            ctx.fillText(`B1: ${b1L}×${b1W}cm`, padX + 8, padY + 18);
+
+            // Blanket 2 block
+            const b2X = padX + 4 + b1PixW;
+            const b2PixW = Math.max(40, rollDrawW - b1PixW - 6);
+            const b2PixH = Math.min(rollDrawH - 4, (Math.min(150, b2W) / 150) * (rollDrawH - 4));
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.25)';
+            ctx.fillRect(b2X, padY + 2, b2PixW, b2PixH);
+            ctx.strokeStyle = '#38bdf8';
+            ctx.strokeRect(b2X, padY + 2, b2PixW, b2PixH);
+            ctx.fillStyle = '#e0f2fe';
+            ctx.fillText(`B2: ${b2L}×${b2W}cm`, b2X + 8, padY + 18);
 
             ctx.restore();
         }
@@ -1882,6 +1948,7 @@
                 let maxSummerReached = startTemp;
                 let minWinterReached = startTemp;
                 let totalHrs = 0;
+                let peakStepDesc = steps[0]?.desc || 'Transit';
                 const timeline = [{ hr: 0, amb: steps[0]?.sum ?? startTemp, core: startTemp }];
 
                 steps.forEach(st => {
@@ -1889,7 +1956,10 @@
                     const dtSec = st.hrs * 3600;
                     const qSum = uVal * surfaceM2 * (st.sum - tSummer) * dtSec;
                     tSummer += qSum / thermalMassJK;
-                    maxSummerReached = Math.max(maxSummerReached, tSummer);
+                    if (tSummer >= maxSummerReached) {
+                        maxSummerReached = tSummer;
+                        peakStepDesc = st.desc || `Step @ ${totalHrs}h`;
+                    }
 
                     const qWin = uVal * surfaceM2 * (st.win - tWinter) * dtSec;
                     tWinter += qWin / thermalMassJK;
@@ -1899,7 +1969,7 @@
                 });
 
                 const pass = (maxSummerReached <= maxTemp) && (minWinterReached >= minTemp);
-                return { spec, tSummer, tWinter, maxSummerReached, minWinterReached, totalHrs, pass, timeline };
+                return { spec, tSummer, tWinter, maxSummerReached, minWinterReached, totalHrs, pass, timeline, peakStepDesc };
             }
 
             const candidates = [
@@ -1909,18 +1979,16 @@
                 THERMAL_SPECS.vip
             ];
 
-            let chosenSim = null;
-            for (const c of candidates) {
-                const sim = simulateWithSpec(c);
-                if (sim.pass) {
-                    chosenSim = sim;
-                    break;
-                }
-                chosenSim = sim;
-            }
+            const allSims = candidates.map(c => simulateWithSpec(c));
+            let chosenSim = allSims.find(s => s.pass) || allSims[allSims.length - 1];
 
             if (chosenSim) {
                 drawCcrmTemperatureChart(chosenSim.timeline, minTemp, maxTemp);
+                const pinEl = document.getElementById('ccrm-risk-pinpointer');
+                if (pinEl) {
+                    const marginC = (maxTemp - chosenSim.maxSummerReached).toFixed(1);
+                    pinEl.innerHTML = `<strong class="text-amber-300">⚡ Peak Thermal Stress Leg:</strong> ${chosenSim.peakStepDesc} • Safety Margin to Tma (${maxTemp}°C): <strong class="${parseFloat(marginC) >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${marginC}°C</strong>`;
+                }
             }
 
             const verdictBanner = document.getElementById('ccrm-verdict-banner');
@@ -1971,6 +2039,8 @@
                 `;
             }
 
+            drawRollCutDiagram(blanketA_L, blanketA_W, blanketB_L, blanketB_W);
+
             const loggerEl = document.getElementById('logger-placement-guide');
             if (loggerEl) {
                 loggerEl.innerHTML = `<strong class="text-cyan-400">📍 ${dict.loggerTitle}</strong> ${dict.loggerText}`;
@@ -1993,7 +2063,8 @@
                 blanketB: { l: blanketB_L, w: blanketB_W, areaM2: blanketB_M2 },
                 totalBlanketsM2: totalTwoBlanketsM2,
                 rollLinearMeters,
-                timeline: chosenSim?.timeline || []
+                timeline: chosenSim?.timeline || [],
+                allSims
             };
         }
 
@@ -2370,6 +2441,9 @@
             drawSopPackingAnimation();
             if (packedState.ccrm) {
                 drawCcrmTemperatureChart(packedState.ccrm.timeline, packedState.ccrm.minTemp ?? 2, packedState.ccrm.maxTemp ?? 8);
+                if (packedState.ccrm.blanketA) {
+                    drawRollCutDiagram(packedState.ccrm.blanketA.l, packedState.ccrm.blanketA.w, packedState.ccrm.blanketB.l, packedState.ccrm.blanketB.w);
+                }
             }
             Object.values(viewers).forEach(v => {
                 if (!v.container || v.container.offsetParent === null) return;
@@ -3907,6 +3981,21 @@
                         <span class="text-[10px] text-slate-500 block">${(cs.rollLinearMeters * orderPallets).toFixed(1)} m for ${orderPallets} pallets</span>
                     </div>
                 `;
+            }
+
+            // Populate Side-by-Side Temax Grade Comparison Table
+            const tbody = document.getElementById('grade-comparison-tbody');
+            if (tbody && c.allSims && c.allSims.length > 0) {
+                tbody.innerHTML = c.allSims.map(sim => `
+                    <tr class="${sim.spec.key === c.chosenSpecKey ? 'bg-emerald-500/10' : ''}">
+                        <td class="py-2 pr-3 font-semibold text-white">${sim.spec.name}</td>
+                        <td class="py-2 px-2 text-slate-300">${sim.spec.wallCm} cm</td>
+                        <td class="py-2 px-2 text-cyan-300 font-mono">R-${sim.spec.rValue.toFixed(2)}</td>
+                        <td class="py-2 px-2 text-amber-300 font-bold">${sim.maxSummerReached.toFixed(1)}°C</td>
+                        <td class="py-2 px-2 text-sky-300 font-bold">${sim.minWinterReached.toFixed(1)}°C</td>
+                        <td class="py-2 pl-2 font-bold ${sim.pass ? 'text-emerald-400' : 'text-rose-400'}">${sim.pass ? '✓ PASS' : '⚠ PCM Needed'}</td>
+                    </tr>
+                `).join('');
             }
 
             packedState.thermal = {
