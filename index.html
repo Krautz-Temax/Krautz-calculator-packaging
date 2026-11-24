@@ -268,7 +268,7 @@
                                     </div>
                                     <div>
                                         <label class="text-[10px] text-emerald-400 block mb-1">c (J/kg·K)</label>
-                                        <input type="number" id="ccrm-cp" value="4186" min="100" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-bold text-emerald-300">
+                                        <input type="number" id="ccrm-cp" value="4186" min="100" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs font-bold text-emerald-300">
                                     </div>
                                 </div>
                                 <div class="flex items-center justify-between text-[10px] text-slate-400">
@@ -360,7 +360,7 @@
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET, 2-BLANKET ROLL CUT + ROLL LAYOUT CANVAS & MANUAL/ANIMATED SOP -->
+                <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET, 2-BLANKET ROLL CUT + STANDARD ROLL QTY & MOVABLE 3D 5-STEP PACKING SOP -->
                 <div class="lg:col-span-6 space-y-5">
 
                     <!-- Internal CCRM Sheet Page 1 Metadata -->
@@ -410,26 +410,30 @@
                         </div>
                     </div>
 
-                    <!-- 2-Blanket Roll Cut Dimensions + Visual 1.50m Roll Cutting Layout -->
+                    <!-- 2-Blanket Flap/Blanket Cut Dimensions + Standard Roll Quantity Calculator -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
                             <h3 data-i18n="lblTwoBlanketsTitle" class="text-sm font-bold text-white flex items-center gap-2">
-                                <i data-lucide="scissors" class="w-4 h-4 text-sky-400"></i> 2-Blanket Roll Cut Dimensions (From 1.50m Roll)
+                                <i data-lucide="scissors" class="w-4 h-4 text-sky-400"></i> 2-Flap / Blanket Cut Dimensions & Standard Roll Count
                             </h3>
-                            <span class="text-[10px] px-2 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/30">Incl. 15 cm Overlap Seals</span>
+                            <select id="standardRollSelect" onchange="calculateCcrmEngine()" class="bg-slate-950 border border-sky-500/40 text-sky-200 text-xs font-semibold rounded-lg px-2.5 py-1">
+                                <option value="1.25x12.5">Roll 1: 1.25 m × 12.5 m (15.625 m²)</option>
+                                <option value="3.0x10.0">Roll 2: 3.00 m × 10.0 m (30.00 m²)</option>
+                            </select>
                         </div>
                         <div id="ccrm-two-blankets-panel" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                        <div id="ccrm-roll-count-panel" class="p-3 rounded-xl bg-slate-950 border border-sky-500/30 text-xs text-slate-200"></div>
                         <canvas id="rollCutCanvas" width="560" height="84" class="w-full h-[84px] bg-slate-950 rounded-xl border border-slate-800"></canvas>
                     </div>
 
-                    <!-- Manual & Animated SOP: Pallet Packing & Fixing the 2 Blankets -->
+                    <!-- Movable 3D 5-Step Pallet Packing & Insulation SOP -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
                             <div>
                                 <h3 data-i18n="lblAnimatedSopTitle" class="text-sm font-bold text-white flex items-center gap-2">
-                                    <i data-lucide="play-circle" class="w-4 h-4 text-amber-400"></i> Manual & Animated SOP: Pallet Packing & Sealing the 2 Blankets
+                                    <i data-lucide="move-3d" class="w-4 h-4 text-amber-400"></i> Movable 3D SOP: 5 Packing & Insulation Steps
                                 </h3>
-                                <p id="sop-anim-caption" class="text-[11px] text-cyan-300 font-medium">Step 2/5: Manually load & stack cargo boxes onto pallet</p>
+                                <p id="sop-anim-caption" class="text-[11px] text-cyan-300 font-medium">Step 2/5: Load & stack cargo boxes onto pallet</p>
                             </div>
                             <div class="flex flex-wrap items-center gap-1.5">
                                 <button type="button" onclick="prevSopStep()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">← Prev</button>
@@ -437,27 +441,31 @@
                                     <i data-lucide="pause" class="w-3.5 h-3.5"></i> <span id="sopPlayPauseLabel">Auto</span>
                                 </button>
                                 <button type="button" onclick="stepSopAnimation()" class="px-2.5 py-1.5 bg-krautz-500 hover:bg-krautz-600 text-white text-xs font-semibold rounded-lg transition">Next Step →</button>
-                                <button type="button" onclick="printPackoutSop()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-emerald-300 rounded-lg border border-slate-700 transition">Print SOP</button>
+                                <button type="button" onclick="resetCamera('sop')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset 3D</button>
                             </div>
                         </div>
 
-                        <div class="w-full h-[275px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
-                            <canvas id="sopAnimCanvas" width="560" height="275" class="w-full h-full"></canvas>
-                            <div class="absolute bottom-2 left-2.5 z-10 flex flex-wrap items-center gap-2 bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800 text-[10px]">
+                        <!-- Movable 3D Viewport (#canvas-sop) -->
+                        <div id="canvas-sop" class="webgl-viewport w-full h-[290px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
+                            <div class="absolute top-2.5 right-2.5 z-10 bg-slate-900/85 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800 text-[10px] text-slate-300">
+                                Drag to rotate • Scroll to zoom • Right-drag to pan
+                            </div>
+                            <div class="absolute bottom-2.5 left-2.5 z-10 flex flex-wrap items-center gap-2 bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800 text-[10px]">
                                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#8B4513] inline-block"></span> Pallet</span>
                                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#0077ee] inline-block"></span> Cargo</span>
-                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#22d3ee] inline-block"></span> Blanket 1</span>
-                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#38bdf8] inline-block"></span> Blanket 2</span>
-                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#f59e0b] inline-block"></span> Manual Foil Sealing</span>
+                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#22d3ee] inline-block"></span> Insulation / Flap 1</span>
+                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#38bdf8] inline-block"></span> Flap 2</span>
+                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#f59e0b] inline-block"></span> Seal / Strap</span>
                             </div>
                         </div>
 
+                        <!-- 5-Step Selector Bar -->
                         <div class="grid grid-cols-5 gap-1.5 text-[10px]" id="sop-visual-steps-bar">
                             <button type="button" onclick="selectSopStep(0)" class="p-1.5 rounded-lg border text-center font-semibold bg-amber-500/20 border-amber-500/50 text-amber-200">1. Base Pad</button>
                             <button type="button" onclick="selectSopStep(1)" class="p-1.5 rounded-lg border text-center font-semibold bg-amber-500/20 border-amber-500/50 text-amber-200">2. Load Cargo</button>
-                            <button type="button" onclick="selectSopStep(2)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">3. Blanket 1</button>
-                            <button type="button" onclick="selectSopStep(3)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">4. Blanket 2</button>
-                            <button type="button" onclick="selectSopStep(4)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">5. Manual Seal</button>
+                            <button type="button" onclick="selectSopStep(2)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">3. Flap 1</button>
+                            <button type="button" onclick="selectSopStep(3)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">4. Flap 2</button>
+                            <button type="button" onclick="selectSopStep(4)" class="p-1.5 rounded-lg border text-center font-semibold bg-slate-950 border-slate-800 text-slate-400">5. Seal & Fix</button>
                         </div>
 
                         <div id="logger-placement-guide" class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 text-[11px] text-slate-300"></div>
@@ -745,7 +753,7 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.8</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.9</span>
                         </div>
                     </div>
 
@@ -1061,10 +1069,9 @@
                         <div id="roi-comparison-panel" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
                     </div>
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5"><h3 class="text-sm font-bold text-white flex items-center gap-2"><i data-lucide="scissors" class="w-4 h-4 text-sky-400"></i> Master Roll Yield Summary (1.50m Roll)</h3><span class="text-[11px] text-slate-400">2-Blanket Cross-Wrap System</span></div>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5"><h3 class="text-sm font-bold text-white flex items-center gap-2"><i data-lucide="scissors" class="w-4 h-4 text-sky-400"></i> Master Roll Yield Summary</h3><span class="text-[11px] text-slate-400">2-Flap / Blanket Cross-Wrap System</span></div>
                         <div id="cutsheet-panel" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
                     </div>
-                    <!-- Side-by-Side Temax Insulation Comparison Table -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
                             <h3 class="text-sm font-bold text-white flex items-center gap-2"><i data-lucide="table" class="w-4 h-4 text-amber-400"></i> Side-by-Side Temax Grade Performance</h3>
@@ -1136,7 +1143,7 @@
         <div>© 2026 Krautz-Temax NV. All rights reserved. CCRM Cold Chain Risk Management & 3D Thermal Packaging Technology.</div>
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
-    <!-- JavaScript Application: Part 2 (Full I18N, CCRM Engine, 2h/2°C Graph + Legend, Roll Cut Diagram, Grade Comparison & Manual/Animated SOP) -->
+    <!-- JavaScript Application: Part 2 (Full I18N, CCRM Engine, 2h/2°C Graph + Legend, Standard Roll Qty & Movable 3D 5-Step Packing SOP) -->
     <script>
         lucide.createIcons();
 
@@ -1145,8 +1152,12 @@
         const SHEET_THICKNESS = 0.4;
         const CORNER_THICKNESS = 0.45;
         const CORNER_WING = 5.5;
-        const MASTER_ROLL_WIDTH_M = 1.50;
         const BLANKET_OVERLAP_CM = 15;
+
+        const STANDARD_ROLLS = {
+            '1.25x12.5': { id: '1.25x12.5', label: '1.25 m × 12.5 m', widthM: 1.25, lengthM: 12.5, areaM2: 15.625 },
+            '3.0x10.0':  { id: '3.0x10.0',  label: '3.00 m × 10.0 m', widthM: 3.00, lengthM: 10.0, areaM2: 30.000 }
+        };
 
         const THERMAL_SPECS = {
             none:      { key: 'none', name: 'None (Uninsulated)', wallCm: 0.0, holdLabel: 'Uninsulated', blanketKg: 0.0, rValue: 0.15, flatFoldRatio: 1.0 },
@@ -1212,8 +1223,8 @@
                 lblHandledBy: 'Handled By (Manager)',
                 lblRecommendedTemax: 'Recommended Krautz-Temax Insulation',
                 btnApplyTo3D: 'Apply to 3D Pallet & Cut-Sheet ✓',
-                lblTwoBlanketsTitle: '2-Blanket Roll Cut Dimensions (From 1.50m Roll)',
-                lblAnimatedSopTitle: 'Manual & Animated SOP: Pallet Packing & Sealing the 2 Blankets',
+                lblTwoBlanketsTitle: '2-Flap / Blanket Cut Dimensions & Standard Roll Count',
+                lblAnimatedSopTitle: 'Movable 3D SOP: 5 Packing & Insulation Steps',
                 outerTitle: 'Outer Packaging / Load Size',
                 innerTitle: 'Inner Packages, Weight & Order',
                 puzzleTitle: 'Multi-Box 3D Volume Puzzle',
@@ -1241,20 +1252,20 @@
                 viewportTitle: '3D Perspective & Cross-Section',
                 btnResetView: 'Reset View',
                 lblExplode: 'Explode',
-                blanket1Title: 'BLANKET 1 — Lengthwise Wrap',
-                blanket1Desc: 'Covers Front + Top + Back + 15cm floor tuck',
-                blanket2Title: 'BLANKET 2 — Crosswise Wrap',
-                blanket2Desc: 'Covers Left + Top + Right + locks Blanket 1',
+                blanket1Title: 'FLAP / BLANKET 1 — Lengthwise Wrap',
+                blanket1Desc: 'Covers Front + Top + Back + 15cm floor overlap',
+                blanket2Title: 'FLAP / BLANKET 2 — Crosswise Wrap',
+                blanket2Desc: 'Covers Left + Top + Right + locks Flap 1',
                 loggerTitle: 'QA Data Logger Placement:',
                 loggerText: 'Place primary logger at geometric top-center of cargo (warmest air zone). Never place sensors directly against PCM bricks or dry ice.',
                 sopStages: [
-                    'Step 1/5: Manually lay base thermal pad on EPAL pallet',
-                    'Step 2/5: Manually load & stack cargo boxes onto pallet',
-                    'Step 3/5: Manually drape Blanket 1 lengthwise (Front -> Top -> Back)',
-                    'Step 4/5: Manually cross-wrap Blanket 2 over Blanket 1',
-                    'Step 5/5: Manually seal 15cm overlap flaps with foil tape & wrap'
+                    'Step 1/5: Lay base insulation pad on EPAL pallet',
+                    'Step 2/5: Load & stack cargo boxes onto pallet',
+                    'Step 3/5: Drape Flap / Blanket 1 lengthwise (Front -> Top -> Back)',
+                    'Step 4/5: Cross-wrap Flap / Blanket 2 over Blanket 1',
+                    'Step 5/5: Seal 15cm overlap flaps & fix thermal wrap'
                 ],
-                sopShort: ['1. Base Pad', '2. Load Cargo', '3. Blanket 1', '4. Blanket 2', '5. Manual Seal']
+                sopShort: ['1. Base Pad', '2. Load Cargo', '3. Flap 1', '4. Flap 2', '5. Seal & Fix']
             },
             nl: {
                 headerSubtitle: 'Temax Isolatie Aanvraagformulier, CCRM & 3D Palletengine',
@@ -1303,8 +1314,8 @@
                 lblHandledBy: 'Behandeld Door (Manager)',
                 lblRecommendedTemax: 'Aanbevolen Krautz-Temax Isolatie',
                 btnApplyTo3D: 'Toepassen op 3D Pallet & Snijplan ✓',
-                lblTwoBlanketsTitle: '2-Dekens Rol-Snijmaten (Uit 1,50m Rol)',
-                lblAnimatedSopTitle: 'Manuele & Geanimeerde SOP: Pallet Beladen & Afplakken',
+                lblTwoBlanketsTitle: '2-Flap / Deken Snijmaten & Standaard Rolberekening',
+                lblAnimatedSopTitle: 'Beweegbare 3D SOP: 5 Stappen Pallet Beladen & Isoleren',
                 outerTitle: 'Buitenverpakking / Palletmaat',
                 innerTitle: 'Binnendozen, Gewicht & Order',
                 puzzleTitle: 'Multi-Doos 3D Volume Puzzel',
@@ -1332,20 +1343,20 @@
                 viewportTitle: '3D Perspectief & Doorsnede',
                 btnResetView: 'Reset Weergave',
                 lblExplode: 'Explodeer',
-                blanket1Title: 'DEKEN 1 — Lengte-omslag',
+                blanket1Title: 'FLAP / DEKEN 1 — Lengte-omslag',
                 blanket1Desc: 'Bedekt Voor + Boven + Achter + 15cm vloeroverlap',
-                blanket2Title: 'DEKEN 2 — Dwars-omslag',
-                blanket2Desc: 'Bedekt Links + Boven + Rechts + sluit Deken 1 af',
+                blanket2Title: 'FLAP / DEKEN 2 — Dwars-omslag',
+                blanket2Desc: 'Bedekt Links + Boven + Rechts + sluit Flap 1 af',
                 loggerTitle: 'QA Datalogger Plaatsing:',
                 loggerText: 'Plaats de datalogger midden-boven op de lading (warmste luchtzone). Plaats sensoren nooit direct tegen PCM-koelelementen of droogijs.',
                 sopStages: [
-                    'Stap 1/5: Leg manueel de thermische vloerpad op de EPAL-pallet',
-                    'Stap 2/5: Plaats en stapel de dozen manueel op de pallet',
-                    'Stap 3/5: Leg Deken 1 manueel in de lengte (Voor -> Boven -> Achter)',
-                    'Stap 4/5: Wikkel Deken 2 manueel haaks over Deken 1',
-                    'Stap 5/5: Sluit de 15cm naden manueel met folietape & wikkelfolie'
+                    'Stap 1/5: Leg de thermische vloerpad op de EPAL-pallet',
+                    'Stap 2/5: Plaats en stapel de dozen op de pallet',
+                    'Stap 3/5: Leg Flap / Deken 1 in de lengte (Voor -> Boven -> Achter)',
+                    'Stap 4/5: Wikkel Flap / Deken 2 haaks over Deken 1',
+                    'Stap 5/5: Sluit de 15cm naden en fixeer de isolatie'
                 ],
-                sopShort: ['1. Vloerpad', '2. Lading', '3. Deken 1', '4. Deken 2', '5. Manueel Tape']
+                sopShort: ['1. Vloerpad', '2. Lading', '3. Flap 1', '4. Flap 2', '5. Fixeren']
             },
             de: {
                 headerSubtitle: 'Temax Isolieranfrage, CCRM-Berechnung & 3D-Palettierung',
@@ -1394,8 +1405,8 @@
                 lblHandledBy: 'Bearbeitet Von (Manager)',
                 lblRecommendedTemax: 'Empfohlene Krautz-Temax Isolierung',
                 btnApplyTo3D: 'Auf 3D-Palette & Zuschnitt Anwenden ✓',
-                lblTwoBlanketsTitle: '2-Hauben Rollenzuschnitt (Aus 1,50m Rolle)',
-                lblAnimatedSopTitle: 'Manuelle & Animierte SOP: Beladen & Versiegeln der 2 Decken',
+                lblTwoBlanketsTitle: '2-Bahnen Zuschnitt & Standard-Rollenbedarf',
+                lblAnimatedSopTitle: 'Bewegliche 3D-SOP: 5 Schritte Palettierung & Isolierung',
                 outerTitle: 'Außenverpackung / Palettenmaß',
                 innerTitle: 'Innenkartons, Gewicht & Auftrag',
                 puzzleTitle: 'Mehrboxen 3D Volumen-Puzzle',
@@ -1423,20 +1434,20 @@
                 viewportTitle: '3D-Perspektive & Querschnitt',
                 btnResetView: 'Ansicht Zurücksetzen',
                 lblExplode: 'Explodieren',
-                blanket1Title: 'DECKE 1 — Längswicklung',
+                blanket1Title: 'BAHN / DECKE 1 — Längswicklung',
                 blanket1Desc: 'Bedeckt Vorne + Oben + Hinten + 15cm Bodenüberlappung',
-                blanket2Title: 'DECKE 2 — Querwicklung',
-                blanket2Desc: 'Bedeckt Links + Oben + Rechts + fixiert Decke 1',
+                blanket2Title: 'BAHN / DECKE 2 — Querwicklung',
+                blanket2Desc: 'Bedeckt Links + Oben + Rechts + fixiert Bahn 1',
                 loggerTitle: 'QA-Datenlogger-Platzierung:',
                 loggerText: 'Platzieren Sie den Datenlogger mittig oben auf der Ladung (wärmste Luftzone). Sensoren niemals direkt auf PCM-Akkus oder Trockeneis legen.',
                 sopStages: [
-                    'Schritt 1/5: Thermobodenmatte manuell auf EPAL-Palette legen',
-                    'Schritt 2/5: Ware manuell auf die Palette stapeln',
-                    'Schritt 3/5: Decke 1 manuell längs überlegen (Vorne -> Oben -> Hinten)',
-                    'Schritt 4/5: Decke 2 manuell quer darüberwickeln',
-                    'Schritt 5/5: 15cm Überlappung manuell mit Aluklebeband versiegeln'
+                    'Schritt 1/5: Thermobodenmatte auf EPAL-Palette legen',
+                    'Schritt 2/5: Ware auf die Palette stapeln',
+                    'Schritt 3/5: Bahn / Decke 1 längs überlegen (Vorne -> Oben -> Hinten)',
+                    'Schritt 4/5: Bahn / Decke 2 quer darüberwickeln',
+                    'Schritt 5/5: 15cm Überlappung versiegeln & fixieren'
                 ],
-                sopShort: ['1. Bodenmatte', '2. Ladung', '3. Decke 1', '4. Decke 2', '5. Klebeband']
+                sopShort: ['1. Bodenmatte', '2. Ladung', '3. Bahn 1', '4. Bahn 2', '5. Fixieren']
             },
             fr: {
                 headerSubtitle: 'Demande Isolation Temax, Calcul CCRM & Palettisation 3D',
@@ -1485,8 +1496,8 @@
                 lblHandledBy: 'Traité Par (Responsable)',
                 lblRecommendedTemax: 'Isolation Krautz-Temax Recommandée',
                 btnApplyTo3D: 'Appliquer à la Palette 3D & Découpe ✓',
-                lblTwoBlanketsTitle: 'Dimensions de Coupe 2 Housses (Rouleau 1,50m)',
-                lblAnimatedSopTitle: 'SOP Manuelle & Animée : Palettisation & Pose des 2 Housses',
+                lblTwoBlanketsTitle: 'Découpe 2 Housses / Flaps & Nombre de Rouleaux',
+                lblAnimatedSopTitle: 'SOP 3D Interactive : 5 Étapes Palettisation & Isolation',
                 outerTitle: 'Emballage Extérieur / Palette',
                 innerTitle: 'Colis Internes, Poids & Commande',
                 puzzleTitle: 'Puzzle Volume 3D Multi-Colis',
@@ -1514,20 +1525,20 @@
                 viewportTitle: 'Perspective 3D & Coupe Transversale',
                 btnResetView: 'Réinitialiser Vue',
                 lblExplode: 'Éclater',
-                blanket1Title: 'HOUSSE 1 — Enveloppement Longitudinal',
+                blanket1Title: 'FLAP / HOUSSE 1 — Enveloppement Longitudinal',
                 blanket1Desc: 'Couvre Avant + Dessus + Arrière + rabat 15cm au sol',
-                blanket2Title: 'HOUSSE 2 — Enveloppement Transversal',
+                blanket2Title: 'FLAP / HOUSSE 2 — Enveloppement Transversal',
                 blanket2Desc: 'Couvre Gauche + Dessus + Droite + verrouille Housse 1',
                 loggerTitle: 'Position Enregistreur QA :',
                 loggerText: 'Placez l’enregistreur au centre supérieur de la charge (zone la plus chaude). Ne jamais poser de sonde directement sur les plaques PCM ou la glace carbonique.',
                 sopStages: [
-                    'Étape 1/5 : Poser manuellement le tapis isolant sur la palette EPAL',
-                    'Étape 2/5 : Empiler manuellement les colis sur la palette',
-                    'Étape 3/5 : Poser manuellement la Housse 1 en longueur',
-                    'Étape 4/5 : Croiser manuellement la Housse 2 perpendiculairement',
-                    'Étape 5/5 : Sceller manuellement les rabats de 15cm au ruban alu'
+                    'Étape 1/5 : Poser le tapis isolant sur la palette EPAL',
+                    'Étape 2/5 : Empiler les colis sur la palette',
+                    'Étape 3/5 : Poser Flap / Housse 1 en longueur',
+                    'Étape 4/5 : Croiser Flap / Housse 2 perpendiculairement',
+                    'Étape 5/5 : Sceller les rabats de 15cm et fixer l’isolation'
                 ],
-                sopShort: ['1. Base Isolante', '2. Colis', '3. Housse 1', '4. Housse 2', '5. Pose Manuelle']
+                sopShort: ['1. Base Isolante', '2. Colis', '3. Flap 1', '4. Flap 2', '5. Fixation']
             }
         };
 
@@ -1833,8 +1844,8 @@
             ctx.restore();
         }
 
-        // Visual 1.50m Master Roll Cutting Diagram
-        function drawRollCutDiagram(b1L, b1W, b2L, b2W) {
+        // Visual Standard Roll Cutting Diagram for Flap 1 & Flap 2
+        function drawRollCutDiagram(b1L, b1W, b2L, b2W, rollSpec) {
             const canvas = document.getElementById('rollCutCanvas');
             if (!canvas) return;
             const rect = canvas.getBoundingClientRect();
@@ -1856,37 +1867,35 @@
             const rollDrawW = cssW - padX * 2;
             const rollDrawH = 44;
 
-            // 1.50m Master Roll outline
             ctx.strokeStyle = '#475569';
             ctx.lineWidth = 1.5;
             ctx.strokeRect(padX, padY, rollDrawW, rollDrawH);
 
             ctx.fillStyle = '#94a3b8';
             ctx.font = 'bold 10px Inter, Arial, sans-serif';
-            ctx.fillText('1.50m (150 cm) Master Roll Cutting Layout', padX, 13);
+            ctx.fillText(`Standard Roll Layout (${rollSpec?.label || '1.25 m × 12.5 m'})`, padX, 13);
 
             const totalLen = Math.max(1, b1L + b2L);
             const b1PixW = Math.max(40, (b1L / totalLen) * (rollDrawW - 8));
-            const b1PixH = Math.min(rollDrawH - 4, (Math.min(150, b1W) / 150) * (rollDrawH - 4));
+            const rollWidthCm = (rollSpec?.widthM || 1.25) * 100;
+            const b1PixH = Math.max(14, Math.min(rollDrawH - 4, (Math.min(rollWidthCm, b1W) / rollWidthCm) * (rollDrawH - 4)));
 
-            // Blanket 1 block
             ctx.fillStyle = 'rgba(34, 211, 238, 0.25)';
             ctx.fillRect(padX + 2, padY + 2, b1PixW, b1PixH);
             ctx.strokeStyle = '#22d3ee';
             ctx.strokeRect(padX + 2, padY + 2, b1PixW, b1PixH);
             ctx.fillStyle = '#cffafe';
-            ctx.fillText(`B1: ${b1L}×${b1W}cm`, padX + 8, padY + 18);
+            ctx.fillText(`Flap 1: ${b1L}×${b1W}cm`, padX + 8, padY + 18);
 
-            // Blanket 2 block
             const b2X = padX + 4 + b1PixW;
             const b2PixW = Math.max(40, rollDrawW - b1PixW - 6);
-            const b2PixH = Math.min(rollDrawH - 4, (Math.min(150, b2W) / 150) * (rollDrawH - 4));
+            const b2PixH = Math.max(14, Math.min(rollDrawH - 4, (Math.min(rollWidthCm, b2W) / rollWidthCm) * (rollDrawH - 4)));
             ctx.fillStyle = 'rgba(56, 189, 248, 0.25)';
             ctx.fillRect(b2X, padY + 2, b2PixW, b2PixH);
             ctx.strokeStyle = '#38bdf8';
             ctx.strokeRect(b2X, padY + 2, b2PixW, b2PixH);
             ctx.fillStyle = '#e0f2fe';
-            ctx.fillText(`B2: ${b2L}×${b2W}cm`, b2X + 8, padY + 18);
+            ctx.fillText(`Flap 2: ${b2L}×${b2W}cm`, b2X + 8, padY + 18);
 
             ctx.restore();
         }
@@ -2015,7 +2024,17 @@
             const blanketB_M2 = (blanketB_L * blanketB_W) / 10000;
 
             const totalTwoBlanketsM2 = blanketA_M2 + blanketB_M2;
-            const rollLinearMeters = totalTwoBlanketsM2 / MASTER_ROLL_WIDTH_M;
+
+            // Standard Roll Count Calculation for the 2 cut flaps/blankets
+            const selectedRollKey = document.getElementById('standardRollSelect')?.value || '1.25x12.5';
+            const activeRoll = STANDARD_ROLLS[selectedRollKey] || STANDARD_ROLLS['1.25x12.5'];
+            const rollsNeededExact = totalTwoBlanketsM2 / activeRoll.areaM2;
+            const rollsNeededOrder = Math.max(1, Math.ceil(rollsNeededExact));
+
+            const roll1Exact = totalTwoBlanketsM2 / STANDARD_ROLLS['1.25x12.5'].areaM2;
+            const roll1Ceil = Math.max(1, Math.ceil(roll1Exact));
+            const roll2Exact = totalTwoBlanketsM2 / STANDARD_ROLLS['3.0x10.0'].areaM2;
+            const roll2Ceil = Math.max(1, Math.ceil(roll2Exact));
 
             const twoBlanketsEl = document.getElementById('ccrm-two-blankets-panel');
             if (twoBlanketsEl) {
@@ -2039,7 +2058,26 @@
                 `;
             }
 
-            drawRollCutDiagram(blanketA_L, blanketA_W, blanketB_L, blanketB_W);
+            const rollCountEl = document.getElementById('ccrm-roll-count-panel');
+            if (rollCountEl) {
+                rollCountEl.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <span class="text-sky-400 font-bold">📏 Total Cut Area (2 Flaps):</span>
+                            <strong class="text-white">${totalTwoBlanketsM2.toFixed(2)} m²</strong>
+                            <span class="text-slate-400 ml-1">• Selected (${activeRoll.label}):</span>
+                            <strong class="text-emerald-400">${rollsNeededOrder} roll(s)</strong>
+                            <span class="text-[11px] text-slate-400">(${rollsNeededExact.toFixed(2)} rolls exact)</span>
+                        </div>
+                        <div class="text-[11px] text-slate-300">
+                            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 mr-1">1.25×12.5m: <strong>${roll1Ceil}</strong> (${roll1Exact.toFixed(2)})</span>
+                            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">3.0×10.0m: <strong>${roll2Ceil}</strong> (${roll2Exact.toFixed(2)})</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            drawRollCutDiagram(blanketA_L, blanketA_W, blanketB_L, blanketB_W, activeRoll);
 
             const loggerEl = document.getElementById('logger-placement-guide');
             if (loggerEl) {
@@ -2062,7 +2100,10 @@
                 blanketA: { l: blanketA_L, w: blanketA_W, areaM2: blanketA_M2 },
                 blanketB: { l: blanketB_L, w: blanketB_W, areaM2: blanketB_M2 },
                 totalBlanketsM2: totalTwoBlanketsM2,
-                rollLinearMeters,
+                rollSpec: activeRoll,
+                rollsNeededExact,
+                rollsNeededOrder,
+                rollLinearMeters: totalTwoBlanketsM2 / Math.max(0.1, activeRoll.widthM),
                 timeline: chosenSim?.timeline || [],
                 allSims
             };
@@ -2108,11 +2149,12 @@
                 ['2. PRODUCT TEMPERATURE DETAILS'],
                 ['Start Temp Tp (°C)', c.startTemp, 'Min Barrier Tmi (°C)', c.minTemp, 'Max Barrier Tma (°C)', c.maxTemp, 'Specific Heat c (J/kg.K)', c.cp],
                 [],
-                ['3. CCRM RESULT & 2-BLANKET ROLL CUT (1.50M ROLL)'],
+                ['3. CCRM RESULT & 2-FLAP ROLL CUT'],
                 ['Recommended Temax Product', c.chosenSpecName, 'R-Value', c.chosenRValue],
                 ['Summer Peak (°C)', c.predictedEndTemp.toFixed(2), 'Winter Low (°C)', c.minWinterTemp.toFixed(2)],
-                ['Blanket 1 (Lengthwise cm)', `${c.blanketA.l} x ${c.blanketA.w}`, 'Blanket 2 (Crosswise cm)', `${c.blanketB.l} x ${c.blanketB.w}`],
-                ['Total Area (m2)', c.totalBlanketsM2.toFixed(2), '1.50m Roll Linear Meters', c.rollLinearMeters.toFixed(2)]
+                ['Flap / Blanket 1 (cm)', `${c.blanketA.l} x ${c.blanketA.w}`, 'Flap / Blanket 2 (cm)', `${c.blanketB.l} x ${c.blanketB.w}`],
+                ['Total Area (m2)', c.totalBlanketsM2.toFixed(2), 'Standard Roll', c.rollSpec?.label || '1.25 m x 12.5 m'],
+                ['Rolls Needed (Exact)', (c.rollsNeededExact || 0).toFixed(2), 'Rolls Needed (Order)', c.rollsNeededOrder || 1]
             ];
             const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(r => r.join(',')).join('\n');
             const link = document.createElement('a');
@@ -2123,6 +2165,7 @@
             document.body.removeChild(link);
         }
 
+        // Movable 3D 5-Step Pallet Packing & Insulation SOP (#canvas-sop)
         function toggleSopAnimation() {
             sopAnimPlaying = !sopAnimPlaying;
             const lbl = document.getElementById('sopPlayPauseLabel');
@@ -2135,7 +2178,7 @@
             if (lbl) lbl.innerText = 'Auto';
             const cur = Math.floor(sopAnimProgress);
             sopAnimProgress = ((cur - 1 + 5) % 5) + 0.99;
-            drawSopPackingAnimation();
+            updateSop3DScene();
         }
 
         function stepSopAnimation() {
@@ -2144,7 +2187,7 @@
             if (lbl) lbl.innerText = 'Auto';
             const cur = Math.floor(sopAnimProgress);
             sopAnimProgress = ((cur + 1) % 5) + 0.99;
-            drawSopPackingAnimation();
+            updateSop3DScene();
         }
 
         function selectSopStep(stepIdx) {
@@ -2152,74 +2195,13 @@
             const lbl = document.getElementById('sopPlayPauseLabel');
             if (lbl) lbl.innerText = 'Auto';
             sopAnimProgress = Math.max(0, Math.min(4, stepIdx)) + 0.99;
-            drawSopPackingAnimation();
+            updateSop3DScene();
         }
 
-        function drawSopRoundRect(ctx, x, y, w, h, r) {
-            const rad = Math.min(r, w / 2, h / 2);
-            ctx.beginPath();
-            ctx.moveTo(x + rad, y);
-            ctx.arcTo(x + w, y, x + w, y + h, rad);
-            ctx.arcTo(x + w, y + h, x, y + h, rad);
-            ctx.arcTo(x, y + h, x, y, rad);
-            ctx.arcTo(x, y, x + w, y, rad);
-            ctx.closePath();
-        }
-
-        function drawManualHandIcon(ctx, hx, hy, label) {
-            ctx.save();
-            ctx.fillStyle = '#fde68a';
-            ctx.strokeStyle = '#92400e';
-            ctx.lineWidth = 1.5;
-            drawSopRoundRect(ctx, hx - 9, hy - 7, 18, 15, 4);
-            ctx.fill();
-            ctx.stroke();
-            for (let f = -5; f <= 5; f += 5) {
-                drawSopRoundRect(ctx, hx + f - 1.5, hy - 12, 3, 6, 1.5);
-                ctx.fill();
-                ctx.stroke();
-            }
-            if (label) {
-                ctx.fillStyle = '#fef3c7';
-                ctx.font = 'bold 10px Inter, sans-serif';
-                ctx.fillText(label, hx + 14, hy + 4);
-            }
-            ctx.restore();
-        }
-
-        function drawSopPackingAnimation() {
-            const canvas = document.getElementById('sopAnimCanvas');
-            if (!canvas) return;
-
-            const rect = canvas.getBoundingClientRect();
-            const dpr = Math.min(window.devicePixelRatio || 1, 2);
-            const cssW = Math.max(300, Math.floor(rect.width || 560));
-            const cssH = Math.max(200, Math.floor(rect.height || 275));
-
-            if (canvas.width !== cssW * dpr || canvas.height !== cssH * dpr) {
-                canvas.width = cssW * dpr;
-                canvas.height = cssH * dpr;
-            }
-
-            const ctx = canvas.getContext('2d');
+        function updateSop3DScene() {
+            const v = viewers['sop'];
             const dict = I18N[currentLang] || I18N.en;
             const c = packedState.ccrm || {};
-
-            ctx.save();
-            ctx.scale(dpr, dpr);
-            ctx.clearRect(0, 0, cssW, cssH);
-
-            ctx.fillStyle = '#060b16';
-            ctx.fillRect(0, 0, cssW, cssH);
-
-            ctx.strokeStyle = 'rgba(148, 163, 184, 0.08)';
-            ctx.lineWidth = 1;
-            for (let gx = 0; gx < cssW; gx += 28) {
-                ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, cssH); ctx.stroke();
-            }
-            for (let gy = 0; gy < cssH; gy += 28) {
-                ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(cssW, gy); ctx.stroke();
-            }
 
             const stage = Math.min(4, Math.floor(sopAnimProgress));
             const frac = sopAnimProgress - Math.floor(sopAnimProgress);
@@ -2229,105 +2211,96 @@
 
             const barEl = document.getElementById('sop-visual-steps-bar');
             if (barEl) {
-                const shortNames = dict.sopShort;
-                barEl.innerHTML = shortNames.map((nm, idx) => `
+                barEl.innerHTML = dict.sopShort.map((nm, idx) => `
                     <button type="button" onclick="selectSopStep(${idx})" class="p-1.5 rounded-lg border text-center font-semibold transition ${idx <= stage ? 'bg-amber-500/20 border-amber-500/50 text-amber-200' : 'bg-slate-950 border-slate-800 text-slate-500'}">
                         ${nm}
                     </button>
                 `).join('');
             }
 
-            const palW = Math.min(206, cssW * 0.42), palH = 18, isoDx = 24, isoDy = -11;
-            const palX = (cssW - palW) / 2 - 12;
-            const palY = cssH - 58;
+            if (!v) return;
+            while (v.rootGroup.children.length > 0) {
+                v.rootGroup.remove(v.rootGroup.children[0]);
+            }
 
-            ctx.fillStyle = '#a1561c';
-            ctx.beginPath();
-            ctx.moveTo(palX, palY);
-            ctx.lineTo(palX + isoDx, palY + isoDy);
-            ctx.lineTo(palX + palW + isoDx, palY + isoDy);
-            ctx.lineTo(palX + palW, palY);
-            ctx.closePath();
-            ctx.fill();
+            const L = c.L || 120;
+            const W = c.W || 80;
+            const H = c.H || 100;
 
-            ctx.fillStyle = '#8B4513';
-            ctx.fillRect(palX, palY, palW, palH);
-            ctx.strokeStyle = '#d97706';
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(palX, palY, palW, palH);
+            v.rootGroup.add(buildConcreteFloorMesh(L, W));
+            v.rootGroup.add(buildBrownPalletMesh(L, W, L + 1));
 
-            const cargoW = palW - 24;
-            const cargoFullH = Math.min(102, cssH * 0.38);
-            const cargoX = palX + 12;
-            const cargoBaseY = palY - 6;
+            // Step 0+: Base thermal pad on EPAL pallet
+            const padDrop = stage === 0 ? (1 - frac) * 28 : 0;
+            const padH = 2.0;
+            const padGeo = new THREE.BoxGeometry(L - 2, padH, W - 2);
+            const padMat = new THREE.MeshLambertMaterial({ color: 0x06b6d4 });
+            const padMesh = new THREE.Mesh(padGeo, padMat);
+            padMesh.position.set(0, PALLET_HEIGHT + padH / 2 + padDrop, 0);
+            padMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(padGeo), new THREE.LineBasicMaterial({ color: 0x67e8f9 })));
+            v.rootGroup.add(padMesh);
 
-            const padDrop = stage === 0 ? (1 - frac) * 32 : 0;
-            ctx.fillStyle = '#06b6d4';
-            ctx.fillRect(cargoX - 4, cargoBaseY - 6 - padDrop, cargoW + 8, 6);
-            if (stage === 0) drawManualHandIcon(ctx, cargoX + cargoW + 22, cargoBaseY - 8 - padDrop, 'Base Pad');
+            const cargoBaseY = PALLET_HEIGHT + padH;
 
+            // Step 1+: Cargo stack on pallet
             if (stage >= 1) {
-                const cargoScale = stage === 1 ? Math.max(0.25, frac) : 1.0;
-                const curH = cargoFullH * cargoScale;
-                const curTopY = cargoBaseY - 6 - curH;
-                ctx.fillStyle = '#0077ee';
-                ctx.fillRect(cargoX, curTopY, cargoW, curH);
-                ctx.strokeStyle = '#7dd3fc';
-                ctx.lineWidth = 1.5;
-                ctx.strokeRect(cargoX, curTopY, cargoW, curH);
-
-                ctx.strokeStyle = 'rgba(224, 242, 254, 0.35)';
-                ctx.beginPath();
-                ctx.moveTo(cargoX + cargoW / 2, curTopY);
-                ctx.lineTo(cargoX + cargoW / 2, cargoBaseY - 6);
-                ctx.moveTo(cargoX, curTopY + curH / 2);
-                ctx.lineTo(cargoX + cargoW, curTopY + curH / 2);
-                ctx.stroke();
-
-                if (stage === 1) drawManualHandIcon(ctx, cargoX + cargoW / 2 + 24, curTopY + 14, 'Load Boxes');
+                const fillRatio = stage === 1 ? Math.max(0.25, frac) : 1.0;
+                const curCargoH = Math.max(6, H * fillRatio);
+                const cargoGeo = new THREE.BoxGeometry(L - 6, curCargoH, W - 6);
+                const cargoMat = new THREE.MeshLambertMaterial({ color: 0x0077ee });
+                const cargoMesh = new THREE.Mesh(cargoGeo, cargoMat);
+                cargoMesh.position.set(0, cargoBaseY + curCargoH / 2, 0);
+                cargoMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(cargoGeo), new THREE.LineBasicMaterial({ color: 0x7dd3fc })));
+                v.rootGroup.add(cargoMesh);
             }
 
-            const cargoTopY = cargoBaseY - 6 - cargoFullH;
-
+            // Step 2+: Flap / Blanket 1 lengthwise wrap
             if (stage >= 2) {
-                const p1 = stage === 2 ? frac : 1.0;
-                ctx.strokeStyle = '#22d3ee';
-                ctx.lineWidth = 4;
-                ctx.beginPath();
-                ctx.moveTo(cargoX - 6, cargoTopY + 36 * p1);
-                ctx.lineTo(cargoX - 6, cargoTopY - 4);
-                ctx.lineTo(cargoX + cargoW + 6, cargoTopY - 4);
-                ctx.lineTo(cargoX + cargoW + 6, cargoTopY + 36 * p1);
-                ctx.stroke();
-
-                ctx.fillStyle = '#22d3ee';
-                ctx.font = 'bold 11px Inter, sans-serif';
-                ctx.fillText(`Blanket 1: ${c.blanketA?.l || 350}×${c.blanketA?.w || 110}cm`, 14, 20);
-                if (stage === 2) drawManualHandIcon(ctx, cargoX + cargoW + 22, cargoTopY + 16, 'Draping B1');
+                const p1 = stage === 2 ? Math.max(0.2, frac) : 1.0;
+                const b1H = H * p1;
+                const b1Geo = new THREE.BoxGeometry(L + 2.2, b1H, W - 1.5);
+                const b1Mat = new THREE.MeshPhongMaterial({
+                    color: 0x22d3ee,
+                    transparent: true,
+                    opacity: 0.28,
+                    depthWrite: false,
+                    side: THREE.DoubleSide
+                });
+                const b1Mesh = new THREE.Mesh(b1Geo, b1Mat);
+                b1Mesh.position.set(0, cargoBaseY + b1H / 2, 0);
+                b1Mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(b1Geo), new THREE.LineBasicMaterial({ color: 0x22d3ee })));
+                v.rootGroup.add(b1Mesh);
             }
 
+            // Step 3+: Flap / Blanket 2 crosswise wrap
             if (stage >= 3) {
-                ctx.strokeStyle = '#38bdf8';
-                ctx.lineWidth = 3.5;
-                ctx.setLineDash([7, 4]);
-                ctx.strokeRect(cargoX - 10, cargoTopY - 9, cargoW + 20, cargoFullH + 14);
-                ctx.setLineDash([]);
-
-                ctx.fillStyle = '#38bdf8';
-                ctx.font = 'bold 11px Inter, sans-serif';
-                ctx.fillText(`Blanket 2: ${c.blanketB?.l || 310}×${c.blanketB?.w || 150}cm`, Math.max(14, cssW - 205), 20);
-                if (stage === 3) drawManualHandIcon(ctx, Math.max(24, cargoX - 24), cargoTopY + 28, 'Cross-Wrap B2');
+                const p2 = stage === 3 ? Math.max(0.2, frac) : 1.0;
+                const b2H = H * p2;
+                const b2Geo = new THREE.BoxGeometry(L - 1.5, b2H, W + 2.2);
+                const b2Mat = new THREE.MeshPhongMaterial({
+                    color: 0x38bdf8,
+                    transparent: true,
+                    opacity: 0.22,
+                    depthWrite: false,
+                    side: THREE.DoubleSide
+                });
+                const b2Mesh = new THREE.Mesh(b2Geo, b2Mat);
+                b2Mesh.position.set(0, cargoBaseY + b2H / 2, 0);
+                b2Mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(b2Geo), new THREE.LineBasicMaterial({ color: 0x38bdf8 })));
+                v.rootGroup.add(b2Mesh);
             }
 
+            // Step 4+: Manual foil tape & fixing bands around 15cm overlap zone
             if (stage >= 4) {
-                const sealY = cargoTopY + cargoFullH * (0.3 + frac * 0.45);
-                ctx.fillStyle = '#f59e0b';
-                ctx.fillRect(cargoX - 12, cargoTopY + cargoFullH * 0.35, cargoW + 24, 5);
-                ctx.fillRect(cargoX - 12, cargoTopY + cargoFullH * 0.72, cargoW + 24, 5);
-                drawManualHandIcon(ctx, cargoX + cargoW + 24, sealY, 'Manual Foil Seal');
+                const bandHeights = [cargoBaseY + H * 0.35, cargoBaseY + H * 0.72];
+                const bandMat = new THREE.MeshLambertMaterial({ color: 0xf59e0b });
+                bandHeights.forEach(by => {
+                    const bandGeo = new THREE.BoxGeometry(L + 4.0, 2.2, W + 4.0);
+                    const bandMesh = new THREE.Mesh(bandGeo, bandMat);
+                    bandMesh.position.set(0, by, 0);
+                    v.rootGroup.add(bandMesh);
+                });
             }
-
-            ctx.restore();
         }
 
         function startSopLoop() {
@@ -2335,7 +2308,7 @@
                 if (sopAnimPlaying) {
                     sopAnimProgress = (sopAnimProgress + 0.012) % 5.0;
                 }
-                drawSopPackingAnimation();
+                updateSop3DScene();
                 requestAnimationFrame(tick);
             }
             requestAnimationFrame(tick);
@@ -2438,11 +2411,11 @@
         }
 
         function handleResize() {
-            drawSopPackingAnimation();
+            updateSop3DScene();
             if (packedState.ccrm) {
                 drawCcrmTemperatureChart(packedState.ccrm.timeline, packedState.ccrm.minTemp ?? 2, packedState.ccrm.maxTemp ?? 8);
                 if (packedState.ccrm.blanketA) {
-                    drawRollCutDiagram(packedState.ccrm.blanketA.l, packedState.ccrm.blanketA.w, packedState.ccrm.blanketB.l, packedState.ccrm.blanketB.w);
+                    drawRollCutDiagram(packedState.ccrm.blanketA.l, packedState.ccrm.blanketA.w, packedState.ccrm.blanketB.l, packedState.ccrm.blanketB.w, packedState.ccrm.rollSpec);
                 }
             }
             Object.values(viewers).forEach(v => {
@@ -2460,8 +2433,18 @@
 
         function resetCamera(key) {
             const v = viewers[key];
+            if (!v) return;
+            if (key === 'sop') {
+                const c = packedState.ccrm || { L: 120, W: 80, H: 100 };
+                const totalH = (c.H || 100) + PALLET_HEIGHT;
+                const maxDim = Math.max(c.L || 120, c.W || 80, totalH);
+                v.camera.position.set(maxDim * 1.4, maxDim * 1.15, maxDim * 1.55);
+                v.controls.target.set(0, totalH / 2, 0);
+                v.controls.update();
+                return;
+            }
             const c = packedState[key]?.container;
-            if (!v || !c) return;
+            if (!c) return;
             if (key === 'truck') {
                 const maxDim = Math.max(c.l, c.w, c.h);
                 v.camera.position.set(maxDim * 0.95, maxDim * 0.65, maxDim * 0.95);
@@ -3031,7 +3014,7 @@
 
             setTimeout(() => {
                 handleResize();
-                if (tabId === 'pack-ccrm') { calculateCcrmEngine(); drawSopPackingAnimation(); }
+                if (tabId === 'pack-ccrm') { calculateCcrmEngine(); updateSop3DScene(); resetCamera('sop'); }
                 if (tabId === 'pack-dual') resetCamera('dual');
                 if (tabId === 'pack-puzzle') resetCamera('puzzle');
                 if (tabId === 'pack-sphere') resetCamera('sphere');
@@ -3959,31 +3942,36 @@
                 blanketA: { l: 340, w: 110, areaM2: 3.74 },
                 blanketB: { l: 310, w: 150, areaM2: 4.65 },
                 totalBlanketsM2: 8.39,
-                rollLinearMeters: 5.59
+                rollSpec: STANDARD_ROLLS['1.25x12.5'],
+                rollsNeededOrder: 1,
+                rollsNeededExact: 0.54
             };
+
+            const rollLabel = cs.rollSpec?.label || '1.25 m × 12.5 m';
+            const rollsOrder = cs.rollsNeededOrder || 1;
+            const rollsExact = cs.rollsNeededExact || 0.54;
 
             const cutEl = document.getElementById('cutsheet-panel');
             if (cutEl) {
                 cutEl.innerHTML = `
                     <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
-                        <span class="text-[11px] text-slate-400 block">Blanket 1 (Lengthwise)</span>
+                        <span class="text-[11px] text-slate-400 block">Flap / Blanket 1 (Lengthwise)</span>
                         <span class="text-base font-extrabold text-cyan-400">${cs.blanketA.l} × ${cs.blanketA.w} cm</span>
                         <span class="text-[10px] text-slate-500 block">${cs.blanketA.areaM2.toFixed(2)} m² per pallet</span>
                     </div>
                     <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
-                        <span class="text-[11px] text-slate-400 block">Blanket 2 (Cross-Wrap)</span>
+                        <span class="text-[11px] text-slate-400 block">Flap / Blanket 2 (Cross-Wrap)</span>
                         <span class="text-base font-extrabold text-sky-400">${cs.blanketB.l} × ${cs.blanketB.w} cm</span>
                         <span class="text-[10px] text-slate-500 block">${cs.blanketB.areaM2.toFixed(2)} m² per pallet</span>
                     </div>
                     <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
-                        <span class="text-[11px] text-slate-400 block">1.50m Roll Yield / Pallet</span>
-                        <span class="text-base font-extrabold text-emerald-400">${cs.rollLinearMeters.toFixed(2)} lin. m</span>
-                        <span class="text-[10px] text-slate-500 block">${(cs.rollLinearMeters * orderPallets).toFixed(1)} m for ${orderPallets} pallets</span>
+                        <span class="text-[11px] text-slate-400 block">Standard Roll (${rollLabel})</span>
+                        <span class="text-base font-extrabold text-emerald-400">${rollsOrder} roll(s) / pallet</span>
+                        <span class="text-[10px] text-slate-500 block">${rollsExact.toFixed(2)} exact • ${(rollsOrder * orderPallets)} rolls for ${orderPallets} pallets</span>
                     </div>
                 `;
             }
 
-            // Populate Side-by-Side Temax Grade Comparison Table
             const tbody = document.getElementById('grade-comparison-tbody');
             if (tbody && c.allSims && c.allSims.length > 0) {
                 tbody.innerHTML = c.allSims.map(sim => `
@@ -4002,11 +3990,11 @@
                 dimSavingsKg: Math.round(dimSavingsTotalKg),
                 co2SavedKg: Math.round(co2SavedKg),
                 sopSteps: [
-                    `Inspect EPAL pallet / floor and place base thermal pad (${c.chosenSpecName || 'Temax-4000'}).`,
+                    `Inspect EPAL pallet / floor and place base insulation pad (${c.chosenSpecName || 'Temax-4000'}).`,
                     `Load temperature-sensitive goods (${c.L || 120}×${c.W || 80}×${c.H || 100} cm, ${c.massKg || 650} kg, Cp ${c.cp || 4186} J/kg·K).`,
-                    `Drape Blanket 1 lengthwise (${cs.blanketA.l}×${cs.blanketA.w} cm) over front, top, and back with 15 cm seal flap.`,
-                    `Cross-wrap Blanket 2 (${cs.blanketB.l}×${cs.blanketB.w} cm) perpendicular over Blanket 1 for full thermal envelope.`,
-                    `Seal all 15 cm overlap seams with reflective foil tape and stretch-wrap.`
+                    `Drape Flap / Blanket 1 lengthwise (${cs.blanketA.l}×${cs.blanketA.w} cm) over front, top, and back with 15 cm overlap.`,
+                    `Cross-wrap Flap / Blanket 2 (${cs.blanketB.l}×${cs.blanketB.w} cm) perpendicular over Blanket 1.`,
+                    `Seal all 15 cm overlap flaps (${rollsOrder} roll(s) of ${rollLabel} per pallet) and fix insulation.`
                 ]
             };
         }
@@ -4057,11 +4045,11 @@
                         <div><strong>Client:</strong> ${c.company} (${c.phone})</div>
                         <div><strong>Shipment:</strong> ${c.L}×${c.W}×${c.H} cm • ${c.massKg} kg</div>
                         <div><strong>Temp Limits:</strong> Tp ${c.startTemp}°C | [${c.minTemp}°C to ${c.maxTemp}°C]</div>
-                        <div><strong>Blanket 1:</strong> ${c.blanketA?.l}×${c.blanketA?.w} cm (${c.blanketA?.areaM2?.toFixed(2)} m²)</div>
-                        <div><strong>Blanket 2:</strong> ${c.blanketB?.l}×${c.blanketB?.w} cm (${c.blanketB?.areaM2?.toFixed(2)} m²)</div>
-                        <div><strong>Date:</strong> ${now}</div>
+                        <div><strong>Flap 1:</strong> ${c.blanketA?.l}×${c.blanketA?.w} cm (${c.blanketA?.areaM2?.toFixed(2)} m²)</div>
+                        <div><strong>Flap 2:</strong> ${c.blanketB?.l}×${c.blanketB?.w} cm (${c.blanketB?.areaM2?.toFixed(2)} m²)</div>
+                        <div><strong>Standard Roll:</strong> ${c.rollSpec?.label || '1.25 m × 12.5 m'} (${c.rollsNeededOrder || 1} roll/pallet)</div>
                     </div>
-                    <h3 style="font-size:14px;text-transform:uppercase;color:#004c99;">2-Blanket Cross-Wrap Assembly Sequence</h3>
+                    <h3 style="font-size:14px;text-transform:uppercase;color:#004c99;">5-Step Pallet Packing & Insulation Sequence</h3>
                     <ol>${(t.sopSteps || []).map(st => `<li>${st}</li>`).join('')}</ol>
                     <div class="signoff">
                         <div><div class="line"></div>Operator Name & Signature</div>
@@ -4090,6 +4078,7 @@
                 tz: document.getElementById('temaxTempZone').value,
                 sc: document.getElementById('dualSheetCarton').checked ? 1 : 0,
                 cg: document.getElementById('dualCornerGuards').checked ? 1 : 0,
+                rl: document.getElementById('standardRollSelect')?.value || '1.25x12.5',
                 ccrm: {
                     co: document.getElementById('req-company').value,
                     cn: document.getElementById('req-contact').value,
@@ -4136,6 +4125,7 @@
                 if (cfg.qty) document.getElementById('orderTotalQty').value = cfg.qty;
                 if (cfg.tg) document.getElementById('temaxThermalGrade').value = cfg.tg;
                 if (cfg.tz) document.getElementById('temaxTempZone').value = cfg.tz;
+                if (cfg.rl && document.getElementById('standardRollSelect')) document.getElementById('standardRollSelect').value = cfg.rl;
                 if (cfg.sc !== undefined) document.getElementById('dualSheetCarton').checked = !!cfg.sc;
                 if (cfg.cg !== undefined) document.getElementById('dualCornerGuards').checked = !!cfg.cg;
                 if (cfg.ccrm) {
@@ -4174,9 +4164,10 @@
                 `Dimensions & Mass: ${c.L} x ${c.W} x ${c.H} cm | ${c.massKg} kg (Cp: ${c.cp} J/kg·K)`,
                 `Thermal Limits: Start ${c.startTemp}°C | Min ${c.minTemp}°C / Max ${c.maxTemp}°C`,
                 `CCRM Recommended Grade: ${c.chosenSpecName} (Summer Peak: ${c.predictedEndTemp?.toFixed(1)}°C / Winter Low: ${c.minWinterTemp?.toFixed(1)}°C)`,
-                `2-Blanket Roll Cut (1.50m Roll):`,
-                `  - Blanket 1 (Lengthwise): ${c.blanketA?.l} x ${c.blanketA?.w} cm (${c.blanketA?.areaM2?.toFixed(2)} m²)`,
-                `  - Blanket 2 (Cross-Wrap): ${c.blanketB?.l} x ${c.blanketB?.w} cm (${c.blanketB?.areaM2?.toFixed(2)} m²)`,
+                `2-Flap / Blanket Cut (${c.rollSpec?.label || '1.25 m × 12.5 m'}):`,
+                `  - Flap / Blanket 1: ${c.blanketA?.l} x ${c.blanketA?.w} cm (${c.blanketA?.areaM2?.toFixed(2)} m²)`,
+                `  - Flap / Blanket 2: ${c.blanketB?.l} x ${c.blanketB?.w} cm (${c.blanketB?.areaM2?.toFixed(2)} m²)`,
+                `  - Rolls Needed: ${c.rollsNeededOrder || 1} roll(s)/pallet (${(c.rollsNeededExact || 0).toFixed(2)} exact)`,
                 `Order Requirement: ${s.orderTotalQty} units (${s.totalPalletsNeeded} pallets total)`
             ].join('\n');
 
@@ -4289,12 +4280,12 @@
 
                     <div class="grid">
                         <div class="card">
-                            <h3>1. CCRM Thermal & 2-Blanket Roll Cut</h3>
+                            <h3>1. CCRM Thermal & 2-Flap Roll Cut</h3>
                             <div class="row"><span>Recommended Temax:</span><span class="val">${c.chosenSpecName} (R-${c.chosenRValue?.toFixed(2)})</span></div>
                             <div class="row"><span>Start → Summer / Winter:</span><span class="val">${c.startTemp}°C → ${c.predictedEndTemp?.toFixed(1)}°C / ${c.minWinterTemp?.toFixed(1)}°C</span></div>
-                            <div class="row"><span>Blanket 1 (Lengthwise):</span><span class="val">${c.blanketA?.l} × ${c.blanketA?.w} cm (${c.blanketA?.areaM2?.toFixed(2)} m²)</span></div>
-                            <div class="row"><span>Blanket 2 (Cross-Wrap):</span><span class="val">${c.blanketB?.l} × ${c.blanketB?.w} cm (${c.blanketB?.areaM2?.toFixed(2)} m²)</span></div>
-                            <div class="row"><span>1.50m Roll Material / Pallet:</span><span class="val">${c.rollLinearMeters?.toFixed(2)} linear m (${c.totalBlanketsM2?.toFixed(2)} m²)</span></div>
+                            <div class="row"><span>Flap 1 (Lengthwise):</span><span class="val">${c.blanketA?.l} × ${c.blanketA?.w} cm (${c.blanketA?.areaM2?.toFixed(2)} m²)</span></div>
+                            <div class="row"><span>Flap 2 (Cross-Wrap):</span><span class="val">${c.blanketB?.l} × ${c.blanketB?.w} cm (${c.blanketB?.areaM2?.toFixed(2)} m²)</span></div>
+                            <div class="row"><span>Roll (${c.rollSpec?.label || '1.25×12.5m'}):</span><span class="val">${c.rollsNeededOrder || 1} roll(s) (${c.totalBlanketsM2?.toFixed(2)} m²)</span></div>
                         </div>
 
                         <div class="card">
@@ -4324,13 +4315,14 @@
             calculateIrregular();
             calculateTruckLoad();
             calculateThermalAndRoi();
-            drawSopPackingAnimation();
+            updateSop3DScene();
         }
 
         window.onload = function () {
             document.getElementById('ccrm-calc-date').value = new Date().toISOString().split('T')[0];
             renderColdChainSteps();
             refreshSavedProfilesDropdown();
+            init3DViewer('sop', 'canvas-sop');
             init3DViewer('dual', 'canvas-dual');
             init3DViewer('puzzle', 'canvas-puzzle');
             init3DViewer('sphere', 'canvas-sphere');
@@ -4339,6 +4331,7 @@
             loadConfigFromUrl();
             calculateAll();
             startSopLoop();
+            resetCamera('sop');
             resetCamera('dual');
             resetCamera('puzzle');
             resetCamera('sphere');
