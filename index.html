@@ -43,8 +43,9 @@
         .glow-blue {
             box-shadow: 0 0 25px -5px rgba(0, 102, 204, 0.4);
         }
-        canvas { display: block; outline: none; touch-action: manipulation; }
-        .webgl-viewport { touch-action: none; }
+        canvas { display: block; outline: none; touch-action: manipulation; margin: 0 auto; }
+        .webgl-viewport { touch-action: none; display: flex; align-items: center; justify-content: center; }
+        .webgl-viewport canvas { width: 100% !important; height: 100% !important; }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-krautz-500 selection:text-white">
@@ -551,7 +552,7 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <button type="button" id="stackPatternColBtn" onclick="setStackPattern('column')" class="px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-krautz-500/20 border-krautz-500 text-krautz-300">
                                     <span>🧱 Column Stack</span>
-                                    <span class="text-[10px] opacity-80">Aligned Vertical</span>
+                                    <span class="text-[10px] opacity-80">Centered Vertical</span>
                                 </button>
                                 <button type="button" id="stackPatternBrickBtn" onclick="setStackPattern('interlock')" class="px-3 py-2 rounded-xl text-xs font-semibold border transition flex flex-col items-center justify-center gap-0.5 bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200">
                                     <span>🔀 Interlocking</span>
@@ -752,7 +753,7 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v7.2</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v7.3</span>
                         </div>
                     </div>
 
@@ -1138,9 +1139,8 @@
         <div>© 2026 Krautz-Temax NV. All rights reserved. CCRM Cold Chain Risk Management & 3D Thermal Packaging Technology.</div>
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
-    <!-- JavaScript Application: Part 2 (Anti-Refresh & WebGL Guards, Non-Overlapping 3D Dims, CCRM Engine, PCM Estimator, Roll Offcut, JSON Backup/Restore & Movable 3D 5-Step SOP) -->
+    <!-- JavaScript Application: Part 2 (Centered Cargo Stack & 3D Camera, Anti-Refresh & WebGL Guards, Non-Overlapping 3D Dims, CCRM Engine, PCM Estimator, Roll Offcut, JSON Backup/Restore & Movable 3D 5-Step SOP) -->
     <script>
-        // Prevent any stray meta-refresh or accidental reload loop
         (function preventUnwantedAutoRefresh() {
             document.querySelectorAll('meta[http-equiv="refresh" i]').forEach(el => el.remove());
             window.addEventListener('submit', function (e) {
@@ -2588,19 +2588,24 @@
                         v.renderer.setSize(w, h);
                     }
                 });
-            }, 120);
+            }, 100);
         }
         window.addEventListener('resize', handleResize);
 
         function resetCamera(key) {
             const v = viewers[key];
             if (!v) return;
+            if (v.container && v.container.clientWidth > 0 && v.container.clientHeight > 0) {
+                v.camera.aspect = v.container.clientWidth / v.container.clientHeight;
+                v.camera.updateProjectionMatrix();
+                v.renderer.setSize(v.container.clientWidth, v.container.clientHeight);
+            }
             if (key === 'sop') {
                 const c = packedState.ccrm || { L: 120, W: 80, H: 100 };
                 const totalH = (c.H || 100) + PALLET_HEIGHT;
                 const maxDim = Math.max(c.L || 120, c.W || 80, totalH);
-                v.camera.position.set(maxDim * 1.4, maxDim * 1.15, maxDim * 1.55);
-                v.controls.target.set(0, totalH / 2, 0);
+                v.camera.position.set(maxDim * 1.45, maxDim * 1.15, maxDim * 1.55);
+                v.controls.target.set(0, totalH * 0.48, 0);
                 v.controls.update();
                 return;
             }
@@ -2617,8 +2622,8 @@
             const baseOffset = mode === 'pallet' ? PALLET_HEIGHT : 0;
             const totalH = c.h + baseOffset;
             const maxDim = Math.max(c.l, c.w, totalH);
-            v.camera.position.set(maxDim * 1.45, maxDim * 1.2, maxDim * 1.6);
-            v.controls.target.set(0, totalH / 2, 0);
+            v.camera.position.set(maxDim * 1.45, maxDim * 1.15, maxDim * 1.6);
+            v.controls.target.set(0, totalH * 0.48, 0);
             v.controls.update();
         }
 
@@ -3291,8 +3296,16 @@
             const sheetYs = [];
             let packedCount = 0;
 
+            // Center the cargo stack symmetrically inside the pallet / inner cavity
+            const stackSpanX = best.cols * best.dim.l;
+            const stackSpanZ = best.rows * best.dim.w;
+            const centerOffsetX = Math.max(0, (innerL - stackSpanX) / 2);
+            const centerOffsetZ = Math.max(0, (innerW - stackSpanZ) / 2);
+
             const rotCols = Math.floor(innerL / best.dim.w);
             const rotRows = Math.floor(innerW / best.dim.l);
+            const rotCenterX = Math.max(0, (innerL - rotCols * best.dim.w) / 2);
+            const rotCenterZ = Math.max(0, (innerW - rotRows * best.dim.l) / 2);
             const canRotateAltLayer = (stackPattern === 'interlock') && (rotCols * rotRows >= best.cols * best.rows * 0.85) && (rotCols > 0 && rotRows > 0);
 
             for (let y = 0; y < best.layers && packedCount < unitsToPack; y++) {
@@ -3307,9 +3320,9 @@
                         for (let x = 0; x < rotCols && packedCount < unitsToPack; x++) {
                             items.push({
                                 shape: 'box',
-                                x: wall + x * best.dim.w,
+                                x: wall + rotCenterX + x * best.dim.w,
                                 y: layerY,
-                                z: wall + z * best.dim.l,
+                                z: wall + rotCenterZ + z * best.dim.l,
                                 l: best.dim.w,
                                 w: best.dim.l,
                                 h: best.dim.h,
@@ -3321,16 +3334,13 @@
                         }
                     }
                 } else {
-                    const slackX = innerL - best.cols * best.dim.l;
-                    const shiftX = (stackPattern === 'interlock' && isOddLayer) ? slackX : 0;
-
                     for (let z = 0; z < best.rows && packedCount < unitsToPack; z++) {
                         for (let x = 0; x < best.cols && packedCount < unitsToPack; x++) {
                             items.push({
                                 shape: 'box',
-                                x: wall + shiftX + x * best.dim.l,
+                                x: wall + centerOffsetX + x * best.dim.l,
                                 y: layerY,
-                                z: wall + z * best.dim.w,
+                                z: wall + centerOffsetZ + z * best.dim.w,
                                 l: best.dim.l,
                                 w: best.dim.w,
                                 h: best.dim.h,
@@ -3377,7 +3387,7 @@
             if (useCorners) dunnageNotes.push(`4 hoeklatten`);
             document.getElementById('dunnageSummary').innerText = dunnageNotes.length > 0
                 ? `+ ${dunnageNotes.join(' & ')}`
-                : (stackPattern === 'interlock' ? 'Interlocking Pattern' : 'Cols × Rows × Layers');
+                : (stackPattern === 'interlock' ? 'Interlocking Pattern' : 'Centered Cols × Rows');
 
             document.getElementById('effectiveVolume').innerText = `Effective Cargo Volume: ${masterVol.toFixed(1)} L`;
             document.getElementById('unitVolume').innerText = `Unit Volume: ${unitVol.toFixed(2)} L`;
@@ -3585,6 +3595,9 @@
                 ? Math.max(0, Math.floor((CH + SHEET_THICKNESS) / gridStepY))
                 : Math.floor(CH / diam);
 
+            const gridOffsetX = Math.max(0, (CL - gx * diam) / 2);
+            const gridOffsetZ = Math.max(0, (CW - gz * diam) / 2);
+
             for (let iy = 0; iy < gy; iy++) {
                 const baseY = iy * gridStepY;
                 if (useSheets && iy > 0) gridSheetYs.push(baseY - SHEET_THICKNESS);
@@ -3592,9 +3605,9 @@
                     for (let ix = 0; ix < gx; ix++) {
                         gridSpheres.push({
                             shape: 'sphere',
-                            x: r + ix * diam,
+                            x: gridOffsetX + r + ix * diam,
                             y: baseY + r,
-                            z: r + iz * diam,
+                            z: gridOffsetZ + r + iz * diam,
                             r: r
                         });
                     }
@@ -3798,6 +3811,9 @@
             const pureVolCapacity = Math.floor((ml * mw * mh) / adjustedObjVol);
             const maxFit = Math.max(spatialCapacity, Math.min(pureVolCapacity, Math.ceil(ml / cellL) * Math.ceil(mw / cellW) * layers));
 
+            const centerX = Math.max(0, (ml - cols * cellL) / 2);
+            const centerZ = Math.max(0, (mw - rows * cellW) / 2);
+
             const items = [];
             const sheetYs = [];
             let placed = 0;
@@ -3809,9 +3825,9 @@
                     for (let x = 0; x < cols && placed < maxFit; x++) {
                         items.push({
                             shape: 'irregular',
-                            x: x * cellL,
+                            x: centerX + x * cellL,
                             y: layerY,
-                            z: z * cellW,
+                            z: centerZ + z * cellW,
                             l: cellL,
                             w: cellW,
                             h: cellH,
@@ -3898,6 +3914,8 @@
             let count = 0;
             let weightedXSum = 0;
 
+            const rowCenterZ = Math.max(0, (TW - bestLayout.rows * bestLayout.dim.w) / 2);
+
             for (let x = 0; x < bestLayout.cols && count < fittedPallets; x++) {
                 for (let z = 0; z < bestLayout.rows && count < fittedPallets; z++) {
                     for (let y = 0; y < bestLayout.tiers && count < fittedPallets; y++) {
@@ -3905,7 +3923,7 @@
                         pallets.push({
                             x: px,
                             y: y * pH,
-                            z: z * bestLayout.dim.w,
+                            z: rowCenterZ + z * bestLayout.dim.w,
                             l: bestLayout.dim.l,
                             w: bestLayout.dim.w,
                             h: pH,
