@@ -158,7 +158,6 @@
                 <!-- LEFT COLUMN (6 cols): TEMAX INSULATION REQUEST FORM (PAGE 1 & PAGE 2) -->
                 <div class="lg:col-span-6 space-y-5">
 
-                    <!-- Form Page Switcher (Page 1: Customer Info | Page 2: Shipment & Cold Chain Data) -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                             <div>
@@ -171,7 +170,7 @@
                             </div>
                         </div>
 
-                        <!-- FORM PAGE 1: COMPANY, CONTACT & SHIPMENT REFERENCE -->
+                        <!-- FORM PAGE 1 -->
                         <div id="request-form-page-1" class="space-y-3">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
@@ -218,10 +217,9 @@
                             </div>
                         </div>
 
-                        <!-- FORM PAGE 2: SHIPMENT DIMENSIONS, WEIGHT, PRODUCT TEMPS, Cp & SINGLE / 10-STEP COLD CHAIN -->
+                        <!-- FORM PAGE 2 -->
                         <div id="request-form-page-2" class="space-y-4 hidden">
                             
-                            <!-- 1. Shipment Details -->
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
                                     <h3 data-i18n="sec1ShipDetails" class="text-xs font-bold text-sky-400 uppercase tracking-wider">1. Shipment Details</h3>
@@ -247,7 +245,6 @@
                                 </div>
                             </div>
 
-                            <!-- 2. Product Temperature Details & Specific Heat Capacity -->
                             <div class="space-y-2 pt-2 border-t border-slate-800">
                                 <div class="flex items-center justify-between">
                                     <h3 data-i18n="sec2TempDetails" class="text-xs font-bold text-cyan-400 uppercase tracking-wider">2. Product Temperature & Specific Heat (c)</h3>
@@ -284,7 +281,6 @@
                                 </div>
                             </div>
 
-                            <!-- 3. Environment Mode Toggle: A. Single Excursion vs B. Total Cold Chain (10 Steps) -->
                             <div class="space-y-2.5 pt-2 border-t border-slate-800">
                                 <div class="flex flex-wrap items-center justify-between gap-2">
                                     <h3 data-i18n="sec3EnvProfile" class="text-xs font-bold text-amber-400 uppercase tracking-wider">3. Environment Profile</h3>
@@ -295,7 +291,6 @@
                                     <input type="hidden" id="ccrm-env-mode" value="chain">
                                 </div>
 
-                                <!-- A. Single Excursion -->
                                 <div id="ccrm-single-panel" class="hidden bg-slate-950/90 border border-slate-800 rounded-xl p-3 space-y-2">
                                     <p class="text-[11px] text-slate-400">Enter extreme Summer and/or Winter outer temperature and exposure duration:</p>
                                     <div class="grid grid-cols-2 gap-3">
@@ -328,7 +323,6 @@
                                     </div>
                                 </div>
 
-                                <!-- B. Total Cold Chain (10 Steps) -->
                                 <div id="ccrm-chain-panel" class="bg-slate-950/90 border border-slate-800 rounded-xl p-3 space-y-2">
                                     <div class="flex items-center justify-between">
                                         <span class="text-[11px] text-slate-300 font-semibold">10-Step Cold Chain Transport / Storage Profile</span>
@@ -345,7 +339,7 @@
                         </div>
                     </div>
 
-                    <!-- External vs Internal Pallet Temperature Curve + Legend (X: every 2h, Y: every 2°C) + Excursion & PCM Alert -->
+                    <!-- External vs Internal Pallet Temperature Curve + Legend (X: every 2h, Y: every 2°C) -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
                             <div>
@@ -370,7 +364,6 @@
                 <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET, 2-BLANKET ROLL CUT + OFFCUT & MOVABLE 3D 5-STEP PACKING SOP -->
                 <div class="lg:col-span-6 space-y-5">
 
-                    <!-- Internal CCRM Sheet Page 1 Metadata -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
                             <div class="flex items-center gap-2">
@@ -404,7 +397,6 @@
                             </div>
                         </div>
 
-                        <!-- CCRM Recommended Temax Product & Thermal Excursion Verdict -->
                         <div id="ccrm-verdict-banner" class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-3">
                             <div>
                                 <span data-i18n="lblRecommendedTemax" class="text-[10px] uppercase tracking-wider text-emerald-300 font-bold block">Recommended Krautz-Temax Insulation</span>
@@ -417,7 +409,6 @@
                         </div>
                     </div>
 
-                    <!-- 2-Blanket Flap/Blanket Cut Dimensions + Standard Roll Quantity & Offcut Readout -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
                             <h3 data-i18n="lblTwoBlanketsTitle" class="text-sm font-bold text-white flex items-center gap-2">
@@ -433,7 +424,6 @@
                         <canvas id="rollCutCanvas" width="560" height="84" class="w-full h-[84px] bg-slate-950 rounded-xl border border-slate-800"></canvas>
                     </div>
 
-                    <!-- Movable 3D 5-Step Pallet Packing & Insulation SOP -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
                             <div>
@@ -452,18 +442,17 @@
                             </div>
                         </div>
 
-                        <div id="canvas-sop" class="webgl-viewport w-full h-[290px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
-                            <div class="absolute top-2.5 right-2.5 z-10 bg-slate-900/85 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800 text-[10px] text-slate-300">
-                                Drag to rotate • Scroll to zoom • Right-drag to pan
-                            </div>
-                            <div class="absolute bottom-2.5 left-2.5 z-10 flex flex-wrap items-center gap-2 bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800 text-[10px]">
-                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#8B4513] inline-block"></span> Pallet</span>
-                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#0077ee] inline-block"></span> Cargo</span>
-                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#22d3ee] inline-block"></span> Insulation / Flap 1</span>
-                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#38bdf8] inline-block"></span> Flap 2</span>
-                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-[#f59e0b] inline-block"></span> Seal / Strap</span>
-                            </div>
+                        <!-- Legend cleanly placed above #canvas-sop -->
+                        <div class="flex flex-wrap items-center gap-3 bg-slate-950/90 px-3 py-1.5 rounded-xl border border-slate-800 text-[11px]">
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Pallet</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Cargo</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#22d3ee] inline-block"></span> Insulation / Flap 1</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#38bdf8] inline-block"></span> Flap 2</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#f59e0b] inline-block"></span> Seal / Strap</span>
+                            <span class="ml-auto text-[10px] text-slate-400">Drag to rotate • Scroll to zoom</span>
                         </div>
+
+                        <div id="canvas-sop" class="webgl-viewport w-full h-[290px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative"></div>
 
                         <div class="grid grid-cols-5 gap-1.5 text-[10px]" id="sop-visual-steps-bar">
                             <button type="button" onclick="selectSopStep(0)" class="p-1.5 rounded-lg border text-center font-semibold bg-amber-500/20 border-amber-500/50 text-amber-200">1. Base Pad</button>
@@ -487,7 +476,6 @@
                 <!-- Left Panel: Inputs -->
                 <div class="lg:col-span-4 space-y-4">
                     
-                    <!-- Master Container / Outer Footprint -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                             <div class="flex items-center space-x-2">
@@ -553,6 +541,9 @@
                                         <option value="frozen">-20°C Frozen (18% Gel/DryIce)</option>
                                     </select>
                                 </div>
+                            </div>
+                            <div id="usableInnerCavityText" class="text-[10px] text-cyan-300/90 bg-slate-950/80 px-2.5 py-1.5 rounded-lg border border-slate-800">
+                                Usable Inner Cavity: 114.0 × 74.0 × 94.0 cm
                             </div>
                         </div>
 
@@ -658,7 +649,6 @@
                         </div>
                     </div>
 
-                    <!-- Quick Load Presets -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2.5">
                         <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Quick Load Presets</h3>
                         <div class="grid grid-cols-2 gap-2">
@@ -744,21 +734,27 @@
                             </div>
                         </div>
 
-                        <div id="canvas-dual" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
-                            <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-2.5 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Unit</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#22d3ee] inline-block"></span> Temax Thermal / PCM</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
-                            </div>
+                        <!-- Legend placed cleanly ABOVE the 3D canvas so L/W/H dimension badges are never covered -->
+                        <div class="flex flex-wrap items-center gap-3 bg-slate-950/90 px-3 py-2 rounded-xl border border-slate-800 text-[11px]">
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Unit</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#22d3ee] inline-block"></span> Temax Thermal / PCM</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
+                            <span class="ml-auto flex items-center gap-2 text-[10px]">
+                                <span class="text-sky-400 font-semibold">L (X)</span> •
+                                <span class="text-emerald-400 font-semibold">W (Z)</span> •
+                                <span class="text-amber-400 font-semibold">H (Y)</span>
+                            </span>
                         </div>
+
+                        <div id="canvas-dual" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative"></div>
 
                         <div id="dual-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
 
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v7.0</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v7.1</span>
                         </div>
                     </div>
 
@@ -833,14 +829,13 @@
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span><span id="puzzleSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span></div><input type="range" id="puzzleSliceY" min="1" max="100" value="100" oninput="update3DScene('puzzle')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span><span id="puzzleSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span></div><input type="range" id="puzzleSliceX" min="1" max="100" value="100" oninput="update3DScene('puzzle')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                         </div>
-                        <div id="canvas-puzzle" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
-                            <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Batch 1</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#10b981] inline-block"></span> Batch 2</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
-                            </div>
+                        <div class="flex flex-wrap items-center gap-3 bg-slate-950/90 px-3 py-1.5 rounded-xl border border-slate-800 text-[11px]">
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Batch 1</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#10b981] inline-block"></span> Batch 2</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
                         </div>
+                        <div id="canvas-puzzle" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative"></div>
                         <div id="puzzle-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
                     </div>
                 </div>
@@ -905,13 +900,12 @@
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span><span id="sphereSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span></div><input type="range" id="sphereSliceY" min="1" max="100" value="100" oninput="update3DScene('sphere')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span><span id="sphereSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span></div><input type="range" id="sphereSliceX" min="1" max="100" value="100" oninput="update3DScene('sphere')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                         </div>
-                        <div id="canvas-sphere" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
-                            <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#38bdf8] inline-block"></span> Packed Sphere</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
-                            </div>
+                        <div class="flex flex-wrap items-center gap-3 bg-slate-950/90 px-3 py-1.5 rounded-xl border border-slate-800 text-[11px]">
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-[#38bdf8] inline-block"></span> Packed Sphere</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
                         </div>
+                        <div id="canvas-sphere" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative"></div>
                         <div id="sphere-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
                     </div>
                 </div>
@@ -976,13 +970,12 @@
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Height Cutaway (Y-Axis)</span><span id="irrSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span></div><input type="range" id="irrSliceY" min="1" max="100" value="100" oninput="update3DScene('irr')" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Cross-Section Cut (X-Plane)</span><span id="irrSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span></div><input type="range" id="irrSliceX" min="1" max="100" value="100" oninput="update3DScene('irr')" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                         </div>
-                        <div id="canvas-irr" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
-                            <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8b5cf6] inline-block"></span> Scanned Unit</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
-                            </div>
+                        <div class="flex flex-wrap items-center gap-3 bg-slate-950/90 px-3 py-1.5 rounded-xl border border-slate-800 text-[11px]">
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#8b5cf6] inline-block"></span> Scanned Unit</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#d4a373] inline-block"></span> Carton Dunnage</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
                         </div>
+                        <div id="canvas-irr" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative"></div>
                         <div id="irr-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
                     </div>
                 </div>
@@ -1039,13 +1032,12 @@
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Tier Cutaway (Height)</span><span id="truckSliceYLabel" class="text-krautz-400 font-bold">100% (Full)</span></div><input type="range" id="truckSliceY" min="1" max="100" value="100" oninput="updateTruck3DScene()" class="w-full accent-krautz-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                             <div><div class="flex justify-between text-[11px] mb-1"><span class="text-slate-400 font-medium">Trailer Length Cut (X-Plane)</span><span id="truckSliceXLabel" class="text-amber-400 font-bold">100% (Full)</span></div><input type="range" id="truckSliceX" min="1" max="100" value="100" oninput="updateTruck3DScene()" class="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"></div>
                         </div>
-                        <div id="canvas-truck" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
-                            <div class="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px]">
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Palletized Cargo</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b] inline-block"></span> Center of Gravity (CoG)</span>
-                            </div>
+                        <div class="flex flex-wrap items-center gap-3 bg-slate-950/90 px-3 py-1.5 rounded-xl border border-slate-800 text-[11px]">
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Palletized Cargo</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Brown Pallet</span>
+                            <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b] inline-block"></span> Center of Gravity (CoG)</span>
                         </div>
+                        <div id="canvas-truck" class="webgl-viewport w-full h-[390px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative"></div>
                         <div id="truck-dim-status" class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 text-xs"></div>
                     </div>
                 </div>
@@ -1148,7 +1140,7 @@
         <div>© 2026 Krautz-Temax NV. All rights reserved. CCRM Cold Chain Risk Management & 3D Thermal Packaging Technology.</div>
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
-    <!-- JavaScript Application: Part 2 (Full I18N, CCRM Engine, PCM Estimator, Roll Offcut, JSON Backup/Restore & Movable 3D 5-Step SOP) -->
+    <!-- JavaScript Application: Part 2 (Non-Overlapping 3D Dims, Inner Cavity Readout, CCRM Engine, PCM Estimator, Roll Offcut, JSON Backup/Restore & Movable 3D 5-Step SOP) -->
     <script>
         lucide.createIcons();
 
@@ -2683,16 +2675,17 @@
             `;
         }
 
+        // Non-overlapping 3D dimension callout badges for L (X), W (Z), and H (Y)
         function build3DDimensionCallouts(L, W, totalH) {
             const group = new THREE.Group();
-            const offset = 8;
+            const offset = 10;
 
             function createTextSprite(text, colorHex) {
                 const canvas = document.createElement('canvas');
                 canvas.width = 256;
                 canvas.height = 64;
                 const ctx = canvas.getContext('2d');
-                ctx.fillStyle = 'rgba(6, 11, 22, 0.85)';
+                ctx.fillStyle = 'rgba(6, 11, 22, 0.92)';
                 ctx.beginPath();
                 ctx.roundRect(16, 10, 224, 44, 10);
                 ctx.fill();
@@ -2708,7 +2701,7 @@
                 const tex = new THREE.CanvasTexture(canvas);
                 const mat = new THREE.SpriteMaterial({ map: tex, depthTest: false });
                 const sprite = new THREE.Sprite(mat);
-                const scale = Math.max(L, W, totalH) * 0.28;
+                const scale = Math.max(L, W, totalH) * 0.25;
                 sprite.scale.set(scale, scale * 0.25, 1);
                 return sprite;
             }
@@ -2719,21 +2712,26 @@
                 group.add(new THREE.Line(geo, mat));
             }
 
+            // Length (X) along front-left edge
             const zFront = W / 2 + offset;
             addAxisLine(new THREE.Vector3(-L / 2, 0.5, zFront), new THREE.Vector3(L / 2, 0.5, zFront), 0x38bdf8);
             const lblL = createTextSprite(`L: ${L.toFixed(0)} cm`, '#38bdf8');
-            lblL.position.set(0, 2, zFront + 5);
+            lblL.position.set(-L * 0.12, 5, zFront + 10);
             group.add(lblL);
 
+            // Width (Z) along right edge
             const xRight = L / 2 + offset;
             addAxisLine(new THREE.Vector3(xRight, 0.5, -W / 2), new THREE.Vector3(xRight, 0.5, W / 2), 0x10b981);
             const lblW = createTextSprite(`W: ${W.toFixed(0)} cm`, '#10b981');
-            lblW.position.set(xRight + 6, 2, 0);
+            lblW.position.set(xRight + 10, 5, W * 0.15);
             group.add(lblW);
 
-            addAxisLine(new THREE.Vector3(xRight, 0, zFront), new THREE.Vector3(xRight, totalH, zFront), 0xf59e0b);
+            // Height (Y) offset further out at right-front corner so L and H badges never collide
+            const hX = L / 2 + offset + 12;
+            const hZ = W / 2 + offset + 12;
+            addAxisLine(new THREE.Vector3(hX, 0, hZ), new THREE.Vector3(hX, totalH, hZ), 0xf59e0b);
             const lblH = createTextSprite(`H: ${totalH.toFixed(0)} cm`, '#f59e0b');
-            lblH.position.set(xRight + 7, totalH / 2, zFront + 4);
+            lblH.position.set(hX + 10, totalH * 0.58, hZ + 8);
             group.add(lblH);
 
             return group;
@@ -3205,6 +3203,11 @@
             const innerHBeforeCoolant = Math.max(1, CH - wall * 2);
             const coolantHeightCm = innerHBeforeCoolant * tempSpec.coolantRatio;
             const usableCargoH = Math.max(1, innerHBeforeCoolant - coolantHeightCm);
+
+            const cavityEl = document.getElementById('usableInnerCavityText');
+            if (cavityEl) {
+                cavityEl.innerText = `Usable Inner Cavity: ${innerL.toFixed(1)} × ${innerW.toFixed(1)} × ${usableCargoH.toFixed(1)} cm${coolantHeightCm > 0.2 ? ` (incl. ${coolantHeightCm.toFixed(1)} cm PCM)` : ''}`;
+            }
 
             const coolantVolL = (innerL * innerW * coolantHeightCm) / 1000;
             const coolantKg = coolantVolL * tempSpec.coolantDensityKgPerL;
