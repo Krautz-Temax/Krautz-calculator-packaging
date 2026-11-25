@@ -66,25 +66,25 @@
 
             <!-- Tab Navigation -->
             <nav class="flex flex-wrap gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
-                <button onclick="switchTab('pack-ccrm')" id="btn-pack-ccrm" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all bg-krautz-500 text-white shadow flex items-center gap-1">
+                <button type="button" onclick="switchTab('pack-ccrm')" id="btn-pack-ccrm" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all bg-krautz-500 text-white shadow flex items-center gap-1">
                     <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i> <span data-i18n="tabCcrm">CCRM & Form</span>
                 </button>
-                <button onclick="switchTab('pack-dual')" id="btn-pack-dual" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
+                <button type="button" onclick="switchTab('pack-dual')" id="btn-pack-dual" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
                     <i data-lucide="box" class="w-3.5 h-3.5"></i> <span data-i18n="tabDual">Dual Box & 3D</span>
                 </button>
-                <button onclick="switchTab('pack-puzzle')" id="btn-pack-puzzle" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
+                <button type="button" onclick="switchTab('pack-puzzle')" id="btn-pack-puzzle" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
                     <i data-lucide="boxes" class="w-3.5 h-3.5"></i> <span data-i18n="tabPuzzle">Volume Puzzle</span>
                 </button>
-                <button onclick="switchTab('pack-sphere')" id="btn-pack-sphere" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
+                <button type="button" onclick="switchTab('pack-sphere')" id="btn-pack-sphere" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
                     <i data-lucide="circle-dot" class="w-3.5 h-3.5"></i> <span data-i18n="tabSphere">Spherical 3D</span>
                 </button>
-                <button onclick="switchTab('pack-irregular')" id="btn-pack-irregular" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
+                <button type="button" onclick="switchTab('pack-irregular')" id="btn-pack-irregular" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
                     <i data-lucide="scan" class="w-3.5 h-3.5"></i> <span data-i18n="tabIrregular">Irregular Scan</span>
                 </button>
-                <button onclick="switchTab('pack-truck')" id="btn-pack-truck" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
+                <button type="button" onclick="switchTab('pack-truck')" id="btn-pack-truck" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
                     <i data-lucide="truck" class="w-3.5 h-3.5"></i> <span data-i18n="tabTruck">Truck / ULD</span>
                 </button>
-                <button onclick="switchTab('pack-thermal')" id="btn-pack-thermal" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
+                <button type="button" onclick="switchTab('pack-thermal')" id="btn-pack-thermal" class="tab-btn px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-1">
                     <i data-lucide="thermometer-snowflake" class="w-3.5 h-3.5 text-cyan-400"></i> <span data-i18n="tabThermal">ROI & Compare</span>
                 </button>
             </nav>
@@ -97,13 +97,13 @@
                     <option value="de">DE</option>
                     <option value="fr">FR</option>
                 </select>
-                <button onclick="copyShareableConfigUrl()" id="shareUrlBtn" title="Copy Customer Request Form & CCRM Hyperlink" class="px-2.5 py-2 bg-sky-900/40 hover:bg-sky-800/60 text-sky-200 border border-sky-500/40 text-xs font-semibold rounded-lg transition flex items-center gap-1">
+                <button type="button" onclick="copyShareableConfigUrl()" id="shareUrlBtn" title="Copy Customer Request Form & CCRM Hyperlink" class="px-2.5 py-2 bg-sky-900/40 hover:bg-sky-800/60 text-sky-200 border border-sky-500/40 text-xs font-semibold rounded-lg transition flex items-center gap-1">
                     <i data-lucide="link" class="w-3.5 h-3.5 text-sky-400"></i> <span id="shareUrlLabel" data-i18n="btnShare">Form Link</span>
                 </button>
-                <button onclick="exportSpecSheet()" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1">
+                <button type="button" onclick="exportSpecSheet()" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1">
                     <i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-400"></i> <span data-i18n="btnSpec">Spec PDF</span>
                 </button>
-                <button onclick="openRfqModal()" class="px-2.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow transition flex items-center gap-1">
+                <button type="button" onclick="openRfqModal()" class="px-2.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow transition flex items-center gap-1">
                     <i data-lucide="send" class="w-3.5 h-3.5"></i> <span data-i18n="btnQuote">Request Quote</span>
                 </button>
             </div>
@@ -442,7 +442,6 @@
                             </div>
                         </div>
 
-                        <!-- Legend cleanly placed above #canvas-sop -->
                         <div class="flex flex-wrap items-center gap-3 bg-slate-950/90 px-3 py-1.5 rounded-xl border border-slate-800 text-[11px]">
                             <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#8B4513] inline-block"></span> Pallet</span>
                             <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Cargo</span>
@@ -652,10 +651,10 @@
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2.5">
                         <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Quick Load Presets</h3>
                         <div class="grid grid-cols-2 gap-2">
-                            <button onclick="setPresetValues(120, 80, 100, 30, 20, 25)" class="p-2.5 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-xs font-medium text-slate-300 transition text-left">
+                            <button type="button" onclick="setPresetValues(120, 80, 100, 30, 20, 25)" class="p-2.5 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-xs font-medium text-slate-300 transition text-left">
                                 Euro-Pallet (120×80×100)
                             </button>
-                            <button onclick="setPresetValues(120, 100, 120, 40, 25, 30)" class="p-2.5 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-xs font-medium text-slate-300 transition text-left">
+                            <button type="button" onclick="setPresetValues(120, 100, 120, 40, 25, 30)" class="p-2.5 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-xl text-xs font-medium text-slate-300 transition text-left">
                                 Block Pallet (120×100×120)
                             </button>
                         </div>
@@ -699,13 +698,13 @@
                                 </div>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
-                                <button onclick="switchTab('pack-ccrm')" class="px-2.5 py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-xs text-cyan-300 font-medium rounded-lg border border-cyan-500/40 transition flex items-center gap-1">
+                                <button type="button" onclick="switchTab('pack-ccrm')" class="px-2.5 py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-xs text-cyan-300 font-medium rounded-lg border border-cyan-500/40 transition flex items-center gap-1">
                                     <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i> CCRM & 2-Flap SOP →
                                 </button>
-                                <button onclick="switchTab('pack-truck')" class="px-2.5 py-1.5 bg-krautz-500/20 hover:bg-krautz-500/30 text-xs text-krautz-300 font-medium rounded-lg border border-krautz-500/40 transition flex items-center gap-1">
+                                <button type="button" onclick="switchTab('pack-truck')" class="px-2.5 py-1.5 bg-krautz-500/20 hover:bg-krautz-500/30 text-xs text-krautz-300 font-medium rounded-lg border border-krautz-500/40 transition flex items-center gap-1">
                                     <i data-lucide="truck" class="w-3.5 h-3.5"></i> Truck / ULD →
                                 </button>
-                                <button onclick="resetCamera('dual')" data-i18n="btnResetView" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
+                                <button type="button" onclick="resetCamera('dual')" data-i18n="btnResetView" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
                                 <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer">
                                     <input type="checkbox" id="dualShowDims" checked onchange="update3DScene('dual')" class="accent-sky-400">
                                     <span>3D Dims</span>
@@ -734,7 +733,6 @@
                             </div>
                         </div>
 
-                        <!-- Legend placed cleanly ABOVE the 3D canvas so L/W/H dimension badges are never covered -->
                         <div class="flex flex-wrap items-center gap-3 bg-slate-950/90 px-3 py-2 rounded-xl border border-slate-800 text-[11px]">
                             <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#0077ee] inline-block"></span> Unit</span>
                             <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-[#22d3ee] inline-block"></span> Temax Thermal / PCM</span>
@@ -754,7 +752,7 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v7.1</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v7.2</span>
                         </div>
                     </div>
 
@@ -812,7 +810,7 @@
                             <div><label class="text-[11px] text-slate-400">Height</label><input type="number" id="pz-b2-h" value="25" oninput="calculatePuzzle()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-semibold"></div>
                         </div>
                     </div>
-                    <button onclick="calculatePuzzle()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Recalculate 3D Placement</button>
+                    <button type="button" onclick="calculatePuzzle()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Recalculate 3D Placement</button>
                 </div>
 
                 <div class="lg:col-span-8 space-y-5">
@@ -821,7 +819,7 @@
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
                             <div class="flex items-center space-x-2"><span class="text-emerald-400 text-lg">📐</span><div><h2 class="text-sm font-semibold text-white tracking-wide">3D Multi-SKU Placement & Cross-Section</h2><p class="text-[11px] text-slate-400">Shows Batch 1 + Secondary Batch 2 with Dunnage on Pallet or Floor</p></div></div>
                             <div class="flex flex-wrap items-center gap-2">
-                                <button onclick="resetCamera('puzzle')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
+                                <button type="button" onclick="resetCamera('puzzle')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
                                 <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer"><input type="checkbox" id="puzzleExplode" onchange="update3DScene('puzzle')" class="accent-krautz-500"><span>Explode</span></label>
                             </div>
                         </div>
@@ -883,7 +881,7 @@
                             <input type="hidden" id="spherePattern" value="fcc">
                         </div>
                     </div>
-                    <button onclick="calculateSpheres()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Calculate Spherical Pack</button>
+                    <button type="button" onclick="calculateSpheres()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Calculate Spherical Pack</button>
                 </div>
 
                 <div class="lg:col-span-8 space-y-5">
@@ -892,7 +890,7 @@
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
                             <div class="flex items-center space-x-2"><span class="text-sky-400 text-lg">⚪</span><div><h2 class="text-sm font-semibold text-white tracking-wide">3D Spherical Lattice & Cross-Section</h2><p class="text-[11px] text-slate-400">Use sliders to slice open inner staggered sphere layers</p></div></div>
                             <div class="flex flex-wrap items-center gap-2">
-                                <button onclick="resetCamera('sphere')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
+                                <button type="button" onclick="resetCamera('sphere')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
                                 <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer"><input type="checkbox" id="sphereExplode" onchange="update3DScene('sphere')" class="accent-krautz-500"><span>Explode</span></label>
                             </div>
                         </div>
@@ -953,7 +951,7 @@
                             <div class="flex items-center justify-between bg-slate-950/70 px-3 py-1.5 rounded-xl border border-slate-800"><label for="irrCornerGuards" class="text-xs text-slate-200 cursor-pointer">Carton Hoeklatten (4 Corners)</label><input type="checkbox" id="irrCornerGuards" onchange="calculateIrregular()" class="w-4 h-4 accent-amber-500 cursor-pointer"></div>
                         </div>
                     </div>
-                    <button onclick="calculateIrregular()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Compute Irregular 3D Fit</button>
+                    <button type="button" onclick="calculateIrregular()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Compute Irregular 3D Fit</button>
                 </div>
 
                 <div class="lg:col-span-8 space-y-5">
@@ -962,7 +960,7 @@
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
                             <div class="flex items-center space-x-2"><span class="text-purple-400 text-lg">🧬</span><div><h2 class="text-sm font-semibold text-white tracking-wide">3D Irregular Scan Packing & Cross-Section</h2><p class="text-[11px] text-slate-400">Visualizes non-uniform cargo units inside master envelope</p></div></div>
                             <div class="flex flex-wrap items-center gap-2">
-                                <button onclick="resetCamera('irr')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
+                                <button type="button" onclick="resetCamera('irr')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
                                 <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer"><input type="checkbox" id="irrExplode" onchange="update3DScene('irr')" class="accent-krautz-500"><span>Explode</span></label>
                             </div>
                         </div>
@@ -1015,7 +1013,7 @@
                             <div class="flex items-center justify-between bg-slate-950/70 px-3 py-2 rounded-xl border border-slate-800"><div><label for="tr-rotate-pallets" class="text-xs font-medium text-slate-200 block cursor-pointer">Auto-Rotate Pallets (80×120 vs 120×80)</label><span class="text-[10px] text-slate-400">Maximizes floor pallet count</span></div><input type="checkbox" id="tr-rotate-pallets" checked onchange="calculateTruckLoad()" class="w-4 h-4 accent-krautz-500 cursor-pointer"></div>
                         </div>
                     </div>
-                    <button onclick="calculateTruckLoad()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Recalculate Fleet Load</button>
+                    <button type="button" onclick="calculateTruckLoad()" class="w-full py-2.5 bg-krautz-500 hover:bg-krautz-600 text-white text-sm font-semibold rounded-xl transition-all shadow-lg">Recalculate Fleet Load</button>
                 </div>
 
                 <div class="lg:col-span-8 space-y-5">
@@ -1024,7 +1022,7 @@
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-3">
                             <div class="flex items-center space-x-2"><span class="text-sky-400 text-lg">🚛</span><div><h2 class="text-sm font-semibold text-white tracking-wide">3D Trailer / ULD Pallet Plan & Center of Gravity (CoG)</h2><p class="text-[11px] text-slate-400">Amber vertical beam marks Center of Gravity (CoG) for safe axle & aircraft balance</p></div></div>
                             <div class="flex flex-wrap items-center gap-2">
-                                <button onclick="resetCamera('truck')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
+                                <button type="button" onclick="resetCamera('truck')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded-lg border border-slate-700 transition">Reset View</button>
                                 <label class="flex items-center gap-1.5 text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer"><input type="checkbox" id="truckExplode" onchange="updateTruck3DScene()" class="accent-krautz-500"><span>Explode</span></label>
                             </div>
                         </div>
@@ -1107,7 +1105,7 @@
                         <p class="text-[11px] text-slate-400">Includes CCRM thermal validation, 2-blanket roll cut & pallet specs</p>
                     </div>
                 </div>
-                <button onclick="closeRfqModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button type="button" onclick="closeRfqModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
@@ -1140,8 +1138,16 @@
         <div>© 2026 Krautz-Temax NV. All rights reserved. CCRM Cold Chain Risk Management & 3D Thermal Packaging Technology.</div>
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
-    <!-- JavaScript Application: Part 2 (Non-Overlapping 3D Dims, Inner Cavity Readout, CCRM Engine, PCM Estimator, Roll Offcut, JSON Backup/Restore & Movable 3D 5-Step SOP) -->
+    <!-- JavaScript Application: Part 2 (Anti-Refresh & WebGL Guards, Non-Overlapping 3D Dims, CCRM Engine, PCM Estimator, Roll Offcut, JSON Backup/Restore & Movable 3D 5-Step SOP) -->
     <script>
+        // Prevent any stray meta-refresh or accidental reload loop
+        (function preventUnwantedAutoRefresh() {
+            document.querySelectorAll('meta[http-equiv="refresh" i]').forEach(el => el.remove());
+            window.addEventListener('submit', function (e) {
+                e.preventDefault();
+            }, true);
+        })();
+
         lucide.createIcons();
 
         const PALLET_HEIGHT = 15.0;
@@ -1580,6 +1586,11 @@
 
         let sopAnimPlaying = false;
         let sopAnimProgress = 1.7;
+        let pageVisible = true;
+
+        document.addEventListener('visibilitychange', () => {
+            pageVisible = !document.hidden;
+        });
 
         function buildFullConfigObject() {
             const steps10 = [];
@@ -2324,6 +2335,32 @@
             updateSop3DScene();
         }
 
+        function disposeObject3D(obj) {
+            if (!obj) return;
+            obj.traverse(child => {
+                if (child.geometry) child.geometry.dispose();
+                if (child.material) {
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach(m => {
+                            if (m.map) m.map.dispose();
+                            m.dispose();
+                        });
+                    } else {
+                        if (child.material.map) child.material.map.dispose();
+                        child.material.dispose();
+                    }
+                }
+            });
+        }
+
+        function clearGroupChildren(group) {
+            while (group.children.length > 0) {
+                const child = group.children[0];
+                group.remove(child);
+                disposeObject3D(child);
+            }
+        }
+
         function updateSop3DScene() {
             const v = viewers['sop'];
             const dict = I18N[currentLang] || I18N.en;
@@ -2344,10 +2381,8 @@
                 `).join('');
             }
 
-            if (!v) return;
-            while (v.rootGroup.children.length > 0) {
-                v.rootGroup.remove(v.rootGroup.children[0]);
-            }
+            if (!v || !v.container || v.container.offsetParent === null) return;
+            clearGroupChildren(v.rootGroup);
 
             const L = c.L || 120;
             const W = c.W || 80;
@@ -2426,10 +2461,10 @@
 
         function startSopLoop() {
             function tick() {
-                if (sopAnimPlaying) {
+                if (pageVisible && sopAnimPlaying) {
                     sopAnimProgress = (sopAnimProgress + 0.012) % 5.0;
+                    updateSop3DScene();
                 }
-                updateSop3DScene();
                 requestAnimationFrame(tick);
             }
             requestAnimationFrame(tick);
@@ -2498,9 +2533,9 @@
             const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 10000);
             camera.position.set(170, 150, 190);
 
-            const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+            const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: 'low-power' });
             renderer.setSize(width, height);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
             container.appendChild(renderer.domElement);
 
             const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -2525,30 +2560,35 @@
 
             function animate() {
                 requestAnimationFrame(animate);
+                if (!pageVisible || !container || container.offsetParent === null) return;
                 controls.update();
                 renderer.render(scene, camera);
             }
             animate();
         }
 
+        let resizeDebounceTimer = null;
         function handleResize() {
-            updateSop3DScene();
-            if (packedState.ccrm) {
-                drawCcrmTemperatureChart(packedState.ccrm.timeline, packedState.ccrm.minTemp ?? 2, packedState.ccrm.maxTemp ?? 8);
-                if (packedState.ccrm.blanketA) {
-                    drawRollCutDiagram(packedState.ccrm.blanketA.l, packedState.ccrm.blanketA.w, packedState.ccrm.blanketB.l, packedState.ccrm.blanketB.w, packedState.ccrm.rollSpec);
+            clearTimeout(resizeDebounceTimer);
+            resizeDebounceTimer = setTimeout(() => {
+                updateSop3DScene();
+                if (packedState.ccrm) {
+                    drawCcrmTemperatureChart(packedState.ccrm.timeline, packedState.ccrm.minTemp ?? 2, packedState.ccrm.maxTemp ?? 8);
+                    if (packedState.ccrm.blanketA) {
+                        drawRollCutDiagram(packedState.ccrm.blanketA.l, packedState.ccrm.blanketA.w, packedState.ccrm.blanketB.l, packedState.ccrm.blanketB.w, packedState.ccrm.rollSpec);
+                    }
                 }
-            }
-            Object.values(viewers).forEach(v => {
-                if (!v.container || v.container.offsetParent === null) return;
-                const w = v.container.clientWidth;
-                const h = v.container.clientHeight;
-                if (w > 0 && h > 0) {
-                    v.camera.aspect = w / h;
-                    v.camera.updateProjectionMatrix();
-                    v.renderer.setSize(w, h);
-                }
-            });
+                Object.values(viewers).forEach(v => {
+                    if (!v.container || v.container.offsetParent === null) return;
+                    const w = v.container.clientWidth;
+                    const h = v.container.clientHeight;
+                    if (w > 0 && h > 0) {
+                        v.camera.aspect = w / h;
+                        v.camera.updateProjectionMatrix();
+                        v.renderer.setSize(w, h);
+                    }
+                });
+            }, 120);
         }
         window.addEventListener('resize', handleResize);
 
@@ -2675,7 +2715,6 @@
             `;
         }
 
-        // Non-overlapping 3D dimension callout badges for L (X), W (Z), and H (Y)
         function build3DDimensionCallouts(L, W, totalH) {
             const group = new THREE.Group();
             const offset = 10;
@@ -2712,21 +2751,18 @@
                 group.add(new THREE.Line(geo, mat));
             }
 
-            // Length (X) along front-left edge
             const zFront = W / 2 + offset;
             addAxisLine(new THREE.Vector3(-L / 2, 0.5, zFront), new THREE.Vector3(L / 2, 0.5, zFront), 0x38bdf8);
             const lblL = createTextSprite(`L: ${L.toFixed(0)} cm`, '#38bdf8');
             lblL.position.set(-L * 0.12, 5, zFront + 10);
             group.add(lblL);
 
-            // Width (Z) along right edge
             const xRight = L / 2 + offset;
             addAxisLine(new THREE.Vector3(xRight, 0.5, -W / 2), new THREE.Vector3(xRight, 0.5, W / 2), 0x10b981);
             const lblW = createTextSprite(`W: ${W.toFixed(0)} cm`, '#10b981');
             lblW.position.set(xRight + 10, 5, W * 0.15);
             group.add(lblW);
 
-            // Height (Y) offset further out at right-front corner so L and H badges never collide
             const hX = L / 2 + offset + 12;
             const hZ = W / 2 + offset + 12;
             addAxisLine(new THREE.Vector3(hX, 0, hZ), new THREE.Vector3(hX, totalH, hZ), 0xf59e0b);
@@ -2956,9 +2992,7 @@
             const data = packedState[key];
             if (!v || !data) return;
 
-            while (v.rootGroup.children.length > 0) {
-                v.rootGroup.remove(v.rootGroup.children[0]);
-            }
+            clearGroupChildren(v.rootGroup);
 
             const { l: CL, w: CW, h: CH } = data.container;
             const sliceYPercent = parseFloat(document.getElementById(`${key}SliceY`).value) || 100;
@@ -3944,9 +3978,7 @@
             const data = packedState['truck'];
             if (!v || !data) return;
 
-            while (v.rootGroup.children.length > 0) {
-                v.rootGroup.remove(v.rootGroup.children[0]);
-            }
+            clearGroupChildren(v.rootGroup);
 
             const { l: TL, w: TW, h: TH } = data.container;
             const sliceYPercent = parseFloat(document.getElementById('truckSliceY').value) || 100;
@@ -4197,7 +4229,9 @@
             const cfg = buildFullConfigObject();
             const encoded = btoa(encodeURIComponent(JSON.stringify(cfg)));
             const shareUrl = `${window.location.origin}${window.location.pathname}?cfg=${encodeURIComponent(encoded)}`;
-            window.history.replaceState({}, '', `?cfg=${encodeURIComponent(encoded)}`);
+            try {
+                window.history.replaceState({}, '', `?cfg=${encodeURIComponent(encoded)}`);
+            } catch (e) {}
             navigator.clipboard?.writeText(shareUrl);
 
             const lbl = document.getElementById('shareUrlLabel');
@@ -4388,7 +4422,7 @@
             updateSop3DScene();
         }
 
-        window.onload = function () {
+        window.addEventListener('DOMContentLoaded', function () {
             document.getElementById('ccrm-calc-date').value = new Date().toISOString().split('T')[0];
             renderColdChainSteps();
             refreshSavedProfilesDropdown();
@@ -4407,7 +4441,7 @@
             resetCamera('sphere');
             resetCamera('irr');
             resetCamera('truck');
-        };
+        });
     </script>
 </body>
 </html>
