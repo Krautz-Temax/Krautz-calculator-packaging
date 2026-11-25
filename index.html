@@ -116,7 +116,7 @@
         <!-- TAB 0 (PRIMARY): TEMAX INSULATION REQUEST FORM & CCRM THERMAL ENGINE -->
         <section id="tab-pack-ccrm" class="tab-content space-y-6">
 
-            <!-- Customer Form Hyperlink, Saved Profiles & Workflow Banner -->
+            <!-- Customer Form Hyperlink, Saved Profiles, JSON Backup/Restore & Workflow Banner -->
             <div class="bg-slate-900 border border-sky-500/30 rounded-2xl p-4 shadow-xl flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <div class="p-2.5 bg-sky-500/15 rounded-xl border border-sky-500/30 text-sky-400">
@@ -127,7 +127,7 @@
                             TEMAX INSULATION REQUEST (Dok.Nr. F05.008) → CCRM CALCULATION SHEET
                             <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Live Sync</span>
                         </div>
-                        <p data-i18n="ccrmBannerDesc" class="text-[11px] text-slate-400">Send the online request form hyperlink to your customer, or fill in received customer data to run CCRM & Roll-Cut SOPs.</p>
+                        <p data-i18n="ccrmBannerDesc" class="text-[11px] text-slate-400">Send the online request form hyperlink to your customer, save/load JSON configs, or run CCRM & Roll-Cut SOPs.</p>
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
@@ -137,6 +137,13 @@
                     <button type="button" onclick="saveCurrentProfile()" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-1">
                         <i data-lucide="bookmark-plus" class="w-3.5 h-3.5 text-amber-400"></i> <span data-i18n="btnSaveProfile">Save Profile</span>
                     </button>
+                    <button type="button" onclick="exportConfigJson()" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-cyan-200 border border-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-1">
+                        <i data-lucide="file-json" class="w-3.5 h-3.5 text-cyan-400"></i> <span>Save JSON</span>
+                    </button>
+                    <label class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-amber-200 border border-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-1 cursor-pointer">
+                        <i data-lucide="upload" class="w-3.5 h-3.5 text-amber-400"></i> <span>Load JSON</span>
+                        <input type="file" id="importJsonInput" accept=".json" onchange="importConfigJson(event)" class="hidden">
+                    </label>
                     <button type="button" onclick="copyCustomerFormLink()" id="copyFormHyperlinkBtn" class="px-3 py-2 bg-krautz-500 hover:bg-krautz-600 text-white text-xs font-semibold rounded-xl shadow transition flex items-center gap-1.5">
                         <i data-lucide="external-link" class="w-3.5 h-3.5"></i> <span id="copyFormLinkText" data-i18n="btnCopyFormLink">Copy Customer Form Hyperlink</span>
                     </button>
@@ -268,7 +275,7 @@
                                     </div>
                                     <div>
                                         <label class="text-[10px] text-emerald-400 block mb-1">c (J/kg·K)</label>
-                                        <input type="number" id="ccrm-cp" value="4186" min="100" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs font-bold text-emerald-300">
+                                        <input type="number" id="ccrm-cp" value="4186" min="100" oninput="calculateCcrmEngine()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-bold text-emerald-300">
                                     </div>
                                 </div>
                                 <div class="flex items-center justify-between text-[10px] text-slate-400">
@@ -338,7 +345,7 @@
                         </div>
                     </div>
 
-                    <!-- External vs Internal Pallet Temperature Curve + Legend (X: every 2h, Y: every 2°C) -->
+                    <!-- External vs Internal Pallet Temperature Curve + Legend (X: every 2h, Y: every 2°C) + Excursion & PCM Alert -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
                             <div>
@@ -356,11 +363,11 @@
                             <span class="flex items-center gap-1.5 text-emerald-400 font-medium"><span class="w-2.5 h-2.5 rounded-sm bg-emerald-500/25 border border-emerald-500/40 inline-block"></span> <span data-i18n="legSafeBand">Safe Zone</span></span>
                         </div>
                         <canvas id="ccrmTempChart" width="560" height="190" class="w-full h-[190px] bg-slate-950 rounded-xl border border-slate-800"></canvas>
-                        <div id="ccrm-risk-pinpointer" class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 text-[11px] text-slate-300"></div>
+                        <div id="ccrm-risk-pinpointer" class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 text-[11px] text-slate-300 space-y-1"></div>
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET, 2-BLANKET ROLL CUT + STANDARD ROLL QTY & MOVABLE 3D 5-STEP PACKING SOP -->
+                <!-- RIGHT COLUMN (6 cols): INTERNAL CCRM SHEET, 2-BLANKET ROLL CUT + OFFCUT & MOVABLE 3D 5-STEP PACKING SOP -->
                 <div class="lg:col-span-6 space-y-5">
 
                     <!-- Internal CCRM Sheet Page 1 Metadata -->
@@ -410,7 +417,7 @@
                         </div>
                     </div>
 
-                    <!-- 2-Blanket Flap/Blanket Cut Dimensions + Standard Roll Quantity Calculator -->
+                    <!-- 2-Blanket Flap/Blanket Cut Dimensions + Standard Roll Quantity & Offcut Readout -->
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
                         <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2.5 gap-2">
                             <h3 data-i18n="lblTwoBlanketsTitle" class="text-sm font-bold text-white flex items-center gap-2">
@@ -422,7 +429,7 @@
                             </select>
                         </div>
                         <div id="ccrm-two-blankets-panel" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-                        <div id="ccrm-roll-count-panel" class="p-3 rounded-xl bg-slate-950 border border-sky-500/30 text-xs text-slate-200"></div>
+                        <div id="ccrm-roll-count-panel" class="p-3 rounded-xl bg-slate-950 border border-sky-500/30 text-xs text-slate-200 space-y-1"></div>
                         <canvas id="rollCutCanvas" width="560" height="84" class="w-full h-[84px] bg-slate-950 rounded-xl border border-slate-800"></canvas>
                     </div>
 
@@ -445,7 +452,6 @@
                             </div>
                         </div>
 
-                        <!-- Movable 3D Viewport (#canvas-sop) -->
                         <div id="canvas-sop" class="webgl-viewport w-full h-[290px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative">
                             <div class="absolute top-2.5 right-2.5 z-10 bg-slate-900/85 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-800 text-[10px] text-slate-300">
                                 Drag to rotate • Scroll to zoom • Right-drag to pan
@@ -459,7 +465,6 @@
                             </div>
                         </div>
 
-                        <!-- 5-Step Selector Bar -->
                         <div class="grid grid-cols-5 gap-1.5 text-[10px]" id="sop-visual-steps-bar">
                             <button type="button" onclick="selectSopStep(0)" class="p-1.5 rounded-lg border text-center font-semibold bg-amber-500/20 border-amber-500/50 text-amber-200">1. Base Pad</button>
                             <button type="button" onclick="selectSopStep(1)" class="p-1.5 rounded-lg border text-center font-semibold bg-amber-500/20 border-amber-500/50 text-amber-200">2. Load Cargo</button>
@@ -705,7 +710,7 @@
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <button onclick="switchTab('pack-ccrm')" class="px-2.5 py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-xs text-cyan-300 font-medium rounded-lg border border-cyan-500/40 transition flex items-center gap-1">
-                                    <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i> CCRM & 2-Blanket SOP →
+                                    <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i> CCRM & 2-Flap SOP →
                                 </button>
                                 <button onclick="switchTab('pack-truck')" class="px-2.5 py-1.5 bg-krautz-500/20 hover:bg-krautz-500/30 text-xs text-krautz-300 font-medium rounded-lg border border-krautz-500/40 transition flex items-center gap-1">
                                     <i data-lucide="truck" class="w-3.5 h-3.5"></i> Truck / ULD →
@@ -753,7 +758,7 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3 gap-2">
                             <span id="effectiveVolume">Effective Cargo Volume: 960.0 L</span>
                             <span id="unitVolume">Unit Volume: 15.00 L</span>
-                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v6.9</span>
+                            <span class="text-slate-500 font-medium">Krautz-Temax 3D Thermal & CCRM Engine v7.0</span>
                         </div>
                     </div>
 
@@ -1143,7 +1148,7 @@
         <div>© 2026 Krautz-Temax NV. All rights reserved. CCRM Cold Chain Risk Management & 3D Thermal Packaging Technology.</div>
         <div>Visit our official website at <a href="https://krautz.org/" target="_blank" class="text-blue-500 hover:text-blue-400 underline font-medium">krautz.org</a>.</div>
     </footer>
-    <!-- JavaScript Application: Part 2 (Full I18N, CCRM Engine, 2h/2°C Graph + Legend, Standard Roll Qty & Movable 3D 5-Step Packing SOP) -->
+    <!-- JavaScript Application: Part 2 (Full I18N, CCRM Engine, PCM Estimator, Roll Offcut, JSON Backup/Restore & Movable 3D 5-Step SOP) -->
     <script>
         lucide.createIcons();
 
@@ -1189,7 +1194,7 @@
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Request Quote',
                 ccrmBannerTitle: 'TEMAX INSULATION REQUEST (Dok.Nr. F05.008) → CCRM CALCULATION SHEET',
-                ccrmBannerDesc: 'Send the online request form hyperlink to your customer, or fill in received customer data to run CCRM & Roll-Cut SOPs.',
+                ccrmBannerDesc: 'Send the online request form hyperlink to your customer, save/load JSON configs, or run CCRM & Roll-Cut SOPs.',
                 btnSaveProfile: 'Save Profile',
                 btnCopyFormLink: 'Copy Customer Form Hyperlink',
                 btnExportCsv: 'Export CCRM (.CSV)',
@@ -1280,7 +1285,7 @@
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Offerte Aanvragen',
                 ccrmBannerTitle: 'TEMAX ISOLATIE AANVRAAG (Dok.Nr. F05.008) → CCRM BEREKENINGSBLAD',
-                ccrmBannerDesc: 'Stuur de online formulierlink naar uw klant of vul de klantgegevens in voor CCRM & snij-instructies.',
+                ccrmBannerDesc: 'Stuur de online formulierlink naar uw klant, bewaar/laad JSON-profielen of run CCRM & snij-SOPs.',
                 btnSaveProfile: 'Profiel Opslaan',
                 btnCopyFormLink: 'Kopieer Klantformulier Link',
                 btnExportCsv: 'Exporteer CCRM (.CSV)',
@@ -1371,7 +1376,7 @@
                 btnSpec: 'Spec PDF',
                 btnQuote: 'Angebot Anfordern',
                 ccrmBannerTitle: 'TEMAX ISOLIERANFRAGE (Dok.Nr. F05.008) → CCRM-BERECHNUNGSBLATT',
-                ccrmBannerDesc: 'Senden Sie den Online-Formularlink an Ihren Kunden oder geben Sie Kundendaten für CCRM & Zuschnitt ein.',
+                ccrmBannerDesc: 'Senden Sie den Online-Formularlink an Ihren Kunden, sichern/laden Sie JSON-Profile oder starten Sie CCRM & SOP.',
                 btnSaveProfile: 'Profil Speichern',
                 btnCopyFormLink: 'Kundenformular-Link Kopieren',
                 btnExportCsv: 'CCRM Exportieren (.CSV)',
@@ -1462,7 +1467,7 @@
                 btnSpec: 'Fiche PDF',
                 btnQuote: 'Demander Devis',
                 ccrmBannerTitle: 'DEMANDE ISOLATION TEMAX (Dok.Nr. F05.008) → FEUILLE DE CALCUL CCRM',
-                ccrmBannerDesc: 'Envoyez le lien du formulaire en ligne au client ou saisissez ses données pour lancer le calcul CCRM & SOP.',
+                ccrmBannerDesc: 'Envoyez le lien du formulaire en ligne au client, sauvegardez/chargez un JSON ou lancez CCRM & SOP.',
                 btnSaveProfile: 'Sauver Profil',
                 btnCopyFormLink: 'Copier Lien Formulaire Client',
                 btnExportCsv: 'Exporter CCRM (.CSV)',
@@ -1584,6 +1589,137 @@
         let sopAnimPlaying = false;
         let sopAnimProgress = 1.7;
 
+        function buildFullConfigObject() {
+            const steps10 = [];
+            for (let i = 1; i <= 10; i++) {
+                steps10.push({
+                    hrs: parseFloat(document.getElementById(`ccrm-step-hrs-${i}`)?.value) || 0,
+                    win: parseFloat(document.getElementById(`ccrm-step-win-${i}`)?.value) || 0,
+                    sum: parseFloat(document.getElementById(`ccrm-step-sum-${i}`)?.value) || 0,
+                    desc: document.getElementById(`ccrm-step-desc-${i}`)?.value || ''
+                });
+            }
+            return {
+                lang: currentLang,
+                cl: document.getElementById('containerL').value,
+                cw: document.getElementById('containerW').value,
+                ch: document.getElementById('containerH').value,
+                il: document.getElementById('itemL').value,
+                iw: document.getElementById('itemW').value,
+                ih: document.getElementById('itemH').value,
+                wt: document.getElementById('itemWeight').value,
+                mp: document.getElementById('maxPayload').value,
+                qty: document.getElementById('orderTotalQty').value,
+                pm: document.getElementById('dualPlacementMode').value,
+                sp: document.getElementById('dualStackPattern').value,
+                tg: document.getElementById('temaxThermalGrade').value,
+                tz: document.getElementById('temaxTempZone').value,
+                sc: document.getElementById('dualSheetCarton').checked ? 1 : 0,
+                cg: document.getElementById('dualCornerGuards').checked ? 1 : 0,
+                rl: document.getElementById('standardRollSelect')?.value || '1.25x12.5',
+                ccrm: {
+                    co: document.getElementById('req-company').value,
+                    cn: document.getElementById('req-contact').value,
+                    ad: document.getElementById('req-address').value,
+                    pl: document.getElementById('req-place').value,
+                    em: document.getElementById('req-email').value,
+                    ph: document.getElementById('req-phone').value,
+                    sr: document.getElementById('req-ship-ref').value,
+                    mg: document.getElementById('ccrm-manager-name').value,
+                    ms: document.getElementById('ccrm-weight').value,
+                    st: document.getElementById('ccrm-start-temp').value,
+                    mn: document.getElementById('ccrm-min-temp').value,
+                    mx: document.getElementById('ccrm-max-temp').value,
+                    cp: document.getElementById('ccrm-cp').value,
+                    envMode: document.getElementById('ccrm-env-mode')?.value || 'chain',
+                    steps10
+                }
+            };
+        }
+
+        function applyFullConfigObject(cfg) {
+            if (!cfg) return;
+            if (cfg.lang && I18N[cfg.lang]) {
+                currentLang = cfg.lang;
+                const sel = document.getElementById('langSelect');
+                if (sel) sel.value = cfg.lang;
+            }
+            if (cfg.cl) { document.getElementById('containerL').value = cfg.cl; document.getElementById('ccrm-l').value = cfg.cl; }
+            if (cfg.cw) { document.getElementById('containerW').value = cfg.cw; document.getElementById('ccrm-w').value = cfg.cw; }
+            if (cfg.ch) { document.getElementById('containerH').value = cfg.ch; document.getElementById('ccrm-h').value = cfg.ch; }
+            if (cfg.il) document.getElementById('itemL').value = cfg.il;
+            if (cfg.iw) document.getElementById('itemW').value = cfg.iw;
+            if (cfg.ih) document.getElementById('itemH').value = cfg.ih;
+            if (cfg.wt) document.getElementById('itemWeight').value = cfg.wt;
+            if (cfg.mp) document.getElementById('maxPayload').value = cfg.mp;
+            if (cfg.qty) document.getElementById('orderTotalQty').value = cfg.qty;
+            if (cfg.tg) document.getElementById('temaxThermalGrade').value = cfg.tg;
+            if (cfg.tz) document.getElementById('temaxTempZone').value = cfg.tz;
+            if (cfg.rl && document.getElementById('standardRollSelect')) document.getElementById('standardRollSelect').value = cfg.rl;
+            if (cfg.sc !== undefined) document.getElementById('dualSheetCarton').checked = !!cfg.sc;
+            if (cfg.cg !== undefined) document.getElementById('dualCornerGuards').checked = !!cfg.cg;
+
+            if (cfg.ccrm) {
+                if (cfg.ccrm.co !== undefined) document.getElementById('req-company').value = cfg.ccrm.co;
+                if (cfg.ccrm.cn !== undefined) document.getElementById('req-contact').value = cfg.ccrm.cn;
+                if (cfg.ccrm.ad !== undefined) document.getElementById('req-address').value = cfg.ccrm.ad;
+                if (cfg.ccrm.pl !== undefined) document.getElementById('req-place').value = cfg.ccrm.pl;
+                if (cfg.ccrm.em !== undefined) document.getElementById('req-email').value = cfg.ccrm.em;
+                if (cfg.ccrm.ph !== undefined) document.getElementById('req-phone').value = cfg.ccrm.ph;
+                if (cfg.ccrm.sr !== undefined) document.getElementById('req-ship-ref').value = cfg.ccrm.sr;
+                if (cfg.ccrm.mg !== undefined) document.getElementById('ccrm-manager-name').value = cfg.ccrm.mg;
+                if (cfg.ccrm.ms !== undefined) document.getElementById('ccrm-weight').value = cfg.ccrm.ms;
+                if (cfg.ccrm.st !== undefined) document.getElementById('ccrm-start-temp').value = cfg.ccrm.st;
+                if (cfg.ccrm.mn !== undefined) document.getElementById('ccrm-min-temp').value = cfg.ccrm.mn;
+                if (cfg.ccrm.mx !== undefined) document.getElementById('ccrm-max-temp').value = cfg.ccrm.mx;
+                if (cfg.ccrm.cp !== undefined) document.getElementById('ccrm-cp').value = cfg.ccrm.cp;
+                if (cfg.ccrm.envMode) setCcrmEnvMode(cfg.ccrm.envMode);
+                if (Array.isArray(cfg.ccrm.steps10)) {
+                    cfg.ccrm.steps10.forEach((st, idx) => {
+                        const n = idx + 1;
+                        if (document.getElementById(`ccrm-step-hrs-${n}`)) document.getElementById(`ccrm-step-hrs-${n}`).value = st.hrs ?? 0;
+                        if (document.getElementById(`ccrm-step-win-${n}`)) document.getElementById(`ccrm-step-win-${n}`).value = st.win ?? 0;
+                        if (document.getElementById(`ccrm-step-sum-${n}`)) document.getElementById(`ccrm-step-sum-${n}`).value = st.sum ?? 0;
+                        if (document.getElementById(`ccrm-step-desc-${n}`)) document.getElementById(`ccrm-step-desc-${n}`).value = st.desc ?? '';
+                    });
+                }
+            }
+            if (cfg.pm) setPlacementMode('dual', cfg.pm);
+            if (cfg.sp) setStackPattern(cfg.sp);
+            applyLanguage(currentLang);
+        }
+
+        function exportConfigJson() {
+            const payload = buildFullConfigObject();
+            const ref = document.getElementById('ccrm-calc-ref')?.value || 'Krautz_CCRM_Config';
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${ref}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importConfigJson(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    applyFullConfigObject(parsed);
+                    calculateAll();
+                } catch (err) {
+                    alert('Invalid JSON configuration file.');
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
         function refreshSavedProfilesDropdown() {
             const sel = document.getElementById('savedProfilesSelect');
             if (!sel) return;
@@ -1597,24 +1733,7 @@
             const shipRef = document.getElementById('req-ship-ref')?.value || 'Ref';
             const label = `${company} — ${shipRef}`;
             const list = JSON.parse(localStorage.getItem('krautz_ccrm_profiles') || '[]');
-            const snapshot = {
-                label,
-                company,
-                contact: document.getElementById('req-contact').value,
-                address: document.getElementById('req-address').value,
-                place: document.getElementById('req-place').value,
-                email: document.getElementById('req-email').value,
-                phone: document.getElementById('req-phone').value,
-                shipRef,
-                l: document.getElementById('ccrm-l').value,
-                w: document.getElementById('ccrm-w').value,
-                h: document.getElementById('ccrm-h').value,
-                weight: document.getElementById('ccrm-weight').value,
-                startTemp: document.getElementById('ccrm-start-temp').value,
-                minTemp: document.getElementById('ccrm-min-temp').value,
-                maxTemp: document.getElementById('ccrm-max-temp').value,
-                cp: document.getElementById('ccrm-cp').value
-            };
+            const snapshot = { label, fullCfg: buildFullConfigObject() };
             list.unshift(snapshot);
             localStorage.setItem('krautz_ccrm_profiles', JSON.stringify(list.slice(0, 20)));
             refreshSavedProfilesDropdown();
@@ -1624,23 +1743,9 @@
             if (idxStr === '') return;
             const list = JSON.parse(localStorage.getItem('krautz_ccrm_profiles') || '[]');
             const p = list[parseInt(idxStr)];
-            if (!p) return;
-            document.getElementById('req-company').value = p.company || '';
-            document.getElementById('req-contact').value = p.contact || '';
-            document.getElementById('req-address').value = p.address || '';
-            document.getElementById('req-place').value = p.place || '';
-            document.getElementById('req-email').value = p.email || '';
-            document.getElementById('req-phone').value = p.phone || '';
-            document.getElementById('req-ship-ref').value = p.shipRef || '';
-            document.getElementById('ccrm-l').value = p.l || 120;
-            document.getElementById('ccrm-w').value = p.w || 80;
-            document.getElementById('ccrm-h').value = p.h || 100;
-            document.getElementById('ccrm-weight').value = p.weight || 650;
-            document.getElementById('ccrm-start-temp').value = p.startTemp ?? 5;
-            document.getElementById('ccrm-min-temp').value = p.minTemp ?? 2;
-            document.getElementById('ccrm-max-temp').value = p.maxTemp ?? 8;
-            document.getElementById('ccrm-cp').value = p.cp || 4186;
-            syncFromCcrmDimensions();
+            if (!p || !p.fullCfg) return;
+            applyFullConfigObject(p.fullCfg);
+            calculateAll();
         }
 
         function renderColdChainSteps() {
@@ -1738,7 +1843,6 @@
             calculateAll();
         }
 
-        // Temperature Graph: X-axis every 2 hours, Y-axis every 2°C + Legend
         function drawCcrmTemperatureChart(timeline, minTemp, maxTemp) {
             const canvas = document.getElementById('ccrmTempChart');
             if (!canvas) return;
@@ -1844,7 +1948,6 @@
             ctx.restore();
         }
 
-        // Visual Standard Roll Cutting Diagram for Flap 1 & Flap 2
         function drawRollCutDiagram(b1L, b1W, b2L, b2W, rollSpec) {
             const canvas = document.getElementById('rollCutCanvas');
             if (!canvas) return;
@@ -1958,6 +2061,9 @@
                 let minWinterReached = startTemp;
                 let totalHrs = 0;
                 let peakStepDesc = steps[0]?.desc || 'Transit';
+                let peakStepHr = 0;
+                let lowStepDesc = steps[0]?.desc || 'Transit';
+                let lowStepHr = 0;
                 const timeline = [{ hr: 0, amb: steps[0]?.sum ?? startTemp, core: startTemp }];
 
                 steps.forEach(st => {
@@ -1968,17 +2074,30 @@
                     if (tSummer >= maxSummerReached) {
                         maxSummerReached = tSummer;
                         peakStepDesc = st.desc || `Step @ ${totalHrs}h`;
+                        peakStepHr = totalHrs;
                     }
 
                     const qWin = uVal * surfaceM2 * (st.win - tWinter) * dtSec;
                     tWinter += qWin / thermalMassJK;
-                    minWinterReached = Math.min(minWinterReached, tWinter);
+                    if (tWinter <= minWinterReached) {
+                        minWinterReached = tWinter;
+                        lowStepDesc = st.desc || `Step @ ${totalHrs}h`;
+                        lowStepHr = totalHrs;
+                    }
 
                     timeline.push({ hr: totalHrs, amb: st.sum, core: tSummer });
                 });
 
                 const pass = (maxSummerReached <= maxTemp) && (minWinterReached >= minTemp);
-                return { spec, tSummer, tWinter, maxSummerReached, minWinterReached, totalHrs, pass, timeline, peakStepDesc };
+                const heatExcursionK = Math.max(0, maxSummerReached - maxTemp);
+                const coldExcursionK = Math.max(0, minTemp - minWinterReached);
+                const excessHeatJoules = heatExcursionK * thermalMassJK;
+                const estPcmKg = Math.ceil((excessHeatJoules / 1000) / 210);
+                return {
+                    spec, tSummer, tWinter, maxSummerReached, minWinterReached,
+                    totalHrs, pass, timeline, peakStepDesc, peakStepHr,
+                    lowStepDesc, lowStepHr, heatExcursionK, coldExcursionK, estPcmKg
+                };
             }
 
             const candidates = [
@@ -1995,8 +2114,15 @@
                 drawCcrmTemperatureChart(chosenSim.timeline, minTemp, maxTemp);
                 const pinEl = document.getElementById('ccrm-risk-pinpointer');
                 if (pinEl) {
-                    const marginC = (maxTemp - chosenSim.maxSummerReached).toFixed(1);
-                    pinEl.innerHTML = `<strong class="text-amber-300">⚡ Peak Thermal Stress Leg:</strong> ${chosenSim.peakStepDesc} • Safety Margin to Tma (${maxTemp}°C): <strong class="${parseFloat(marginC) >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${marginC}°C</strong>`;
+                    const marginHigh = (maxTemp - chosenSim.maxSummerReached).toFixed(1);
+                    const marginLow = (chosenSim.minWinterReached - minTemp).toFixed(1);
+                    const alertHtml = !chosenSim.pass
+                        ? `<div class="text-rose-300 font-semibold">⚠ Breach Flag: ${chosenSim.heatExcursionK > 0 ? `+${chosenSim.heatExcursionK.toFixed(1)}°C over Tma @ ${chosenSim.peakStepHr}h` : ''} ${chosenSim.coldExcursionK > 0 ? `${chosenSim.coldExcursionK.toFixed(1)}°C below Tmi @ ${chosenSim.lowStepHr}h` : ''} • Est. PCM Buffer: ~${chosenSim.estPcmKg} kg</div>`
+                        : `<div class="text-emerald-300 font-semibold">✓ Within Safe Window [${minTemp}°C .. ${maxTemp}°C] • Margins: +${marginHigh}°C high / +${marginLow}°C low</div>`;
+                    pinEl.innerHTML = `
+                        <div><strong class="text-amber-300">⚡ Peak Thermal Stress Leg:</strong> ${chosenSim.peakStepDesc} (${chosenSim.peakStepHr}h)</div>
+                        ${alertHtml}
+                    `;
                 }
             }
 
@@ -2011,7 +2137,7 @@
                     verdictBanner.className = "p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-3";
                 } else {
                     verdictBanner.className = "p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex flex-wrap items-center justify-between gap-3";
-                    prodTitleEl.innerText += " + Active PCM Coolant Required";
+                    prodTitleEl.innerText += ` + ~${chosenSim.estPcmKg} kg PCM`;
                 }
             }
 
@@ -2025,11 +2151,13 @@
 
             const totalTwoBlanketsM2 = blanketA_M2 + blanketB_M2;
 
-            // Standard Roll Count Calculation for the 2 cut flaps/blankets
             const selectedRollKey = document.getElementById('standardRollSelect')?.value || '1.25x12.5';
             const activeRoll = STANDARD_ROLLS[selectedRollKey] || STANDARD_ROLLS['1.25x12.5'];
             const rollsNeededExact = totalTwoBlanketsM2 / activeRoll.areaM2;
             const rollsNeededOrder = Math.max(1, Math.ceil(rollsNeededExact));
+            const totalRollAreaM2 = rollsNeededOrder * activeRoll.areaM2;
+            const offcutAreaM2 = Math.max(0, totalRollAreaM2 - totalTwoBlanketsM2);
+            const nestingEffPct = Math.min(100, (totalTwoBlanketsM2 / Math.max(0.01, totalRollAreaM2)) * 100).toFixed(1);
 
             const roll1Exact = totalTwoBlanketsM2 / STANDARD_ROLLS['1.25x12.5'].areaM2;
             const roll1Ceil = Math.max(1, Math.ceil(roll1Exact));
@@ -2067,12 +2195,15 @@
                             <strong class="text-white">${totalTwoBlanketsM2.toFixed(2)} m²</strong>
                             <span class="text-slate-400 ml-1">• Selected (${activeRoll.label}):</span>
                             <strong class="text-emerald-400">${rollsNeededOrder} roll(s)</strong>
-                            <span class="text-[11px] text-slate-400">(${rollsNeededExact.toFixed(2)} rolls exact)</span>
+                            <span class="text-[11px] text-slate-400">(${rollsNeededExact.toFixed(2)} exact)</span>
                         </div>
                         <div class="text-[11px] text-slate-300">
                             <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 mr-1">1.25×12.5m: <strong>${roll1Ceil}</strong> (${roll1Exact.toFixed(2)})</span>
                             <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">3.0×10.0m: <strong>${roll2Ceil}</strong> (${roll2Exact.toFixed(2)})</span>
                         </div>
+                    </div>
+                    <div class="text-[11px] text-slate-400">
+                        ✂️ Roll Nesting / Offcut: <strong class="text-cyan-300">${nestingEffPct}% used</strong> • Unused offcut on ${rollsNeededOrder} roll(s): <strong class="text-amber-300">${offcutAreaM2.toFixed(2)} m²</strong>
                     </div>
                 `;
             }
@@ -2085,7 +2216,7 @@
             }
 
             packedState.ccrm = {
-                calcDate: document.getElementById('ccrm-calc-date')?.value || '2026-11-24',
+                calcDate: document.getElementById('ccrm-calc-date')?.value || '2026-11-25',
                 calcRef: document.getElementById('ccrm-calc-ref')?.value || 'CCRM-2026-4091',
                 managerName: document.getElementById('ccrm-manager-name')?.value || 'Manager',
                 company, contact, address, place, email, phone, shipRef,
@@ -2097,9 +2228,12 @@
                 minWinterTemp: chosenSim?.minWinterReached ?? startTemp,
                 totalHrs: chosenSim?.totalHrs ?? 0,
                 pass: chosenSim?.pass ?? true,
+                estPcmKg: chosenSim?.estPcmKg || 0,
                 blanketA: { l: blanketA_L, w: blanketA_W, areaM2: blanketA_M2 },
                 blanketB: { l: blanketB_L, w: blanketB_W, areaM2: blanketB_M2 },
                 totalBlanketsM2: totalTwoBlanketsM2,
+                offcutAreaM2,
+                nestingEffPct,
                 rollSpec: activeRoll,
                 rollsNeededExact,
                 rollsNeededOrder,
@@ -2154,7 +2288,8 @@
                 ['Summer Peak (°C)', c.predictedEndTemp.toFixed(2), 'Winter Low (°C)', c.minWinterTemp.toFixed(2)],
                 ['Flap / Blanket 1 (cm)', `${c.blanketA.l} x ${c.blanketA.w}`, 'Flap / Blanket 2 (cm)', `${c.blanketB.l} x ${c.blanketB.w}`],
                 ['Total Area (m2)', c.totalBlanketsM2.toFixed(2), 'Standard Roll', c.rollSpec?.label || '1.25 m x 12.5 m'],
-                ['Rolls Needed (Exact)', (c.rollsNeededExact || 0).toFixed(2), 'Rolls Needed (Order)', c.rollsNeededOrder || 1]
+                ['Rolls Needed (Exact)', (c.rollsNeededExact || 0).toFixed(2), 'Rolls Needed (Order)', c.rollsNeededOrder || 1],
+                ['Offcut Waste (m2)', (c.offcutAreaM2 || 0).toFixed(2), 'Nesting Efficiency (%)', c.nestingEffPct || '100.0']
             ];
             const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(r => r.join(',')).join('\n');
             const link = document.createElement('a');
@@ -2165,7 +2300,6 @@
             document.body.removeChild(link);
         }
 
-        // Movable 3D 5-Step Pallet Packing & Insulation SOP (#canvas-sop)
         function toggleSopAnimation() {
             sopAnimPlaying = !sopAnimPlaying;
             const lbl = document.getElementById('sopPlayPauseLabel');
@@ -2230,7 +2364,6 @@
             v.rootGroup.add(buildConcreteFloorMesh(L, W));
             v.rootGroup.add(buildBrownPalletMesh(L, W, L + 1));
 
-            // Step 0+: Base thermal pad on EPAL pallet
             const padDrop = stage === 0 ? (1 - frac) * 28 : 0;
             const padH = 2.0;
             const padGeo = new THREE.BoxGeometry(L - 2, padH, W - 2);
@@ -2242,7 +2375,6 @@
 
             const cargoBaseY = PALLET_HEIGHT + padH;
 
-            // Step 1+: Cargo stack on pallet
             if (stage >= 1) {
                 const fillRatio = stage === 1 ? Math.max(0.25, frac) : 1.0;
                 const curCargoH = Math.max(6, H * fillRatio);
@@ -2254,7 +2386,6 @@
                 v.rootGroup.add(cargoMesh);
             }
 
-            // Step 2+: Flap / Blanket 1 lengthwise wrap
             if (stage >= 2) {
                 const p1 = stage === 2 ? Math.max(0.2, frac) : 1.0;
                 const b1H = H * p1;
@@ -2272,7 +2403,6 @@
                 v.rootGroup.add(b1Mesh);
             }
 
-            // Step 3+: Flap / Blanket 2 crosswise wrap
             if (stage >= 3) {
                 const p2 = stage === 3 ? Math.max(0.2, frac) : 1.0;
                 const b2H = H * p2;
@@ -2290,7 +2420,6 @@
                 v.rootGroup.add(b2Mesh);
             }
 
-            // Step 4+: Manual foil tape & fixing bands around 15cm overlap zone
             if (stage >= 4) {
                 const bandHeights = [cargoBaseY + H * 0.35, cargoBaseY + H * 0.72];
                 const bandMat = new THREE.MeshLambertMaterial({ color: 0xf59e0b });
@@ -3981,7 +4110,7 @@
                         <td class="py-2 px-2 text-cyan-300 font-mono">R-${sim.spec.rValue.toFixed(2)}</td>
                         <td class="py-2 px-2 text-amber-300 font-bold">${sim.maxSummerReached.toFixed(1)}°C</td>
                         <td class="py-2 px-2 text-sky-300 font-bold">${sim.minWinterReached.toFixed(1)}°C</td>
-                        <td class="py-2 pl-2 font-bold ${sim.pass ? 'text-emerald-400' : 'text-rose-400'}">${sim.pass ? '✓ PASS' : '⚠ PCM Needed'}</td>
+                        <td class="py-2 pl-2 font-bold ${sim.pass ? 'text-emerald-400' : 'text-rose-400'}">${sim.pass ? '✓ PASS' : `⚠ ~${sim.estPcmKg}kg PCM`}</td>
                     </tr>
                 `).join('');
             }
@@ -4062,39 +4191,7 @@
         }
 
         function copyShareableConfigUrl() {
-            const cfg = {
-                cl: document.getElementById('containerL').value,
-                cw: document.getElementById('containerW').value,
-                ch: document.getElementById('containerH').value,
-                il: document.getElementById('itemL').value,
-                iw: document.getElementById('itemW').value,
-                ih: document.getElementById('itemH').value,
-                wt: document.getElementById('itemWeight').value,
-                mp: document.getElementById('maxPayload').value,
-                qty: document.getElementById('orderTotalQty').value,
-                pm: document.getElementById('dualPlacementMode').value,
-                sp: document.getElementById('dualStackPattern').value,
-                tg: document.getElementById('temaxThermalGrade').value,
-                tz: document.getElementById('temaxTempZone').value,
-                sc: document.getElementById('dualSheetCarton').checked ? 1 : 0,
-                cg: document.getElementById('dualCornerGuards').checked ? 1 : 0,
-                rl: document.getElementById('standardRollSelect')?.value || '1.25x12.5',
-                ccrm: {
-                    co: document.getElementById('req-company').value,
-                    cn: document.getElementById('req-contact').value,
-                    ad: document.getElementById('req-address').value,
-                    pl: document.getElementById('req-place').value,
-                    em: document.getElementById('req-email').value,
-                    ph: document.getElementById('req-phone').value,
-                    sr: document.getElementById('req-ship-ref').value,
-                    mg: document.getElementById('ccrm-manager-name').value,
-                    ms: document.getElementById('ccrm-weight').value,
-                    st: document.getElementById('ccrm-start-temp').value,
-                    mn: document.getElementById('ccrm-min-temp').value,
-                    mx: document.getElementById('ccrm-max-temp').value,
-                    cp: document.getElementById('ccrm-cp').value
-                }
-            };
+            const cfg = buildFullConfigObject();
             const encoded = btoa(encodeURIComponent(JSON.stringify(cfg)));
             const shareUrl = `${window.location.origin}${window.location.pathname}?cfg=${encodeURIComponent(encoded)}`;
             window.history.replaceState({}, '', `?cfg=${encodeURIComponent(encoded)}`);
@@ -4114,37 +4211,7 @@
             try {
                 const decodedStr = decodeURIComponent(atob(decodeURIComponent(raw)));
                 const cfg = JSON.parse(decodedStr);
-                if (cfg.cl) { document.getElementById('containerL').value = cfg.cl; document.getElementById('ccrm-l').value = cfg.cl; }
-                if (cfg.cw) { document.getElementById('containerW').value = cfg.cw; document.getElementById('ccrm-w').value = cfg.cw; }
-                if (cfg.ch) { document.getElementById('containerH').value = cfg.ch; document.getElementById('ccrm-h').value = cfg.ch; }
-                if (cfg.il) document.getElementById('itemL').value = cfg.il;
-                if (cfg.iw) document.getElementById('itemW').value = cfg.iw;
-                if (cfg.ih) document.getElementById('itemH').value = cfg.ih;
-                if (cfg.wt) document.getElementById('itemWeight').value = cfg.wt;
-                if (cfg.mp) document.getElementById('maxPayload').value = cfg.mp;
-                if (cfg.qty) document.getElementById('orderTotalQty').value = cfg.qty;
-                if (cfg.tg) document.getElementById('temaxThermalGrade').value = cfg.tg;
-                if (cfg.tz) document.getElementById('temaxTempZone').value = cfg.tz;
-                if (cfg.rl && document.getElementById('standardRollSelect')) document.getElementById('standardRollSelect').value = cfg.rl;
-                if (cfg.sc !== undefined) document.getElementById('dualSheetCarton').checked = !!cfg.sc;
-                if (cfg.cg !== undefined) document.getElementById('dualCornerGuards').checked = !!cfg.cg;
-                if (cfg.ccrm) {
-                    if (cfg.ccrm.co) document.getElementById('req-company').value = cfg.ccrm.co;
-                    if (cfg.ccrm.cn) document.getElementById('req-contact').value = cfg.ccrm.cn;
-                    if (cfg.ccrm.ad) document.getElementById('req-address').value = cfg.ccrm.ad;
-                    if (cfg.ccrm.pl) document.getElementById('req-place').value = cfg.ccrm.pl;
-                    if (cfg.ccrm.em) document.getElementById('req-email').value = cfg.ccrm.em;
-                    if (cfg.ccrm.ph) document.getElementById('req-phone').value = cfg.ccrm.ph;
-                    if (cfg.ccrm.sr) document.getElementById('req-ship-ref').value = cfg.ccrm.sr;
-                    if (cfg.ccrm.mg) document.getElementById('ccrm-manager-name').value = cfg.ccrm.mg;
-                    if (cfg.ccrm.ms) document.getElementById('ccrm-weight').value = cfg.ccrm.ms;
-                    if (cfg.ccrm.st) document.getElementById('ccrm-start-temp').value = cfg.ccrm.st;
-                    if (cfg.ccrm.mn) document.getElementById('ccrm-min-temp').value = cfg.ccrm.mn;
-                    if (cfg.ccrm.mx) document.getElementById('ccrm-max-temp').value = cfg.ccrm.mx;
-                    if (cfg.ccrm.cp) document.getElementById('ccrm-cp').value = cfg.ccrm.cp;
-                }
-                if (cfg.pm) setPlacementMode('dual', cfg.pm);
-                if (cfg.sp) setStackPattern(cfg.sp);
+                applyFullConfigObject(cfg);
             } catch (e) {
                 console.warn('Invalid shared configuration URL parameter.');
             }
